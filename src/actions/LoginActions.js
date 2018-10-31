@@ -41,6 +41,8 @@ export const leetcodeLogin = (username, password, csrftoken, LEETCODE_SESSION) =
                 dispatch({type: LEETCODE_LOGIN_SUCCESS, payload: {
                     csrftoken, LEETCODE_SESSION, username
                 }});
+                // Jump to App main
+                Actions.main();
             } else {
                 let errs = _.reduce(JSON.parse(resp._bodyText).form.errors, (errors, error) => {
                     errors += `${error} `;

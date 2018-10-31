@@ -8,7 +8,7 @@ const INITIAL_STATE = {
     errors: ''
 }
 
-export default LoginReducer = (state = INITIAL_STATE, action) => {
+export default SessionReducer = (state = INITIAL_STATE, action) => {
     switch(action.type) {
         case LEETCODE_LOGIN:
             return {...INITIAL_STATE, loading: true};

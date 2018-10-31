@@ -1,6 +1,9 @@
 import { combineReducers } from 'redux';
-import LoginReducer from './LoginReducer';
+import SessionReducer from './SessionReducer';
+import UserProfileReducer from './UserProfileReducer';
 
 export default combineReducers({
-   login: LoginReducer
+   session: SessionReducer,
+   profile: UserProfileReducer
+//    route: RouteReducer
 });

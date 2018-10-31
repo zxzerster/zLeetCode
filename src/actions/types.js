@@ -5,3 +5,7 @@ export const LEETCODE_LOGIN_FAILED = 'leetcode_login_failed';
 export const LEETCODE_LOGOUT = 'leetcode_logout';
 export const LEETCODE_LOGOUT_SUCCESS = 'leetcode_logout_success';
 export const LEETCODE_LOGOUT_FAILED = 'leetcode_logout_failed';
+
+export const LEETCODE_USERPROFILE = 'leetcode_userprofile';
+export const LEETCODE_USERPROFILE_SUCCESS = 'leetcode_userprofile_success';
+export const LEETCODE_USERPROFILE_FAILED = 'leetcode_userprofile_failed';

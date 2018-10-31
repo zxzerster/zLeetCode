@@ -23,7 +23,7 @@ class Login extends Component {
         // }
         const {csrftoken, LEETCODE_SESSION} = this.props;
         const {username, pwd} = this.state;
-        this.props.leetcodeLogin(username, pwd, csrftoken, LEETCODE_SESSION);
+        this.props.leetcodeLogin('zxz_er', '454127927', csrftoken, LEETCODE_SESSION);
     }
 
     renderButton() {
@@ -77,7 +77,7 @@ class Login extends Component {
 }
 
 const mapStateToProps = (state) => {
-    return state.login
+    return state.session
 }
 
 export default connect(mapStateToProps, actions)(Login);
