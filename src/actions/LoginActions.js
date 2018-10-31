@@ -4,12 +4,9 @@ import _ from 'lodash';
 import { Actions } from 'react-native-router-flux';
 
 import * as NetworkUtils from '../utils/NetworkUtils';
+import Config from '../utils/Config';
 
-// TODO: Move then to config in the future
-const GRAPHQL_URL = 'https://leetcode.com/graphql';
-const ORIGIN_URL = 'https://leetcode.com';
-const LOGIN_URL = 'https://leetcode.com/accounts/login/';
-const LOGOUT_URL = 'https://leetcode.com/accounts/logout/';
+const { Url } = Config;
 
 export const leetcodeLogin = (username, password, csrftoken, LEETCODE_SESSION) => {
     return (dispatch) => {
@@ -80,11 +77,11 @@ export const leetcodeLogout = (csrftoken, LEETCODE_SESSION) => {
     return (dispatch) => {
         dispatch({type: LEETCODE_LOGOUT});
         const headers = {
-            'Origin': ORIGIN_URL,
-            'Referer': LOGIN_URL,
+            'Origin': Url.base,
+            'Referer': Url.login,
             'Cookie': `csrftoken=${csrftoken};LEETCODE_SESSION=${LEETCODE_SESSION}`
         }
-        fetch(LOGOUT_URL, {
+        fetch(Url.logout, {
             method: 'get',
             credentials: 'omit',
             redirect: 'manual',
@@ -107,8 +104,8 @@ export const leetcodeLogout = (csrftoken, LEETCODE_SESSION) => {
 const verifyLoginStatus = (csrftoken, LEETCODE_SESSION) => {
     const headers = {
         credentials: 'omit',
-        origin: ORIGIN_URL,
-        referer: LOGIN_URL,
+        origin: Url.base,
+        referer: Url.login,
         cookie: `csrftoken=${csrftoken}; LEETCODE_SESSION=${LEETCODE_SESSION};`,
         'X-csrftoken': csrftoken,
         'Content-Type': 'application/json'
@@ -128,7 +125,7 @@ const verifyLoginStatus = (csrftoken, LEETCODE_SESSION) => {
     }
     
 
-    return fetch(GRAPHQL_URL, {
+    return fetch(Url.graphql, {
         method: 'post',
         headers,
         body: JSON.stringify(query)
@@ -136,7 +133,7 @@ const verifyLoginStatus = (csrftoken, LEETCODE_SESSION) => {
 }
 
 const postLogin = (username, password) => {
-    return fetch(LOGIN_URL, {
+    return fetch(Url.login, {
         method: 'get',
         credentials: 'omit'
     })
@@ -154,13 +151,13 @@ const postLogin = (username, password) => {
         formData.append('password', password);
 
         const headers = {
-            'Origin': ORIGIN_URL,
-            'Referer': LOGIN_URL,
+            'Origin': Url.base,
+            'Referer': Url.login,
             'X-Requested-With': 'XMLHttpRequest',
             'Cookie': `csrftoken=${csrftoken};`
         }
 
-        return fetch(LOGIN_URL, {
+        return fetch(Url.login, {
             method: 'post',
             headers,
             body: formData
@@ -177,7 +174,7 @@ const postLogin = (username, password) => {
 //         const headers = {
 //             'Cookie': `csrftoken=${csrftoken};LEETCODE_SESSION=${LEETCODE_SESSION};`
 //         };
-//         fetch(LOGIN_URL, {
+//         fetch(Url.login, {
 //             method: 'get',
 //             credentials: 'omit',
 //             redirect: 'manual',
