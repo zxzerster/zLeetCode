@@ -14,13 +14,6 @@ class Login extends Component {
 
     onButtonPress() {
         console.log('button pressed');
-        // if (this.props.LEETCODE_SESSION && this.props.LEETCODE_SESSION.length > 0) {
-        //     console.log('Login Default');
-        //     this.props.leetcodeDefaultLogin(this.props.loginToken, this.props.LEETCODE_SESSION);
-        // } else {
-        //     console.log('New login');
-        //     this.props.leetcodeLogin('zxz_er', '454127927');
-        // }
         const {csrftoken, LEETCODE_SESSION} = this.props;
         const {username, pwd} = this.state;
         this.props.leetcodeLogin('zxz_er', '454127927', csrftoken, LEETCODE_SESSION);

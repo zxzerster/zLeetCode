@@ -7,19 +7,16 @@ import * as actions from '../actions'
 
 class Profile extends Component {
 
-    onEnter(props) {
-        // const {csrftoken, LEETCODE_SESSION} = this.props.login;
-        console.log(`123123Profile onEnter123: ${props}`);
-        // console.log(`csrftoken: ${csrftoken}, LEETCODE_SESSION: ${LEETCODE_SESSION}`);
-        // actions.leetcodeGraphqlProfile()
+    static onEnter() {
+        console.log('Hello Profile');
     }
 
-    // componentWillMount() {
-    //     const {csrftoken, LEETCODE_SESSION} = this.props.session;
-    //     console.log(`Profile componentWillMount`);
-    //     console.log(`csrftoken: ${csrftoken}, LEETCODE_SESSION: ${LEETCODE_SESSION}`);
-    //     this.props.leetcodeGraphqlProfile(csrftoken, LEETCODE_SESSION);
-    // }
+    componentWillMount() {
+        const {csrftoken, LEETCODE_SESSION} = this.props.session;
+        console.log(`Profile componentWillMount`);
+        console.log(`csrftoken: ${csrftoken}, LEETCODE_SESSION: ${LEETCODE_SESSION}`);
+        this.props.leetcodeGraphqlProfile(csrftoken, LEETCODE_SESSION);
+    }
 
     renderUserProfile() {
         const { profile } = this.props;

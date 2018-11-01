@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { LEETCODE_USERPROFILE, LEETCODE_USERPROFILE_SUCCESS, LEETCODE_USERPROFILE_FAILED } from '../actions/types';
+import { LEETCODE_USERPROFILE, LEETCODE_USERPROFILE_SUCCESS, LEETCODE_USERPROFILE_FAILED } from './types';
 
 const graphqlUrl = 'https://leetcode.com/graphql';
 const origin = 'https://leetcode.com';

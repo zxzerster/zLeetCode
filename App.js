@@ -22,6 +22,7 @@ import Login from './src/components/Login';
 import Logout from './src/components/Logout';
 import Profile from './src/components/Profile';
 import Problems from './src/components/Problems';
+import ProblemDetails from './src/components/ProblemDetails';
 
 const loggerMiddleware = createLogger({collapsed:true});
 const middleware = [thunk, loggerMiddleware];
@@ -44,8 +45,11 @@ export default class App extends Component {
 
             {/** App main area */}
             <Scene key='main' hideNavBar tabs>
-              <Scene key='problems' initial component={Problems} title='Problems' onEnter={() => {console.log('HELLO ONENTER`12'); Problems.onEnter()}}/>
-              <Scene key='profile' component={Profile} title='Profile' onEnter={() => {console.log('HELLO ONENTER345')}}/>
+              <Scene key='problemwrapper' initial title='Problems'>
+                <Scene key='problems' initial component={Problems} title='Problems' />
+                <Scene key='problemdetails' component={ProblemDetails} />
+              </Scene>
+              <Scene key='profile' component={Profile} title='Profile' />
             </Scene>
           </Scene>
         </Router>
