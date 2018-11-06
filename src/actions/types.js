@@ -17,3 +17,7 @@ export const LEETCODE_ALL_PROBLEMS_FAILED = 'leetcode_all_problems_failed';
 export const LEETCODE_PROBLEM = 'leetcode_problem';
 export const LEETCODE_PROBLEM_SUCCESS = 'leetcode_problem_success';
 export const LEETCODE_PROBLEM_FAILED = 'leetcode_problem_failed';
+
+export const LEETCODE_RUN_CODE = 'leetcode_run_code';
+export const LEETCODE_RUN_CODE_SUCCESS = 'leetcode_run_code_success';
+export const LEETCODE_RUN_CODE_FAILED = 'leetcode_run_code_failed';
