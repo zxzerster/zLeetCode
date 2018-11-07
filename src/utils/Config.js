@@ -7,6 +7,8 @@ export default {
         runCode:                titleSlug => `https://leetcode.com/problems/${titleSlug}/interpret_solution/`,
         runCodeRefer:           titleSlug => `https://leetcode.com/problems/${titleSlug}`,
         runCodeResult:          interpretId => `https://leetcode.com/submissions/detail/${interpretId}/check/`,
-        runCodeExpectedResult:  expectedInterpretId => `https://leetcode.com/submissions/detail/${expectedInterpretId}/check/`
+        runCodeExpectedResult:  expectedInterpretId => `https://leetcode.com/submissions/detail/${expectedInterpretId}/check/`,
+        submitCode:             titleSlug => `https://leetcode.com/problems/${titleSlug}/submit/`,
+        submitCodeResult:       submissionId => `https://leetcode.com/submissions/detail/${submissionId}/check/`
     }
 };

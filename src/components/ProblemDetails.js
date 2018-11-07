@@ -58,6 +58,18 @@ class ProblemDetails extends Component {
         this.props.runCode(problemInput, titleSlug, csrftoken, LEETCODE_SESSION);
     }
 
+    submitCode() {
+        const { csrftoken, LEETCODE_SESSION } = this.props.session;
+        const { questionId, titleSlug } = this.props.problem.data;
+        const problemInput = {
+            question_id: questionId,
+            lang: this.lang(),
+            typed_code: this.typedSubmissionCode()
+        }
+
+        this.props.submitCode(problemInput, titleSlug, csrftoken, LEETCODE_SESSION);
+    }
+
     dataInput() {
         return '[2, 7, 11, 15]\n9';
     }
@@ -76,6 +88,10 @@ class ProblemDetails extends Component {
 
     typedCodeWrong() {
         return "abc";
+    }
+
+    typedSubmissionCode() {
+        return "class Solution(object):\n    def twoSum(self, nums, target):\n        \"\"\"\n        :type nums: List[int]\n        :type target: int\n        :rtype: List[int]\n        \"\"\"\n        \n        indices = []\n        length = len(nums)\n        for i in range(0, length):\n            del indices[:]\n            remaining = target - nums[i]\n            indices.append(i)\n            for j in range(i + 1, length):\n                if nums[j] == remaining:\n                    indices.append(j)\n                    return indices\n\n        return indices\n        "
     }
 
     componentDidMount() {
@@ -109,6 +125,9 @@ class ProblemDetails extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={this.runCodeWrong.bind(this)}>
                     <Text>'Run Code with Wrong Code'</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.submitCode.bind(this)}>
+                    <Text>'Submit Code!'</Text>
                 </TouchableOpacity>
             </View>
         )

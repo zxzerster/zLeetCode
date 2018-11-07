@@ -1,6 +1,8 @@
 import { LEETCODE_ALL_PROBLEMS, LEETCODE_ALL_PROBLEMS_SUCCESS, LEETCODE_ALL_PROBLEMS_FAILED } from './types';
 import { LEETCODE_PROBLEM, LEETCODE_PROBLEM_SUCCESS, LEETCODE_PROBLEM_FAILED } from './types';
 import { LEETCODE_RUN_CODE, LEETCODE_RUN_CODE_SUCCESS, LEETCODE_RUN_CODE_FAILED } from './types';
+import { LEETCODE_EXPECTED_RESULT_SUCCESS, LEETCODE_EXPECTED_RESULT_FAILED } from './types';
+import { LEETCODE_SUBMIT_CODE, LEETCODE_SUBMIT_CODE_SUCCESS, LEETCODE_SUBMIT_CODE_FAILED } from './types';
 import Config from '../utils/Config';
 
 export const fetchAllProblems = (csrftoken, LEETCODE_SESSION) => {
@@ -133,8 +135,9 @@ export const runCode = (problemInput, titleSlug, csrftoken, LEETCODE_SESSION) =>
             }
         })
         .then(json => {
-            console.log(`========== interpret_id: ${json.interpret_id}: ${JSON.stringify(json)}`);
-            queryResult(dispatch, headers, json.interpret_id);
+            // queryResult(dispatch, headers, json.interpret_id)
+            queryExpectedResult(dispatch, headers, json.interpret_expected_id);
+            queryRuncodeResult(dispatch, headers, json.interpret_id);
         })
         .catch(error => {
             if (error.runcodeError) {
@@ -146,16 +149,62 @@ export const runCode = (problemInput, titleSlug, csrftoken, LEETCODE_SESSION) =>
     };
 }
 
-const queryResult = (dispatch, headers, interpret_id) => {
-    if (!headers) {
-        console.log('headers is NULL');
+export const submitCode = (problemInput, titleSlug, csrftoken, LEETCODE_SESSION) => {
+    const headers = {
+        credentials: 'omit',
+        referer: Config.Url.runCodeRefer(titleSlug),
+        cookie: `csrftoken=${csrftoken}; LEETCODE_SESSION=${LEETCODE_SESSION};`,
+        'X-csrftoken': csrftoken,
+        'Content-Type': 'application/json'
+    };
+
+    return dispatch => {
+        dispatch({type: LEETCODE_SUBMIT_CODE});
+        fetch(Config.Url.submitCode(titleSlug), {
+            method: 'post',
+            headers,
+            body: JSON.stringify(problemInput)
+        }).then(resp => {
+            if (resp.status === 200) {
+                return resp.json();
+            } else {
+                let error = resp.status === 429 ? 'Sorry but you are sending requests too fast. Please try again later.' : 'Unknown errors.';
+                return Promise.reject({runcodeError: error}); 
+            }
+        })
+        .then(json => {
+            // query submit result
+            console.log(`submission_id: ${json.submission_id}`);
+            querySubmissionResult(dispatch, headers, json.submission_id);
+        })
+        .catch(error => {
+            if (error.runcodeError) {
+                dispatch({type: LEETCODE_SUBMIT_CODE_FAILED, error: error.runcodeError});
+            } else {
+                dispatch({type: LEETCODE_SUBMIT_CODE_FAILED, error});
+            }
+        })
     }
-    
-    if (!interpret_id) {
-        console.log('interpret_id is NULL');
+}
+
+const querySubmissionResult = (dispatch, headers, submission_id) => {
+    queryResult(dispatch, LEETCODE_SUBMIT_CODE_SUCCESS, LEETCODE_SUBMIT_CODE_FAILED, headers, submission_id);
+}
+
+const queryExpectedResult = (dispatch, headers, interpret_expected_id) => {
+    queryResult(dispatch, LEETCODE_EXPECTED_RESULT_SUCCESS, LEETCODE_EXPECTED_RESULT_FAILED, headers, interpret_expected_id);
+}
+
+const queryRuncodeResult = (dispatch, headers, interpret_id) => {
+    queryResult(dispatch, LEETCODE_RUN_CODE_SUCCESS, LEETCODE_RUN_CODE_FAILED, headers, interpret_id);
+}
+
+const queryResult = (dispatch, successType, failedType, headers, id) => {
+
+    if (!id) {
         return;
     }
-    fetch(Config.Url.runCodeResult(interpret_id), {
+    fetch(Config.Url.runCodeResult(id), {
         method: 'get',
         headers
     })
@@ -163,17 +212,17 @@ const queryResult = (dispatch, headers, interpret_id) => {
         if (resp.status === 200) {
             return resp.json();
         } else {
-            dispatch({type: LEETCODE_RUN_CODE_FAILED});
+            dispatch({type: successType});
         }
     })
     .then(json => {
         console.log(`query state: ${json.state}`);
         if (json.state === 'PENDING' || json.state === 'STARTED') {
-            setTimeout(queryResult, 1000, dispatch, headers, interpret_id);
+            setTimeout(queryResult, 1000, dispatch, successType, failedType, headers, id);
         } else if (json.state === 'SUCCESS') {
-            dispatch({type: LEETCODE_RUN_CODE_SUCCESS, payload: json})
+            dispatch({type: successType, payload: json})
         } else {
-            dispatch({type: LEETCODE_RUN_CODE_FAILED});
+            dispatch({type: failedType});
         }
     })
     .catch(error => {

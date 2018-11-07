@@ -21,3 +21,9 @@ export const LEETCODE_PROBLEM_FAILED = 'leetcode_problem_failed';
 export const LEETCODE_RUN_CODE = 'leetcode_run_code';
 export const LEETCODE_RUN_CODE_SUCCESS = 'leetcode_run_code_success';
 export const LEETCODE_RUN_CODE_FAILED = 'leetcode_run_code_failed';
+export const LEETCODE_EXPECTED_RESULT_SUCCESS = 'leetcode_expected_result_success';
+export const LEETCODE_EXPECTED_RESULT_FAILED = 'leetcode_expected_result_failed';
+
+export const LEETCODE_SUBMIT_CODE = 'leetcode_submit_code';
+export const LEETCODE_SUBMIT_CODE_SUCCESS = 'leetcode_submit_code_success';
+export const LEETCODE_SUBMIT_CODE_FAILED = 'leetcode_submit_code_failed';
