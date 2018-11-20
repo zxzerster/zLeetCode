@@ -12,5 +12,5 @@ export default combineReducers({
     allProblems: AllProblemsReducer,
     problem: ProblemReducer,
     runcode: RunCodeReducer,
-    submitcode: SubmitCodeReducer
+    submitcode: SubmitCodeReducer,
 });

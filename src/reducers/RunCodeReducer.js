@@ -1,7 +1,9 @@
-import { LEETCODE_RUN_CODE, LEETCODE_RUN_CODE_SUCCESS, LEETCODE_RUN_CODE_FAILED } from '../actions/types';
-import { LEETCODE_EXPECTED_RESULT_SUCCESS, LEETCODE_EXPECTED_RESULT_FAILED } from '../actions/types';
+import {
+    LEETCODE_RUN_CODE, LEETCODE_RUN_CODE_SUCCESS, LEETCODE_RUN_CODE_FAILED,
+    LEETCODE_EXPECTED_RESULT_SUCCESS, LEETCODE_EXPECTED_RESULT_FAILED,
+} from '../actions/types';
 
-const initialState = {
+const INITIAL_STATE = {
     loading: false,
     error: null,
     result: {
@@ -17,7 +19,7 @@ const initialState = {
         pretty_lang: null,
         submission_id: null,
         status_msg: null,
-        state: null
+        state: null,
     },
     expected: {
         status_code: null,
@@ -33,25 +35,42 @@ const initialState = {
         pretty_lang: null,
         submission_id: null,
         status_msg: null,
-        state: null
-    }
-}
+        state: null,
+    },
+};
 
-export default (state = initialState, action) => {
-    switch(action.type) {
+export default (state = INITIAL_STATE, action) => {
+    const expected = state.expected.state;
+    const runcodeLoading = !(expected === 'SUCCESS');
+    const result = state.result.state;
+    const expectedLoading = !(result === 'SUCCESS');
+
+    switch (action.type) {
         case LEETCODE_RUN_CODE:
-            return { ...initialState, loading: true };
+            return { ...INITIAL_STATE, loading: true, error: null };
         case LEETCODE_RUN_CODE_SUCCESS:
-            let expected = state.expected.state;
-            let runcodeLoading = !(expected === 'SUCCESS');
-            return { ...state, loading: runcodeLoading, error: null, result: action.payload };
+            return {
+                ...state,
+                loading: runcodeLoading,
+                error: null,
+                result: action.payload,
+            };
         case LEETCODE_EXPECTED_RESULT_SUCCESS:
-            let result = state.result.state;
-            let expectedLoading = !(result === 'SUCCESS');
-            return { ...state, loading: expectedLoading, error: null, expected: action.payload };
+            return {
+                ...state,
+                loading: expectedLoading,
+                error: null,
+                expected: action.payload,
+            };
         case LEETCODE_RUN_CODE_FAILED:
         case LEETCODE_EXPECTED_RESULT_FAILED:
-            return { ...initialState, loading: false, error: action.error, result: initialState.result, expected: initialState.expected };
+            return {
+                ...INITIAL_STATE,
+                loading: false,
+                error: action.error,
+                result: INITIAL_STATE.result,
+                expected: INITIAL_STATE.expected,
+            };
         default:
             return state;
     }

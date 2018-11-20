@@ -1,4 +1,3 @@
-// import wretch from 'wretch';
 import _ from 'lodash';
 
 const base = 'https://leetcode.com';
@@ -101,12 +100,11 @@ export const leetcodePostFetch = (url, csrftoken, LEETCODE_SESSION, body, form =
         };
     }
 
-    let bodyData = { ...body };
+    let bodyData = body;
 
     if (form) {
         bodyData = new FormData();
         _.forEach(body, (value, key) => {
-            console.log(`key = ${key}, value = ${value}`);
             bodyData.append(key, value);
         });
     }

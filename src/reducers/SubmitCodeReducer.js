@@ -1,6 +1,6 @@
 import { LEETCODE_SUBMIT_CODE, LEETCODE_SUBMIT_CODE_SUCCESS, LEETCODE_SUBMIT_CODE_FAILED } from '../actions/types';
 
-const initialState = {
+const INITIAL_STATE = {
     loading: false,
     error: null,
     result: {
@@ -20,18 +20,18 @@ const initialState = {
         std_output: null,
         submission_id: null,
         total_correct: null,
-        total_testcase: null
-    }
-}
+        total_testcase: null,
+    },
+};
 
-export default (state = initialState, action) => {
-    switch(action.type) {
+export default (state = INITIAL_STATE, action) => {
+    switch (action.type) {
         case LEETCODE_SUBMIT_CODE:
-            return { ...initialState, loading: true };
+            return { ...INITIAL_STATE, loading: true, error: null };
         case LEETCODE_SUBMIT_CODE_SUCCESS:
             return { loading: false, error: null, result: action.payload };
         case LEETCODE_SUBMIT_CODE_FAILED:
-            return { ...initialState, loading: false, error: action.error };
+            return { ...INITIAL_STATE, loading: false, error: action.error };
         default:
             return state;
     }

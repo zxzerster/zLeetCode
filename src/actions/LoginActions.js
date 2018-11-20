@@ -4,13 +4,14 @@ import {
 } from './types';
 import { UserStatus } from '../network/query';
 import {
+    URLs,
     getCookieValue,
     leetcodeGetFetch,
     leetcodePostFetch,
     leetcodeGraphqlFetch,
 } from '../network';
 
-export const login = (username, password) => {
+export const leetcodeLogin = (username, password) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_LOGIN });
 
@@ -18,7 +19,7 @@ export const login = (username, password) => {
         leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, UserStatus)
         .then(resp => {
             if (resp.status !== 200) {
-                return leetcodeGetFetch('https://leetcode.com/accounts/login/');
+                return leetcodeGetFetch(URLs.login);
             }
 
             resp.json().then(json => {
@@ -26,9 +27,11 @@ export const login = (username, password) => {
 
                 if (isSignedIn) {
                     dispatch({ type: LEETCODE_LOGIN_SUCCESS });
-                } else {
-                    return leetcodeGetFetch('https://leetcode.com/accounts/login/');
+
+                    return Promise.resolve();
                 }
+
+                return leetcodeGetFetch(URLs.login);
             });
 
             return Promise.resolve();
@@ -38,7 +41,7 @@ export const login = (username, password) => {
         })
         .then(token => {
             if (token) {
-                return leetcodePostFetch('https://leetcode.com/accounts/login/', csrftoken, LEETCODE_SESSION, {
+                return leetcodePostFetch(URLs.login, csrftoken, LEETCODE_SESSION, {
                     csrfmiddlewaretoken: token,
                     login: username,
                     password,
@@ -57,7 +60,7 @@ export const login = (username, password) => {
                 const payload = {
                     csrftoken: t,
                     LEETCODE_SESSION: s,
-                }
+                };
 
                 if (t && s) {
                     dispatch({ type: LEETCODE_LOGIN_SUCCESS, payload });
@@ -66,22 +69,29 @@ export const login = (username, password) => {
                 }
             }
         })
-        .catch(err => {
-            dispatch({ type: LEETCODE_LOGIN_FAILED });
+        .catch(error => {
+            dispatch({ type: LEETCODE_LOGIN_FAILED, error });
         });
     };
 };
 
-export const logout = () => {
+export const leetcodeLogout = () => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_LOGOUT });
-        debugger;
-        leetcodeGetFetch('https://leetcode.com/accounts/logout/', csrftoken, LEETCODE_SESSION)
+        leetcodeGetFetch(URLs.logout, csrftoken, LEETCODE_SESSION)
         .then(resp => {
-            debugger;
+            if (resp.status !== 200) {
+                dispatch({ type: LEETCODE_LOGOUT_FAILED });
+
+                return Promise.resolve();
+            }
+
+            dispatch({ type: LEETCODE_LOGOUT_SUCCESS });
+
+            return Promise.resolve();
         })
-        .catch(err => {
-            debugger;
+        .catch(error => {
+            dispatch({ type: LEETCODE_LOGOUT_FAILED, error });
         });
     };
 };
@@ -108,4 +118,3 @@ export const logout = () => {
 //         })
 //     }
 // }
-
