@@ -57,7 +57,7 @@ const queryRuncodeResult = (dispatch, id) => {
     queryResult(dispatch, LEETCODE_RUN_CODE_SUCCESS, LEETCODE_RUN_CODE_FAILED, id);
 };
 
-export const leetcodeAllProblems = () => {
+export const leetcodeProblems = () => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_ALL_PROBLEMS });
         leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, Problems)

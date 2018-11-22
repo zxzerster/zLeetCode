@@ -3,7 +3,7 @@ import { LEETCODE_LOGIN, LEETCODE_LOGIN_SUCCESS, LEETCODE_LOGIN_FAILED } from '.
 const INITIAL_STATE = {
     // UI
     loading: null,
-    errors: null,
+    error: null,
     // Data
     LEETCODE_SESSION: null,
     csrftoken: null,

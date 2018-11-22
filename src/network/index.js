@@ -6,12 +6,18 @@ export const URLs = {
     login: `${base}/accounts/login/`,
     logout: `${base}/accounts/logout/`,
     graphql: `${base}/graphql/`,
+    forgot: `${base}/accounts/password/reset/`,
     runCode: titleSlug => `https://leetcode.com/problems/${titleSlug}/interpret_solution/`,
     runCodeRefer: titleSlug => `https://leetcode.com/problems/${titleSlug}`,
     runCodeResult: interpretId => `https://leetcode.com/submissions/detail/${interpretId}/check/`,
     runCodeExpectedResult: expectedInterpretId => `https://leetcode.com/submissions/detail/${expectedInterpretId}/check/`,
     submitCode: titleSlug => `https://leetcode.com/problems/${titleSlug}/submit/`,
-    submitCodeResult: submissionId => `https://leetcode.com/submissions/detail/${submissionId}/check/`
+    submitCodeResult: submissionId => `https://leetcode.com/submissions/detail/${submissionId}/check/`,
+};
+
+export const ERRs = {
+    ERR_NETWORK: 'Network errors',
+    ERR_SESSION: 'Session expired',
 };
 
 const commons = {
