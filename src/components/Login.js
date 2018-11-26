@@ -48,6 +48,7 @@ const styles = {
     submit: {
         backgroundColor: 'rgb(0, 122, 255)',
         borderRadius: 5,
+        height: 48,
     },
     submitDisabled: {
         backgroundColor: '#888888',
