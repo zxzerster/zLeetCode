@@ -8,6 +8,12 @@ import { Actions } from 'react-native-router-flux';
 import LeetcodeIcon from './common/LeetcodeIcon';
 import { leetcodeVerfifySession } from '../actions';
 
+type Props = {
+    verify: Function,
+    loading: boolean,
+    isLoggedIn: boolean,
+};
+
 const styles = {
     container: {
         flex: 1,
@@ -19,7 +25,7 @@ const styles = {
     },
 };
 
-class Loading extends Component {
+class Loading extends Component<Props> {
     componentWillMount() {
         const { verify } = this.props;
 

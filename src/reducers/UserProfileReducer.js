@@ -2,21 +2,23 @@ import { LEETCODE_USERPROFILE, LEETCODE_USERPROFILE_SUCCESS, LEETCODE_USERPROFIL
 
 const INITIAL_STATE = {
     // UI
-    loading: null,
+    loading: true,
     error: null,
     // Data
-    userSlug: null,
-    realName: null,
-    aboutMe: null,
-    country: null,
-    location: null,
-    lastModified: null,
-    userAvatar: null,
-    acStats: {
-        acQuestionCount: null,
-        acSubmissionCount: null,
-        totalSubmissionCount: null,
-        acRate: null,
+    user: {
+        userSlug: null,
+        realName: null,
+        aboutMe: null,
+        country: null,
+        location: null,
+        lastModified: null,
+        userAvatar: null,
+        acStats: {
+            acQuestionCount: null,
+            acSubmissionCount: null,
+            totalSubmissionCount: null,
+            acRate: null,
+        },
     },
 };
 

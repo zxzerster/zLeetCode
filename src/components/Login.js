@@ -124,7 +124,7 @@ class Login extends Component {
         return (
             <View style={root}>
                 <View style={icon}>
-                    <LeetcodeIcon />
+                    <LeetcodeIcon size={{ width: 135, height: 135 }} />
                 </View>
                 <View style={inputContainer}>
                     <View>
