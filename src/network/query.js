@@ -50,6 +50,7 @@ export const UserProfile = {
     query: [
         '{',
         '   user {',
+        '       isCurrentUserPremium',
         '       profile {',
         '           userSlug',
         '           realName',
