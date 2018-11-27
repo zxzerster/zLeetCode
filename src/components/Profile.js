@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { View, Image, Text } from 'react-native';
+import {
+    View, Image, Text, ScrollView, TouchableOpacity,
+} from 'react-native';
 import { Badge, Divider } from 'react-native-elements';
 
 import { connect } from 'react-redux';
@@ -7,7 +9,7 @@ import { leetcodeUserProfile } from '../actions';
 
 type Props = {
     profile: Function,
-    userProfile: Object,
+    userProfile?: Object,
     loading: boolean,
     error: Object,
 };
@@ -32,12 +34,11 @@ const styles = {
         marginLeft: 8,
         marginRight: 8,
     },
-    profileTextContainer: {
+    profileTextBadgesContainer: {
         height: 95,
         justifyContent: 'space-between',
         flex: 1,
         paddingTop: 3,
-        // backgroundColor: 'yellow',
     },
     realNameText: {
         fontSize: 20,
@@ -93,6 +94,107 @@ const styles = {
     },
 };
 
+const renderProfile = ({
+    avatarUri, realName, userSlug, acStats,
+}) => {
+    // Avatar
+    const renderAvatar = () => {
+        const { avatar } = styles;
+
+        return (
+            <View>
+                <Image style={avatar} source={{ uri: avatarUri }} />
+            </View>
+        );
+    };
+
+    // Names
+    const renderNames = () => {
+        const { realNameText, nameSlugText, divider } = styles;
+
+        return (
+            <View>
+                <Text style={realNameText}>{realName}</Text>
+                <Text style={nameSlugText}>{userSlug}</Text>
+                <Divider style={divider} />
+            </View>
+        );
+    };
+
+    // Stats Label
+    const renderStatsLabels = () => {
+        const { statsLabelContainer, statsLableTextContainer, statsLabelText } = styles;
+
+        return (
+            <View style={statsLabelContainer}>
+                <View style={statsLableTextContainer}>
+                    <Text numberOfLines={1} ellipsizeMode="tail" style={statsLabelText}>Resolved</Text>
+                </View>
+                <View style={statsLableTextContainer}>
+                    <Text numberOfLines={1} ellipsizeMode="tail" style={statsLabelText}>Accepted</Text>
+                </View>
+                <View style={statsLableTextContainer}>
+                    <Text numberOfLines={1} ellipsizeMode="tail" style={[statsLabelText, { marginLeft: 10 }]}>Rate</Text>
+                </View>
+            </View>
+        );
+    };
+
+    const renderBadges = () => {
+        const {
+            badgeContainer, badge, greenBadge, blueBadge,
+        } = styles;
+
+        return (
+            <View style={badgeContainer}>
+                <View style={[badge]}>
+                    <Badge containerStyle={greenBadge} value={acStats.acQuestionCount} />
+                </View>
+                <View style={[badge]}>
+                    <Badge containerStyle={greenBadge} value={`${acStats.acSubmissionCount}/${acStats.totalSubmissionCount}`} />
+                </View>
+                <View style={[badge]}>
+                    <Badge containerStyle={blueBadge} value={`${acStats.acRate}%`} />
+                </View>
+            </View>
+        );
+    };
+
+    const { profileContainer, profileTextBadgesContainer, statsContainer } = styles;
+
+    return (
+        <View style={profileContainer}>
+            {renderAvatar()}
+            <View style={profileTextBadgesContainer}>
+                {renderNames()}
+                <View style={statsContainer}>
+                    {renderStatsLabels()}
+                    {renderBadges()}
+                </View>
+            </View>
+        </View>
+    );
+};
+
+const renderSettingItems = () => {
+    const renderItem = (title, handler) => {
+        return (
+            <TouchableOpacity>
+                <Text>{title}</Text>
+            </TouchableOpacity>
+        );
+    };
+
+    return (
+        <View>
+            {renderItem('Your Submissions')}
+            {renderItem('Help')}
+            {renderItem('Logout')}
+            {renderItem('Versions/1')}
+        </View>
+    );
+};
+
 class Profile extends Component<Props> {
     static defaultProps = {
         userProfile: {
@@ -107,12 +209,7 @@ class Profile extends Component<Props> {
     }
 
     render() {
-        const {
-            container, profileContainer, settingContainer, avatar,
-            profileTextContainer, realNameText, nameSlugText, statsContainer,
-            badgeContainer, divider, statsLabelContainer, statsLableTextContainer,
-            statsLabelText, badge, greenBadge, blueBadge,
-        } = styles;
+        const { container, settingContainer } = styles;
         const { userProfile, loading, error } = this.props;
         const avatarUri = userProfile.userAvatar;
 
@@ -126,44 +223,13 @@ class Profile extends Component<Props> {
 
         return (
             <View style={container}>
-                <View style={profileContainer}>
-                    <View>
-                        <Image style={avatar} source={{ uri: avatarUri }} />
-                    </View>
-                    <View style={profileTextContainer}>
-                        <View>
-                            <Text style={realNameText}>{userProfile.realName}</Text>
-                            <Text style={nameSlugText}>{userProfile.userSlug}</Text>
-                            <Divider style={divider} />
-                        </View>
-                        <View style={statsContainer}>
-                            <View style={statsLabelContainer}>
-                                <View style={statsLableTextContainer}>
-                                    <Text numberOfLines={1} ellipsizeMode="tail" style={statsLabelText}>Resolved</Text>
-                                </View>
-                                <View style={statsLableTextContainer}>
-                                    <Text numberOfLines={1} ellipsizeMode="tail" style={statsLabelText}>Accepted</Text>
-                                </View>
-                                <View style={statsLableTextContainer}>
-                                    <Text numberOfLines={1} ellipsizeMode="tail" style={[statsLabelText, { marginLeft: 10 }]}>Rate</Text>
-                                </View>
-                            </View>
-                            <View style={badgeContainer}>
-                                <View style={[badge]}>
-                                    <Badge containerStyle={greenBadge} value={userProfile.acStats.acQuestionCount} />
-                                </View>
-                                <View style={[badge]}>
-                                    <Badge containerStyle={greenBadge} value={`${userProfile.acStats.acSubmissionCount}/${userProfile.acStats.totalSubmissionCount}`} />
-                                </View>
-                                <View style={[badge]}>
-                                    <Badge containerStyle={blueBadge} value={`${userProfile.acStats.acRate}%`} />
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                </View>
-                <View style={settingContainer} >
-
+                {renderProfile({
+                    avatarUri, realName: userProfile.realName, userSlug: userProfile.userSlug, acStats: userProfile.acStats,
+                })}
+                <View style={settingContainer}>
+                    <ScrollView>
+                        {renderSettingItems()}
+                    </ScrollView>
                 </View>
             </View>
         );
@@ -187,61 +253,3 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);
-
-// class Profile extends Component {
-
-//     static onEnter() {
-//         console.log('Hello Profile');
-//     }
-
-//     componentWillMount() {
-//         const {csrftoken, LEETCODE_SESSION} = this.props.session;
-//         console.log(`Profile componentWillMount`);
-//         console.log(`csrftoken: ${csrftoken}, LEETCODE_SESSION: ${LEETCODE_SESSION}`);
-//         this.props.leetcodeGraphqlProfile(csrftoken, LEETCODE_SESSION);
-//     }
-
-//     renderUserProfile() {
-//         const { profile } = this.props;
-//         const ret = _.map(profile, (value, key) =>{
-//             if (key === 'acStats') {
-//                 return (
-//                     <View>
-//                         <Text>Object</Text>
-//                     </View>
-//                 )
-//             } 
-
-//             let str = '';
-//             if (value) {
-//                 str = `${value}`;
-//             } else {
-//                 str = 'Empty';
-//             }
-//             return (
-//                 <View>
-//                     <Text>`${str}`</Text>
-//                 </View>
-//             )
-//         });
-//         return ret;
-//     }
-
-//     render() {
-//         return (
-//             <View>
-//                 {this.renderUserProfile()}
-//             </View>
-//         );
-//     }
-// }
-
-// const mapStateToProps = (state) => {
-//     return {
-//         session: state.session,
-//         profile: state.profile
-//     }
-// };
-
-// export default connect(mapStateToProps, actions)(Profile);
-// export default Profile;
