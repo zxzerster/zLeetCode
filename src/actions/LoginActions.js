@@ -13,7 +13,7 @@ import {
     leetcodeGraphqlFetch,
 } from '../network';
 
-export const leetcodeVerfifySession = (verfiyresult, err) => {
+export const leetcodeVerfifySession = (completionHandler, err) => {
     return ({ csrftoken, LEETCODE_SESSION }) => () => {
         leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, UserStatus)
         .then(resp => {
@@ -27,11 +27,11 @@ export const leetcodeVerfifySession = (verfiyresult, err) => {
                 const { isSignedIn } = json.data.userStatus;
 
                 if (isSignedIn) {
-                    verfiyresult(true);
+                    completionHandler(true);
 
                     return Promise.resolve();
                 }
-                verfiyresult(false);
+                completionHandler(false);
 
                 return Promise.resolve();
             })
