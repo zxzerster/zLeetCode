@@ -1,7 +1,3 @@
-export const LEETCODE_VERIFY_SESSION = 'leetcode_verify_session';
-export const LEETCODE_VERIFY_SESSION_SUCCESS = 'leetcode_verify_session_success';
-export const LEETCODE_VERIFY_SESSION_FAILED = 'leetcode_verify_session_failed';
-
 export const LEETCODE_LOGIN = 'leetcode_login';
 export const LEETCODE_LOGIN_SUCCESS = 'leetcode_login_success';
 export const LEETCODE_LOGIN_FAILED = 'leetcode_login_failed';

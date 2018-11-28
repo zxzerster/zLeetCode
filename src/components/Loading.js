@@ -26,21 +26,34 @@ const styles = {
 };
 
 class Loading extends Component<Props> {
-    componentWillMount() {
-        const { verify } = this.props;
+    static defaultProps = {
+        needVerify: true,
+    };
 
-        verify();
+    constructor(props) {
+        super(props);
+
+        this.shouldUpdate = true;
     }
 
-    componentDidUpdate() {
-        const { loading, isLoggedIn } = this.props;
-
-        if (!loading) {
-            if (isLoggedIn) {
-                Actions.main();
-            } else {
-                Actions.login();
-            }
+    componentDidMount() {
+        const { verify, needVerify } = this.props;
+        
+        if (needVerify) {
+            verify(
+                signedIn => {
+                    if (signedIn) {
+                        Actions.main();
+                    } else {
+                        Actions.login();
+                    }
+                },
+                () => {
+                    Actions.login();
+                }
+            );
+        } else {
+            Actions.login();
         }
     }
 
@@ -56,19 +69,10 @@ class Loading extends Component<Props> {
     }
 }
 
-const mapStateToProps = state => {
-    const { verification } = state;
-
-    return {
-        loading: verification.loading,
-        isLoggedIn: verification.isLoggedIn,
-    };
-};
-
 const mapDispatchToProps = dispatch => {
     return {
         verify: (...args) => dispatch(leetcodeVerfifySession(...args)),
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Loading);
+export default connect(null, mapDispatchToProps)(Loading);

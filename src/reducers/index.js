@@ -4,7 +4,6 @@ import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 import storage from 'redux-persist/lib/storage';
 
 import SessionReducer from './SessionReducer';
-import VerificationReducer from './VerificationReducer';
 import UserProfileReducer from './UserProfileReducer';
 import ProblemsReducer from './ProblemsReducer';
 import ProblemDetailsReducer from './ProblemDetailsReducer';
@@ -28,7 +27,6 @@ const sessionPersistConfig = {
 
 export default persistReducer(rootPersistConfig, combineReducers({
     session: persistReducer(sessionPersistConfig, SessionReducer),
-    verification: VerificationReducer,
     profile: UserProfileReducer,
     problems: ProblemsReducer,
     problem: ProblemDetailsReducer,

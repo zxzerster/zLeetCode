@@ -10,12 +10,12 @@ const LeetCodeRoutes = () => {
     return (
         <Router>
             <Scene key="rootScene" hideNavBar modal>
-                <Scene key="loadingWrapper">
+                <Scene key="loadingWrapper" initial>
                     <Scene key="loading" component={Loading} hideNavBar />
                     <Scene key="login" component={Login} title="Login" hideNavBar />
                 </Scene>
                 <Scene key="main" tabs>
-                    <Scene key="problems" component={Problems} title="Problems" />
+                    <Scene key="problems" component={Problems} title="Problems" initial />
                     <Scene key="profile" component={Profile} title="Profile" />
                 </Scene>
             </Scene>

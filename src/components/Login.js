@@ -73,25 +73,16 @@ class Login extends Component {
         this.startLogin = false;
     }
 
-    componentDidUpdate(prevProps) {
-        const { error, loading } = this.props;
-
-        if (error && error.length >= 0) {
-            this.nameRef.current.focus();
-            this.pwdRef.current.input.clear();
-        }
-
-        if (prevProps.loading && !loading && !error) {
-            Actions.main();
-        }
-    }
-
     login() {
         const { username, password } = this.state;
         const { login } = this.props;
 
         this.startLogin = true;
-        login(username, password);
+        login(username, password, (loggedIn, error) => {
+            if (!error && loggedIn) {
+                Actions.main();
+            }
+        });
     }
 
     enableLoginButton() {
@@ -138,7 +129,7 @@ class Login extends Component {
                     </View>
                     <View style={submitContainer}>
                         <Button buttonStyle={submit} disabledStyle={submitDisabled} loading={loading} title={loading ? '' : 'Sign in'} disabled={this.enableLoginButton()} onPress={() => this.login()} />
-                        <TouchableOpacity style={forgot} onPress={() => this.forgotPassword()}>
+                        <TouchableOpacity style={forgot} onPress={() => Login.forgotPassword()}>
                             <Text style={forgotText}>Forgot Password?</Text>
                         </TouchableOpacity>
                     </View>

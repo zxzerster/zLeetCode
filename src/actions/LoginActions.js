@@ -13,13 +13,12 @@ import {
     leetcodeGraphqlFetch,
 } from '../network';
 
-export const leetcodeVerfifySession = () => {
-    return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
-        dispatch({ type: LEETCODE_VERIFY_SESSION });
+export const leetcodeVerfifySession = (verfiyresult, err) => {
+    return ({ csrftoken, LEETCODE_SESSION }) => () => {
         leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, UserStatus)
         .then(resp => {
             if (resp.status !== 200) {
-                dispatch({ type: LEETCODE_VERIFY_SESSION_FAILED, error: ERRs.ERR_NETWORK });
+                err();
 
                 return Promise.resolve();
             }
@@ -28,27 +27,27 @@ export const leetcodeVerfifySession = () => {
                 const { isSignedIn } = json.data.userStatus;
 
                 if (isSignedIn) {
-                    dispatch({ type: LEETCODE_VERIFY_SESSION_SUCCESS });
+                    verfiyresult(true);
 
                     return Promise.resolve();
                 }
-                dispatch({ type: LEETCODE_VERIFY_SESSION_FAILED, error: ERRs.ERR_SESSION });
+                verfiyresult(false);
 
                 return Promise.resolve();
             })
             .catch(error => {
-                console.log(`error: ${error}`);
+                err(error);
             });
 
             return Promise.resolve();
         })
         .catch(error => {
-            dispatch({ type: LEETCODE_VERIFY_SESSION_FAILED, error });
+            err(error);
         });
     };
 };
 
-export const leetcodeLogin = (username, password) => {
+export const leetcodeLogin = (username, password, completionHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_LOGIN });
         // Check validation of saved csrftoken & LEETCODE_SESSION first
@@ -82,6 +81,7 @@ export const leetcodeLogin = (username, password) => {
                     };
 
                     dispatch({ type: LEETCODE_LOGIN_SUCCESS, payload });
+                    completionHandler(true, null);
                 } else {
                     return resp.json();
                 }
@@ -100,11 +100,13 @@ export const leetcodeLogin = (username, password) => {
                 }
 
                 dispatch({ type: LEETCODE_LOGIN_FAILED, error });
+                completionHandler(false, error);
             }
         })
         .catch(error => {
             // TODO: Format error message, don't pass the raw error message
             dispatch({ type: LEETCODE_LOGIN_FAILED, error });
+            completionHandler(false, error);
         });
     };
 };

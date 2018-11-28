@@ -1,20 +1,25 @@
 import React, { Component } from 'react';
 import {
-    View, Image, Text, ScrollView, TouchableOpacity,
+    View, Image, Text, ScrollView, TouchableOpacity, ActivityIndicator,
 } from 'react-native';
-import { Badge, Divider } from 'react-native-elements';
+import { Actions } from 'react-native-router-flux';
+import { Badge, Divider, Button } from 'react-native-elements';
 
 import { connect } from 'react-redux';
-import { leetcodeUserProfile } from '../actions';
+import { leetcodeUserProfile, leetcodeLogout } from '../actions';
+
+import { versionString } from '../../ZLC-Config';
 
 type Props = {
     profile: Function,
+    logout: Function,
     userProfile?: Object,
     loading: boolean,
     error: Object,
+    logoutLoading: boolean,
 };
 
-const styles = {
+const profileStyles = {
     container: {
         flex: 1,
     },
@@ -94,12 +99,46 @@ const styles = {
     },
 };
 
+const settingStyles = {
+    item: {
+        height: 45,
+        justifyContent: 'center',
+        borderBottomColor: '#c0c0c0',
+        borderBottomWidth: 1,
+        paddingLeft: 8,
+    },
+    topBoder: {
+        borderTopColor: '#c0c0c0',
+        borderTopWidth: 1,
+    },
+    text: {
+        fontSize: 17,
+        fontWeight: '400',
+    },
+};
+
+const logoutStyles = {
+    button: {
+        flex: 1,
+        height: 48,
+    },
+    buttonDisabled: {
+        backgroundColor: '#888888',
+        opacity: 0.6,
+    },
+    containerView: {
+        marginLeft: 0,
+        marginRight: 0,
+        marginTop: 45,
+    },
+};
+
 const renderProfile = ({
     avatarUri, realName, userSlug, acStats,
 }) => {
     // Avatar
     const renderAvatar = () => {
-        const { avatar } = styles;
+        const { avatar } = profileStyles;
 
         return (
             <View>
@@ -110,7 +149,7 @@ const renderProfile = ({
 
     // Names
     const renderNames = () => {
-        const { realNameText, nameSlugText, divider } = styles;
+        const { realNameText, nameSlugText, divider } = profileStyles;
 
         return (
             <View>
@@ -123,7 +162,7 @@ const renderProfile = ({
 
     // Stats Label
     const renderStatsLabels = () => {
-        const { statsLabelContainer, statsLableTextContainer, statsLabelText } = styles;
+        const { statsLabelContainer, statsLableTextContainer, statsLabelText } = profileStyles;
 
         return (
             <View style={statsLabelContainer}>
@@ -143,7 +182,7 @@ const renderProfile = ({
     const renderBadges = () => {
         const {
             badgeContainer, badge, greenBadge, blueBadge,
-        } = styles;
+        } = profileStyles;
 
         return (
             <View style={badgeContainer}>
@@ -160,7 +199,7 @@ const renderProfile = ({
         );
     };
 
-    const { profileContainer, profileTextBadgesContainer, statsContainer } = styles;
+    const { profileContainer, profileTextBadgesContainer, statsContainer } = profileStyles;
 
     return (
         <View style={profileContainer}>
@@ -176,21 +215,43 @@ const renderProfile = ({
     );
 };
 
-const renderSettingItems = () => {
-    const renderItem = (title, handler) => {
+const renderSettingItems = ({ submissionHandler, helperHandler, logoutHandler }) => {
+    const { item, text, topBoder } = settingStyles;
+
+    const renderItem = (index, title, handler) => {
+        if (index === 0) {
+            return (
+                <View style={[item, topBoder]}>
+                    <TouchableOpacity onPress={handler}>
+                        <Text style={text}>{title}</Text>
+                    </TouchableOpacity>
+                </View>
+            );
+        }
+
+        if (index === 2) {
+            return (
+                <View style={[item, { borderBottomWidth: 0 }]}>
+                    <Text style={text}>{title}</Text>
+                </View>
+            );
+        }
+
+
         return (
-            <TouchableOpacity>
-                <Text>{title}</Text>
-            </TouchableOpacity>
+            <View style={item}>
+                <TouchableOpacity onPress={handler}>
+                    <Text style={text}>{title}</Text>
+                </TouchableOpacity>
+            </View>
         );
     };
 
     return (
         <View>
-            {renderItem('Your Submissions')}
-            {renderItem('Help')}
-            {renderItem('Logout')}
-            {renderItem('Versions/1')}
+            {renderItem(0, 'Your Submissions', submissionHandler)}
+            {renderItem(1, 'Help', helperHandler)}
+            {renderItem(2, versionString)}
         </View>
     );
 };
@@ -202,14 +263,62 @@ class Profile extends Component<Props> {
         },
     };
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            showLogoutLoading: false,
+        };
+    }
+
     componentDidMount() {
         const { profile } = this.props;
 
         profile();
     }
 
+    componentDidUpdate(prepProps) {
+        const { logoutLoading } = this.props;
+
+        if (prepProps.logoutLoading && !logoutLoading) {
+            Actions.reset('loadingWrapper', { needVerify: false });
+        }
+    }
+
+    // allSubmissions() {
+
+    // }
+
+    // helpHandler() {
+
+    // }
+
+    logout() {
+        const { logout } = this.props;
+
+        logout();
+    }
+
+    renderLogout() {
+        const { button, buttonDisabled, containerView } = logoutStyles;
+        const { logout, logoutLoading } = this.props;
+
+        return (
+            <Button
+                backgroundColor="red"
+                buttonStyle={button}
+                disabledStyle={buttonDisabled}
+                containerViewStyle={containerView}
+                disabled={logoutLoading}
+                loading={logoutLoading}
+                title={logoutLoading ? '' : 'Sign out'}
+                onPress={logout}
+            />
+        );
+    }
+
     render() {
-        const { container, settingContainer } = styles;
+        const { container, settingContainer } = profileStyles;
         const { userProfile, loading, error } = this.props;
         const avatarUri = userProfile.userAvatar;
 
@@ -228,7 +337,12 @@ class Profile extends Component<Props> {
                 })}
                 <View style={settingContainer}>
                     <ScrollView>
-                        {renderSettingItems()}
+                        {renderSettingItems({
+                            submissionHandler: this.allSubmissions,
+                            helperHandler: this.helpHandler,
+                            logoutHandler: this.logout,
+                        })}
+                        {this.renderLogout()}
                     </ScrollView>
                 </View>
             </View>
@@ -238,17 +352,20 @@ class Profile extends Component<Props> {
 
 const mapStateToProps = state => {
     const { profile } = state;
+    const { loading } = state.session;
 
     return {
         loading: profile.loading,
         error: profile.error,
         userProfile: profile.user.profile,
+        logoutLoading: loading,
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         profile: (...args) => dispatch(leetcodeUserProfile(...args)),
+        logout: (...args) => dispatch(leetcodeLogout(...args)),
     };
 };
 
