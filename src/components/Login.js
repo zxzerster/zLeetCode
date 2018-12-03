@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import {
-    View, TouchableOpacity, Text, Linking,
+    View, TouchableOpacity, Text,
+    Linking, Keyboard, Animated,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { FormValidationMessage, FormInput, Button } from 'react-native-elements';
+import {
+    FormValidationMessage, FormInput, Button, Icon,
+} from 'react-native-elements';
 
 import { connect } from 'react-redux';
 import { leetcodeLogin } from '../actions';
@@ -11,12 +14,16 @@ import { URLs } from '../network';
 
 import LeetcodeIcon from './common/LeetcodeIcon';
 
+const ICON_HEIGTH = 135;
+
 const styles = {
     root: {
         flex: 1,
     },
     icon: {
         flex: 2,
+        // width: null,
+        // height: ICON_HEIGTH,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 60,
@@ -30,7 +37,6 @@ const styles = {
     errorContainer: {
         flex: 2,
         marginTop: 5,
-        numberOfLines: 3,
         // backgroundColor: 'red',
     },
     submitContainer: {
@@ -70,16 +76,55 @@ class Login extends Component {
         this.pwdRef = React.createRef();
         this.nameRef = React.createRef();
 
-        this.startLogin = false;
+        this.paddingBottom = new Animated.Value(0);
+        this.iconHeight = new Animated.Value(ICON_HEIGTH);
+    }
+
+    componentDidMount() {
+        this.keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow.bind(this));
+        this.keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide.bind(this));
+    }
+
+    componentWillUnmount() {
+        this.keyboardWillShowListener.remove();
+        this.keyboardWillHideListener.remove();
+    }
+
+    keyboardWillShow(event) {
+        Animated.parallel([
+            Animated.timing(this.paddingBottom, {
+                duration: event.duration,
+                toValue: event.endCoordinates.height,
+            }),
+            Animated.timing(this.iconHeight, {
+                duration: event.duration,
+                toValue: ICON_HEIGTH * 0.65,
+            }),
+        ]).start();
+    }
+
+    keyboardWillHide(event) {
+        Animated.parallel([
+            Animated.timing(this.paddingBottom, {
+                duration: event.duration,
+                toValue: 0,
+            }),
+            Animated.timing(this.iconHeight, {
+                duration: event.duration,
+                toValue: ICON_HEIGTH,
+            }),
+        ]).start();
     }
 
     login() {
         const { username, password } = this.state;
         const { login } = this.props;
+        const { nameRef } = this;
 
-        this.startLogin = true;
         login(username, password, (loggedIn, error) => {
+            nameRef.current.input.focus();
             if (!error && loggedIn) {
+                this.setState({ username: '', password: '' });
                 Actions.main();
             }
         });
@@ -111,30 +156,39 @@ class Login extends Component {
         } = styles;
         const { username, password } = this.state;
         const { loading } = this.props;
+        const leftIcon = loading ? {} : { name: 'arrow-upward', size: 23 };
 
         return (
-            <View style={root}>
-                <View style={icon}>
+            <Animated.View style={[root, { paddingBottom: this.paddingBottom }]}>
+                <Animated.View style={[icon, { height: this.iconHeight }]}>
                     <LeetcodeIcon size={{ width: 135, height: 135 }} />
-                </View>
+                </Animated.View>
                 <View style={inputContainer}>
-                    <View>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Icon name="mail" color="grey" containerStyle={{ justifyContent: 'center', marginLeft: 15 }} />
                         <FormInput ref={this.nameRef} placeholder="Username or E-mail" autoFocus autoCapitalize="none" autoCorrect={false} value={username} onChangeText={text => this.setState({ username: text })} />
                     </View>
-                    <View style={{ marginTop: 20 }}>
+                    <View style={{ marginTop: 20, flexDirection: 'row' }}>
+                        <Icon name="security" color="grey" containerStyle={{ justifyContent: 'center', marginLeft: 15 }} />
                         <FormInput ref={this.pwdRef} placeholder="Password" secureTextEntry value={password} onChangeText={text => this.setState({ password: text })} />
                     </View>
+                    {/* <View style={{ flexDirection: 'row', marginTop: 16, marginLeft: 8 }}>
+                        <SocialIcon button type="google" iconSize={14} style={{ width: 42, height: 42, backgroundColor: 'red' }} />
+                        <SocialIcon button type="facebook" iconSize={14} style={{ width: 42, height: 42 }} />
+                        <SocialIcon button type="github" iconSize={14} style={{ width: 42, height: 42 }} />
+                        <SocialIcon button type="linkedin" iconSize={14} style={{ width: 42, height: 42 }} />
+                    </View> */}
                     <View style={errorContainer}>
                         {this.renderErrorMessage()}
                     </View>
                     <View style={submitContainer}>
-                        <Button buttonStyle={submit} disabledStyle={submitDisabled} loading={loading} title={loading ? '' : 'Sign in'} disabled={this.enableLoginButton()} onPress={() => this.login()} />
+                        <Button leftIcon={leftIcon} buttonStyle={submit} disabledStyle={submitDisabled} loading={loading} title={loading ? '' : 'Sign in'} disabled={this.enableLoginButton()} onPress={() => this.login()} />
                         <TouchableOpacity style={forgot} onPress={() => Login.forgotPassword()}>
                             <Text style={forgotText}>Forgot Password?</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
-            </View>
+            </Animated.View>
         );
     }
 }

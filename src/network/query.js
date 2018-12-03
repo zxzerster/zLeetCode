@@ -40,6 +40,33 @@ export const ProblemDetails = titleSlug => {
             '           content',
             '           questionId',
             '           judgeType',
+            '           difficulty',
+            '           likes',
+            '           dislikes',
+            '           categoryTitle',
+            '           stats',
+            '           similarQuestions',
+            '           topicTags {',
+            '               name',
+            '           }',
+            '       }',
+            '   }',
+        ].join('\n'),
+    };
+};
+
+export const CodeDefinition = titleSlug => {
+    return {
+        operationName: 'codeDefinition',
+        variables: { titleSlug },
+        query: [
+            '   query codeDefinition($titleSlug: String) {',
+            '       question(titleSlug: $titleSlug) {',
+            '           codeSnippets {',
+            '               langSlug',
+            '               lang',
+            '               code',
+            '           }',
             '       }',
             '   }',
         ].join('\n'),
@@ -93,4 +120,26 @@ export const UserProfile = {
         '}',
     ].join('\n'),
     variables: {},
+};
+
+export const Submissions = (offset, key) => {
+    return {
+        operationName: 'submissions',
+        variables: { offset, key },
+        query: [
+            '   query submissions($offset: Int, $key: String) {',
+            '       submissionList(offset: $offset, limit: 20, lastKey: $key, questionSlug: "") {',
+            '           hasNext',
+            '           lastKey',
+            '           submissions {',
+            '               title',
+            '               time',
+            '               statusDisplay',
+            '               lang',
+            '               timestamp',
+            '           }',
+            '       }',
+            '   }',
+        ].join('\n'),
+    };
 };

@@ -1,11 +1,14 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { ListItem } from 'react-native-elements';
+import { Actions } from 'react-native-router-flux';
 
 export default ({ problem }) => {
     return (
-        <View key={problem.questionId}>
-            <Text>{problem.title}</Text>
-            <Text>{problem.difficulty}</Text>
-        </View>
-    )
+        <ListItem
+            key={problem.questionId}
+            title={problem.title}
+            subtitle={problem.difficulty}
+            onPress={() => { Actions.problemDetails({ titleSlug: problem.titleSlug }); }}
+        />
+    );
 };

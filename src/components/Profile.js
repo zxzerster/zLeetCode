@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    View, Image, Text, ScrollView, TouchableOpacity, ActivityIndicator,
+    View, Image, Text, ScrollView, TouchableOpacity,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { Badge, Divider, Button } from 'react-native-elements';
@@ -9,15 +9,6 @@ import { connect } from 'react-redux';
 import { leetcodeUserProfile, leetcodeLogout } from '../actions';
 
 import { versionString } from '../../ZLC-Config';
-
-type Props = {
-    profile: Function,
-    logout: Function,
-    userProfile?: Object,
-    loading: boolean,
-    error: Object,
-    logoutLoading: boolean,
-};
 
 const profileStyles = {
     container: {
@@ -256,12 +247,25 @@ const renderSettingItems = ({ submissionHandler, helperHandler, logoutHandler })
     );
 };
 
+type Props = {
+    profile: Function,
+    logout: Function,
+    userProfile?: Object,
+    loading: boolean,
+    error: Object,
+    logoutLoading: boolean,
+};
+
 class Profile extends Component<Props> {
     static defaultProps = {
         userProfile: {
             userAvatar: '',
         },
     };
+
+    static allSubmissions() {
+        Actions.submissions();
+    }
 
     constructor(props) {
         super(props);
@@ -281,13 +285,9 @@ class Profile extends Component<Props> {
         const { logoutLoading } = this.props;
 
         if (prepProps.logoutLoading && !logoutLoading) {
-            Actions.reset('loadingWrapper', { needVerify: false });
+            Actions.popTo('login', { needVerify: false });
         }
     }
-
-    // allSubmissions() {
-
-    // }
 
     // helpHandler() {
 
@@ -338,7 +338,7 @@ class Profile extends Component<Props> {
                 <View style={settingContainer}>
                     <ScrollView>
                         {renderSettingItems({
-                            submissionHandler: this.allSubmissions,
+                            submissionHandler: Profile.allSubmissions,
                             helperHandler: this.helpHandler,
                             logoutHandler: this.logout,
                         })}

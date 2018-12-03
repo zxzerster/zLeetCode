@@ -9,7 +9,8 @@ import ProblemsReducer from './ProblemsReducer';
 import ProblemDetailsReducer from './ProblemDetailsReducer';
 import RunCodeReducer from './RunCodeReducer';
 import SubmitCodeReducer from './SubmitCodeReducer';
-
+import SubmissionsReducer from './SubmissionsReducer';
+import CodeDefinitionReducer from './CodeDefinitionReducer';
 
 const rootPersistConfig = {
   key: 'root',
@@ -32,4 +33,6 @@ export default persistReducer(rootPersistConfig, combineReducers({
     problem: ProblemDetailsReducer,
     runcode: RunCodeReducer,
     submitcode: SubmitCodeReducer,
+    submissions: SubmissionsReducer,
+    codeDefinition: CodeDefinitionReducer,
 }));

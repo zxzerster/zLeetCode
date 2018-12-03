@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { View, FlatList, ActivityIndicator } from 'react-native';
+import { List } from 'react-native-elements';
 import { connect } from 'react-redux';
 
 import ProblemItem from './ProblemItem';
@@ -13,11 +14,6 @@ const styles = {
 
 class Problems extends Component {
     static renderItem({ item }) {
-        // return (
-        //     <View id={item.questionId}>
-        //         <Text>{item.title}</Text>
-        //     </View>
-        // );
         return <ProblemItem problem={item} />;
     }
 
@@ -49,7 +45,7 @@ class Problems extends Component {
         }
 
         return (
-            <View style={container}>
+            <View style={[container, { marginTop: 0 }]}>
                 <FlatList
                     data={allQuestions}
                     keyExtractor={item => item.questionId}
