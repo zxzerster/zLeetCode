@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import {
     View, TouchableOpacity, Text,
     Linking, Keyboard, Animated,
+    InputAccessoryView, Alert, Button as NativeButton,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import {
-    FormValidationMessage, FormInput, Button, Icon,
+    FormInput, Button,
 } from 'react-native-elements';
 
 import { connect } from 'react-redux';
@@ -21,10 +22,8 @@ const styles = {
         flex: 1,
         backgroundColor: 'white',
     },
-    icon: {
+    iconContainer: {
         flex: 2,
-        // width: null,
-        // height: ICON_HEIGTH,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 60,
@@ -34,11 +33,6 @@ const styles = {
         justifyContent: 'flex-start',
         marginTop: 20,
         // backgroundColor: 'blue',
-    },
-    errorContainer: {
-        flex: 2,
-        marginTop: 5,
-        // backgroundColor: 'red',
     },
     submitContainer: {
         flex: 12,
@@ -63,7 +57,15 @@ const styles = {
     },
 };
 
-class Login extends Component {
+type LoginProps = {
+    login: (string, string, boolean => void, string => void) => void
+};
+
+class Login extends Component<LoginProps> {
+    static defaultProps = {
+        error: '',
+    };
+
     static forgotPassword() {
         Linking.openURL(URLs.forgot);
     }
@@ -73,6 +75,8 @@ class Login extends Component {
         this.state = {
             username: '',
             password: '',
+            loading: false,
+            error: '',
         };
         this.pwdRef = React.createRef();
         this.nameRef = React.createRef();
@@ -92,98 +96,116 @@ class Login extends Component {
     }
 
     keyboardWillShow(event) {
-        Animated.parallel([
-            Animated.timing(this.paddingBottom, {
-                duration: event.duration,
-                toValue: event.endCoordinates.height,
-            }),
-            Animated.timing(this.iconHeight, {
-                duration: event.duration,
-                toValue: ICON_HEIGTH * 0.65,
-            }),
-        ]).start();
+        // Animated.parallel([
+        //     Animated.timing(this.paddingBottom, {
+        //         duration: event.duration,
+        //         toValue: event.endCoordinates.height,
+        //     }),
+        //     Animated.timing(this.iconHeight, {
+        //         duration: event.duration,
+        //         toValue: ICON_HEIGTH * 0.65,
+        //     }),
+        // ]).start();
+
+        Animated.timing(this.paddingBottom, {
+            duration: event.duration,
+            toValue: event.endCoordinates.height,
+        }).start();
     }
 
     keyboardWillHide(event) {
-        Animated.parallel([
-            Animated.timing(this.paddingBottom, {
-                duration: event.duration,
-                toValue: 0,
-            }),
-            Animated.timing(this.iconHeight, {
-                duration: event.duration,
-                toValue: ICON_HEIGTH,
-            }),
-        ]).start();
+        // Animated.parallel([
+        //     Animated.timing(this.paddingBottom, {
+        //         duration: event.duration,
+        //         toValue: 0,
+        //     }),
+        //     Animated.timing(this.iconHeight, {
+        //         duration: event.duration,
+        //         toValue: ICON_HEIGTH,
+        //     }),
+        // ]).start();
+
+        Animated.timing(this.paddingBottom, {
+            duration: event.duration,
+            toValue: 0,
+        }).start();
     }
 
     login() {
         const { username, password } = this.state;
         const { login } = this.props;
-        const { nameRef } = this;
 
-        login(username, password, (loggedIn, error) => {
-            nameRef.current.input.focus();
-            if (!error && loggedIn) {
+        this.pwdRef.current.input.blur();
+        this.setState({ loading: true });
+        login(username, password,
+            () => {
+                this.setState({ loading: false });
                 this.setState({ username: '', password: '' });
                 Actions.main();
-            }
-        });
+            },
+            error => {
+                // console.log(error);
+                this.setState({ loading: false });
+                Alert.alert('Login failed', error, [{ text: 'OK' }]);
+            });
     }
 
-    enableLoginButton() {
-        const { username, password } = this.state;
-        const { loading } = this.props;
-        const disable = (username.length < 1 || password.length < 3) || loading;
-
-        return disable;
-    }
-
-    renderErrorMessage() {
-        const { error } = this.props;
-
-        if (error && error.length >= 0) {
-            return (
-                <FormValidationMessage>{error}</FormValidationMessage>
-            );
-        }
-
-        return <View />;
+    handleNameInputEnterPressed() {
+        this.pwdRef.current.input.focus();
     }
 
     render() {
         const {
-            root, icon, inputContainer, submitContainer, forgot, errorContainer, forgotText, submit, submitDisabled,
+            root, iconContainer, inputContainer, submitContainer, forgot, forgotText, submit, submitDisabled,
         } = styles;
-        const { username, password } = this.state;
-        const { loading } = this.props;
+        const {
+            username, password, loading,
+        } = this.state;
         const leftIcon = loading ? {} : { name: 'arrow-upward', size: 23 };
+        const title = loading ? '' : 'Sign in';
+        const id = 'alskdjf';
 
         return (
             <Animated.View style={[root, { paddingBottom: this.paddingBottom }]}>
-                <Animated.View style={[icon, { height: this.iconHeight }]}>
-                    <LeetcodeIcon size={{ width: 135, height: 135 }} />
-                </Animated.View>
+                <View style={iconContainer}>
+                    <LeetcodeIcon />
+                </View>
                 <View style={inputContainer}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Icon name="mail" color="grey" containerStyle={{ justifyContent: 'center', marginLeft: 15 }} />
-                        <FormInput ref={this.nameRef} placeholder="Username or E-mail" autoFocus autoCapitalize="none" autoCorrect={false} value={username} onChangeText={text => this.setState({ username: text })} />
-                    </View>
-                    <View style={{ marginTop: 20, flexDirection: 'row' }}>
-                        <Icon name="security" color="grey" containerStyle={{ justifyContent: 'center', marginLeft: 15 }} />
-                        <FormInput ref={this.pwdRef} placeholder="Password" secureTextEntry value={password} onChangeText={text => this.setState({ password: text })} />
-                    </View>
-                    {/* <View style={{ flexDirection: 'row', marginTop: 16, marginLeft: 8 }}>
-                        <SocialIcon button type="google" iconSize={14} style={{ width: 42, height: 42, backgroundColor: 'red' }} />
-                        <SocialIcon button type="facebook" iconSize={14} style={{ width: 42, height: 42 }} />
-                        <SocialIcon button type="github" iconSize={14} style={{ width: 42, height: 42 }} />
-                        <SocialIcon button type="linkedin" iconSize={14} style={{ width: 42, height: 42 }} />
-                    </View> */}
-                    <View style={errorContainer}>
-                        {this.renderErrorMessage()}
-                    </View>
+                        <FormInput
+                            ref={this.nameRef}
+                            inputAccessoryViewID={id}
+                            returnKeyType="next"
+                            placeholder="Username or E-mail"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            value={username}
+                            onChangeText={text => this.setState({ username: text })}
+                            onSubmitEditing={() => this.handleNameInputEnterPressed()}
+                        />
+                        <FormInput
+                            ref={this.pwdRef}
+                            inputAccessoryViewID={id}
+                            returnKeyType="go"
+                            placeholder="Password"
+                            secureTextEntry
+                            value={password}
+                            onChangeText={text => this.setState({ password: text })}
+                            onSubmitEditing={() => this.login()}
+                        />
+                        <InputAccessoryView nativeID={id}>
+                            <View style={{ flex: 1, backgroundColor: 'rgb(213, 213, 213)', alignItems: 'flex-end', justifyContent: 'center' }}>
+                                <NativeButton onPress={() => Keyboard.dismiss()} title="Ok" />
+                            </View>
+                        </InputAccessoryView>
                     <View style={submitContainer}>
-                        <Button leftIcon={leftIcon} buttonStyle={submit} disabledStyle={submitDisabled} loading={loading} title={loading ? '' : 'Sign in'} disabled={this.enableLoginButton()} onPress={() => this.login()} />
+                        <Button
+                            leftIcon={leftIcon}
+                            buttonStyle={submit}
+                            disabledStyle={submitDisabled}
+                            loading={loading}
+                            title={title}
+                            onPress={() => this.login()}
+                        />
                         <TouchableOpacity style={forgot} onPress={() => Login.forgotPassword()}>
                             <Text style={forgotText}>Forgot Password?</Text>
                         </TouchableOpacity>

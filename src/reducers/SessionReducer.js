@@ -5,11 +5,11 @@ import {
 
 const INITIAL_STATE = {
     // UI
-    loading: null,
+    loading: false,
     error: null,
     // Data
-    LEETCODE_SESSION: null,
-    csrftoken: null,
+    LEETCODE_SESSION: '',
+    csrftoken: '',
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -29,7 +29,7 @@ export default (state = INITIAL_STATE, action) => {
             return { ...INITIAL_STATE, loading: false, error: action.error };
         case LEETCODE_LOGOUT_SUCCESS:
         case LEETCODE_LOGOUT_FAILED:
-            // Please notice that theoratically it's impossible that failed to logout.
+            // Please note that theoratically it's impossible that failed to logout.
             return { ...INITIAL_STATE };
         default:
             return state;

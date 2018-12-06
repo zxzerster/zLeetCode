@@ -10,7 +10,7 @@ import LeetcodeIcon from './common/LeetcodeIcon';
 import { leetcodeVerfifySession } from '../actions';
 
 type Props = {
-    verify: (boolean => void, Object => void) => void,
+    verify: (boolean => void, string => void) => void,
 };
 
 const styles = {

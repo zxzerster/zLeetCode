@@ -1,5 +1,4 @@
 import {
-    LEETCODE_VERIFY_SESSION, LEETCODE_VERIFY_SESSION_SUCCESS, LEETCODE_VERIFY_SESSION_FAILED,
     LEETCODE_LOGIN, LEETCODE_LOGIN_SUCCESS, LEETCODE_LOGIN_FAILED,
     LEETCODE_LOGOUT, LEETCODE_LOGOUT_SUCCESS, LEETCODE_LOGOUT_FAILED,
 } from './types';
@@ -40,12 +39,12 @@ export const leetcodeVerfifySession = (completionHandler, errorHandler) => {
         })
         .catch(error => {
             /** This error should never happned, we need investigate this kind of error if it happens */
-            errorHandler(error);
+            errorHandler(`${error}`);
         });
     };
 };
 
-export const leetcodeLogin = (username, password, completionHandler) => {
+export const leetcodeLogin = (username, password, completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_LOGIN });
         // Check validation of saved csrftoken & LEETCODE_SESSION first
@@ -79,32 +78,43 @@ export const leetcodeLogin = (username, password, completionHandler) => {
                     };
 
                     dispatch({ type: LEETCODE_LOGIN_SUCCESS, payload });
-                    completionHandler(true, null);
-                } else {
-                    return resp.json();
+                    completionHandler();
+
+                    return null;
                 }
 
-                return Promise.resolve();
+                return resp.json();
             }
         })
         .then(json => {
             if (json) {
                 // Handle errors here
-                const { errors } = json.form;
+                const { errors, fields } = json.form;
                 let error = 'Unknown errors';
 
-                if (errors && errors.length >= 1) {
-                    error = errors[0];
+                if (errors) {
+                    if (errors.length >= 1) {
+                        [error] = errors;
+                    } else if (errors.length === 0 && fields) {
+                        const { login } = fields;
+
+                        if (login.errors && login.errors.length > 0) {
+                            error = 'User name and/or Password are required';
+                        }
+
+                        if (fields.password.errors && fields.password.errors.length > 0) {
+                            error = 'User name and/or Password are required';
+                        }
+                    }
                 }
 
                 dispatch({ type: LEETCODE_LOGIN_FAILED, error });
-                completionHandler(false, error);
+                errorHandler(`${error}`);
             }
         })
         .catch(error => {
-            // TODO: Format error message, don't pass the raw error message
             dispatch({ type: LEETCODE_LOGIN_FAILED, error });
-            completionHandler(false, error);
+            errorHandler(`error: ${error}`);
         });
     };
 };
