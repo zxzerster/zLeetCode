@@ -9,6 +9,7 @@ import { leetcodeProblems } from '../actions';
 const styles = {
     container: {
         flex: 1,
+        backgroundColor: 'white',
     },
 };
 
@@ -47,6 +48,7 @@ class Problems extends Component {
         return (
             <View style={[container, { marginTop: 0 }]}>
                 <FlatList
+                    style={{ backgroundColor: 'white' }}
                     data={allQuestions}
                     keyExtractor={item => item.questionId}
                     renderItem={Problems.renderItem}

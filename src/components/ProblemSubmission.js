@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import {
-    View, Text, ActivityIndicator,
+    View, Text, ActivityIndicator, TouchableOpacity,
 } from 'react-native';
+import { Button } from 'react-native-elements';
+import { Actions } from 'react-native-router-flux';
+import _ from 'lodash';
 
 import { connect } from 'react-redux';
-import { leetcodeCodeDefinition } from '../actions';
+import { leetcodeCodeDefinition, leetcodeRunCode, leetcodeSubmitCode } from '../actions';
 
 type Props = {
     loading: boolean,
@@ -33,6 +36,15 @@ class ProblemSubmission extends Component<Props> {
         codeDefinition(titleSlug);
     }
 
+    langSelection() {
+        const { snippets, selectedIndex } = this.props;
+        const langsConfig = _.map(snippets, value => {
+            return { lang: value.langSlug, displayName: value.lang };
+        });
+
+        Actions.codelangselector({ langsConfig, selectedIndex });
+    }
+
     render() {
         const { loading } = this.props;
 
@@ -44,15 +56,28 @@ class ProblemSubmission extends Component<Props> {
             );
         }
 
-        // debugger;
-        const { snippets } = this.props;
+        const { snippets, selectedIndex } = this.props;
 
         return (
             <View style={{ flex: 1 }}>
                 <View style={{ flex: 4, backgroundColor: 'red' }}>
-                    <Text>{snippets[0] ? snippets[0].code : ''}</Text>
+                    <Text>{snippets[selectedIndex] ? snippets[selectedIndex].code : ''}</Text>
                 </View>
-                <View style={{ flex: 1, backgroundColor: 'blue'}} />
+                <View style={{ flex: 1, flexDirection: 'row', backgroundColor: 'blue' }}>
+                    <TouchableOpacity onPress={this.langSelection.bind(this)}>
+                        <Text>{snippets.length > 0 ? snippets[selectedIndex].lang : ''}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Text>Check Solutions</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Text>Discussions</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row' }}>
+                    <Button title="Run it" />
+                    <Button title="Submit" />
+                </View>
             </View>
         );
     }
@@ -65,13 +90,15 @@ const mapStateToProps = state => {
         loading: codeDefinition.loading,
         error: codeDefinition.error,
         snippets: codeDefinition.allQuestions ? codeDefinition.allQuestions : [],
-        selectedIndex: 0,
+        selectedIndex: codeDefinition.selectedIndex,
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         codeDefinition: (...args) => dispatch(leetcodeCodeDefinition(...args)),
+        runCode: (...args) => dispatch(leetcodeRunCode(...args)),
+        submitCode: (...args) => dispatch(leetcodeSubmitCode(...args)),
     };
 };
 

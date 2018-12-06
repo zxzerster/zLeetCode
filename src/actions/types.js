@@ -21,6 +21,7 @@ export const LEETCODE_PROBLEM_FAILED = 'leetcode_problem_failed';
 export const LEETCODE_CODE_DEFINITION = 'leetcode_code_definition';
 export const LEETCODE_CODE_DEFINITION_SUCCESS = 'leetcode_code_definition_success';
 export const LEETCODE_CODE_DEFINITION_FAILED = 'leetcode_code_definition_failed';
+export const LEETCODE_CODE_DEFINITION_SELECTED_INDEX = 'leetcode_code_definition_selected_index';
 
 export const LEETCODE_RUN_CODE = 'leetcode_run_code';
 export const LEETCODE_RUN_CODE_SUCCESS = 'leetcode_run_code_success';

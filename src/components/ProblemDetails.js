@@ -85,7 +85,7 @@ class ProblemDetails extends Component<Props> {
         console.log(`content: ${content}`);
 
         return (
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, backgroundColor: 'white' }}>
                 <View>
                     <Text><Text>{`#${questionId}`} </Text>{`${title}`}</Text>
                     <View style={{ flexDirection: 'row' }}>

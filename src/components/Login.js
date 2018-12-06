@@ -19,6 +19,7 @@ const ICON_HEIGTH = 135;
 const styles = {
     root: {
         flex: 1,
+        backgroundColor: 'white',
     },
     icon: {
         flex: 2,

@@ -4,7 +4,7 @@ import {
     LEETCODE_RUN_CODE, LEETCODE_RUN_CODE_SUCCESS, LEETCODE_RUN_CODE_FAILED,
     LEETCODE_EXPECTED_RESULT_SUCCESS, LEETCODE_EXPECTED_RESULT_FAILED,
     LEETCODE_SUBMIT_CODE, LEETCODE_SUBMIT_CODE_SUCCESS, LEETCODE_SUBMIT_CODE_FAILED, LEETCODE_SUBMISSIONS, LEETCODE_SUBMISSIONS_FAILED, LEETCODE_SUBMISSIONS_SUCCESS,
-    LEETCODE_CODE_DEFINITION, LEETCODE_CODE_DEFINITION_SUCCESS, LEETCODE_CODE_DEFINITION_FAILED,
+    LEETCODE_CODE_DEFINITION, LEETCODE_CODE_DEFINITION_SUCCESS, LEETCODE_CODE_DEFINITION_FAILED, LEETCODE_CODE_DEFINITION_SELECTED_INDEX,
 } from './types';
 import {
     URLs,
@@ -12,7 +12,9 @@ import {
     leetcodePostFetch,
     leetcodeGraphqlFetch,
 } from '../network';
-import { Problems, ProblemDetails, Submissions, CodeDefinition } from '../network/query';
+import {
+    Problems, ProblemDetails, Submissions, CodeDefinition,
+} from '../network/query';
 
 const queryResult = (dispatch, successType, failedType, id) => {
     leetcodeGetFetch(URLs.runCodeResult(id))
@@ -129,7 +131,7 @@ export const leetcodeCodeDefinition = titleSlug => {
         })
         .catch(error => {
             dispatch({ type: LEETCODE_CODE_DEFINITION_FAILED, error });
-        })
+        });
     };
 };
 
@@ -212,5 +214,12 @@ export const leetcodeSubmitCode = (input, titleSlug) => {
         .then(error => {
             dispatch({ type: LEETCODE_SUBMIT_CODE_FAILED, error });
         });
+    };
+};
+
+export const leetcodeSelectedIndex = index => {
+    return {
+        type: LEETCODE_CODE_DEFINITION_SELECTED_INDEX,
+        payload: index || 0,
     };
 };

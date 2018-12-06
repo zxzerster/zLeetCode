@@ -13,6 +13,7 @@ import { versionString } from '../../ZLC-Config';
 const profileStyles = {
     container: {
         flex: 1,
+        backgroundColor: 'white',
     },
     profileContainer: {
         flex: 1,
@@ -288,10 +289,6 @@ class Profile extends Component<Props> {
             Actions.popTo('login', { needVerify: false });
         }
     }
-
-    // helpHandler() {
-
-    // }
 
     logout() {
         const { logout } = this.props;
