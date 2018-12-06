@@ -1,7 +1,13 @@
+// @flow
 import React from 'react';
 import Svg, { G, Path } from 'react-native-svg';
 
-const LeetcodeIcon = props => {
+type IconProps = {
+    width?: number,
+    height?: number,
+};
+
+const LeetcodeIcon = (props: IconProps) => {
     const { width, height } = props;
 
     return (

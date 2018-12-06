@@ -13,14 +13,15 @@ import {
     leetcodeGraphqlFetch,
 } from '../network';
 
-export const leetcodeVerfifySession = (completionHandler, err) => {
+export const leetcodeVerfifySession = (completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => () => {
         leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, UserStatus)
         .then(resp => {
+            /** For some unknown reason, network call failed */
             if (resp.status !== 200) {
-                err();
+                errorHandler(ERRs.ERR_NETWORK`: ${resp.status}`);
 
-                return Promise.resolve();
+                return;
             }
 
             resp.json().then(json => {
@@ -29,20 +30,17 @@ export const leetcodeVerfifySession = (completionHandler, err) => {
                 if (isSignedIn) {
                     completionHandler(true);
 
-                    return Promise.resolve();
+                    return;
                 }
                 completionHandler(false);
-
-                return Promise.resolve();
             })
             .catch(error => {
-                err(error);
+                errorHandler(`error: ${error}`);
             });
-
-            return Promise.resolve();
         })
         .catch(error => {
-            err(error);
+            /** This error should never happned, we need investigate this kind of error if it happens */
+            errorHandler(error);
         });
     };
 };

@@ -1,3 +1,4 @@
+// @flow
 import React, { Component } from 'react';
 import {
     View, ActivityIndicator,
@@ -9,9 +10,7 @@ import LeetcodeIcon from './common/LeetcodeIcon';
 import { leetcodeVerfifySession } from '../actions';
 
 type Props = {
-    verify: Function,
-    loading: boolean,
-    isLoggedIn: boolean,
+    verify: (boolean => void, Object => void) => void,
 };
 
 const styles = {
@@ -19,6 +18,7 @@ const styles = {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: 'white',
     },
     indicator: {
         marginTop: 15,
@@ -30,31 +30,21 @@ class Loading extends Component<Props> {
         needVerify: true,
     };
 
-    constructor(props) {
-        super(props);
-
-        this.shouldUpdate = true;
-    }
-
     componentDidMount() {
-        const { verify, needVerify } = this.props;
-        
-        if (needVerify) {
-            verify(
-                signedIn => {
-                    if (signedIn) {
-                        Actions.main();
-                    } else {
-                        Actions.login();
-                    }
-                },
-                () => {
+        const { verify } = this.props;
+
+        verify(
+            signedIn => {
+                if (signedIn) {
+                    Actions.main();
+                } else {
                     Actions.login();
                 }
-            );
-        } else {
-            Actions.login();
-        }
+            },
+            () => {
+                Actions.login();
+            }
+        );
     }
 
     render() {
@@ -62,7 +52,7 @@ class Loading extends Component<Props> {
 
         return (
             <View style={container}>
-                <LeetcodeIcon />
+                <LeetcodeIcon width={200} height={200} />
                 <ActivityIndicator style={indicator} animating />
             </View>
         );
