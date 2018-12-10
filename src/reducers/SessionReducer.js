@@ -4,9 +4,6 @@ import {
 } from '../actions/types';
 
 const INITIAL_STATE = {
-    // UI
-    loading: false,
-    error: null,
     // Data
     LEETCODE_SESSION: '',
     csrftoken: '',
@@ -15,18 +12,16 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case LEETCODE_LOGIN:
-            return { ...INITIAL_STATE, loading: true, error: null };
+            return { ...INITIAL_STATE };
         case LEETCODE_LOGOUT:
-            return { ...state, loading: true, error: null };
+            return { ...state };
         case LEETCODE_LOGIN_SUCCESS:
             return {
                 ...state,
                 ...action.payload,
-                loading: false,
-                error: null,
             };
         case LEETCODE_LOGIN_FAILED:
-            return { ...INITIAL_STATE, loading: false, error: action.error };
+            return { ...INITIAL_STATE };
         case LEETCODE_LOGOUT_SUCCESS:
         case LEETCODE_LOGOUT_FAILED:
             // Please note that theoratically it's impossible that failed to logout.

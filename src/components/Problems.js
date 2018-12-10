@@ -1,19 +1,65 @@
 import React, { Component } from 'react';
-import { View, FlatList, ActivityIndicator } from 'react-native';
-import { List } from 'react-native-elements';
+import {
+    View, FlatList, ActivityIndicator, Animated, LayoutAnimation, Text, TouchableOpacity,
+} from 'react-native';
 import { connect } from 'react-redux';
 
 import ProblemItem from './ProblemItem';
 import { leetcodeProblems } from '../actions';
+
+import LeetcodeIcon from './common/LeetcodeIcon';
+
+const ANIMATION_DURATION = 1000;
+const OPACITY = 0.2;
 
 const styles = {
     container: {
         flex: 1,
         backgroundColor: 'white',
     },
+    loadingErrorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+    },
+    errorString: {
+        fontSize: 24,
+        fontWeight: '500',
+        color: 'gray',
+        marginTop: 20,
+    },
+    reloadButton: {
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 5,
+        // padding: 10,
+        width: '35%',
+        height: 35,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 15,
+    },
+    reloadButtonTitle: {
+        fontSize: 18,
+        color: 'gray',
+    },
 };
 
-class Problems extends Component {
+type ProblemsProps = {
+    problems: (boolean => void, string => void) => void,
+    allQuestions: {
+        title: string,
+        titleSlug: string,
+        questionId: string,
+        difficulty: string,
+        status: string,
+        like: number,
+        dislike: number,
+    },
+};
+
+class Problems extends Component<ProblemsProps> {
     static renderItem({ item }) {
         return <ProblemItem problem={item} />;
     }
@@ -26,21 +72,82 @@ class Problems extends Component {
         );
     }
 
-    componentDidMount() {
-        const { problems } = this.props;
+    constructor(props) {
+        super(props);
 
-        problems();
+        this.state = {
+            loading: false,
+            error: null,
+        };
+
+        this.fade = new Animated.Value(OPACITY);
     }
 
+    componentDidMount() {
+        this.loadProblems.apply(this);
+    }
+
+    loadProblems() {
+        const { problems } = this.props;
+
+        this.setState({ loading: true });
+        problems(() => {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+            this.setState({ loading: false });
+        }, error => {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+            this.setState({ loading: false, error });
+        });
+
+        this.animatedLoading();
+    }
+
+    animatedLoading() {
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(
+                    this.fade,
+                    {
+                        toValue: 1,
+                        duration: ANIMATION_DURATION,
+                    }
+                ),
+                Animated.timing(
+                    this.fade,
+                    {
+                        toValue: OPACITY,
+                        duration: ANIMATION_DURATION,
+                    }
+                ),
+            ])
+        ).start();
+    }
 
     render() {
-        const { container } = styles;
-        const { allQuestions, loading } = this.props;
+        const { loading, error } = this.state;
+        const {
+            container, loadingErrorContainer, errorString, reloadButton, reloadButtonTitle,
+        } = styles;
+        const { allQuestions } = this.props;
 
         if (loading) {
             return (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <ActivityIndicator animating />
+                <View style={loadingErrorContainer}>
+                    <Animated.View style={{ ...this.props.style, opacity: this.fade }}>
+                        <LeetcodeIcon />
+                    </Animated.View>
+                </View>
+            );
+        }
+
+        if (error) {
+            return (
+                <View style={loadingErrorContainer}>
+                   <LeetcodeIcon />
+                   <Text style={errorString}>{error}</Text>
+                   <TouchableOpacity style={reloadButton} onPress={() => { this.loadProblems(); }}>
+                       <Text style={reloadButtonTitle}>Reload it</Text>
+                   </TouchableOpacity>
                 </View>
             );
         }
@@ -62,8 +169,6 @@ const mapStateToProps = state => {
     const { problems } = state;
 
     return {
-        loading: problems.loading,
-        error: problems.error,
         allQuestions: problems.allQuestions,
     };
 };
@@ -75,68 +180,3 @@ const mapDispatchToProps = dispatch => {
  };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Problems);
-
-// import _ from 'lodash';
-// import * as actions from '../actions';
-// import { Actions } from 'react-native-router-flux';
-
-// class ProblemItem extends Component {
-
-//     onProblemPress() {
-//         const {titleSlug, title} = this.props.problem;
-//         Actions.problemdetails({titleSlug, title: title});
-//     }
-
-//     render() {
-//         const {title} = this.props.problem;
-//         return (
-//             <TouchableOpacity onPress={this.onProblemPress.bind(this)}>
-//                 <View>
-//                     <Text>{title}</Text>
-//                 </View>
-//             </TouchableOpacity>
-//         );
-//     }
-// }
-
-// class Problems extends Component {
-
-//     static onEnter(props) {
-//         console.log(`13123123Problems onEnter.a123456.. ${props}`);
-//     }
-
-//     componentWillMount() {
-//         const {csrftoken, LEETCODE_SESSION} = this.props.session;
-//         this.props.fetchAllProblems(csrftoken, LEETCODE_SESSION);
-//     }
-
-//     renderProblems() {
-//         const { data } = this.props.allProblems
-//         return (
-//             <FlatList 
-//                 data={data.allQuestions}
-//                 keyExtractor={(item) => item.questionId}
-//                 renderItem={({item}) => <ProblemItem problem={item} />}
-//             /> 
-//         );
-//     }
-
-//     render() {
-//         return (
-//             <View>
-//                 <Text>Problems</Text>
-//                 {this.renderProblems()}
-//             </View>
-//         );
-//     }
-// }
-
-// const mapStateToProps = (state) => {
-//     const { session, allProblems } = state;
-//     return {
-//         session,
-//         allProblems
-//     }
-// }
-
-// export default connect(mapStateToProps, actions)(Problems);

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import {
     View, TouchableOpacity, Text,
-    Linking, Keyboard, Animated,
-    InputAccessoryView, Alert, Button as NativeButton,
+    Linking, Keyboard, InputAccessoryView,
+    Alert, Button as NativeButton, KeyboardAvoidingView,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import {
@@ -14,8 +14,6 @@ import { leetcodeLogin } from '../actions';
 import { URLs } from '../network';
 
 import LeetcodeIcon from './common/LeetcodeIcon';
-
-const ICON_HEIGTH = 135;
 
 const styles = {
     root: {
@@ -55,6 +53,12 @@ const styles = {
         backgroundColor: '#888888',
         opacity: 0.6,
     },
+    inputAccessory: {
+        flex: 1,
+        backgroundColor: 'rgb(213, 213, 213)',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+    },
 };
 
 type LoginProps = {
@@ -70,65 +74,19 @@ class Login extends Component<LoginProps> {
         Linking.openURL(URLs.forgot);
     }
 
+    static dimissKeyboard() {
+        Keyboard.dismiss();
+    }
+
     constructor(props) {
         super(props);
         this.state = {
             username: '',
             password: '',
             loading: false,
-            error: '',
         };
         this.pwdRef = React.createRef();
         this.nameRef = React.createRef();
-
-        this.paddingBottom = new Animated.Value(0);
-        this.iconHeight = new Animated.Value(ICON_HEIGTH);
-    }
-
-    componentDidMount() {
-        this.keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow.bind(this));
-        this.keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide.bind(this));
-    }
-
-    componentWillUnmount() {
-        this.keyboardWillShowListener.remove();
-        this.keyboardWillHideListener.remove();
-    }
-
-    keyboardWillShow(event) {
-        // Animated.parallel([
-        //     Animated.timing(this.paddingBottom, {
-        //         duration: event.duration,
-        //         toValue: event.endCoordinates.height,
-        //     }),
-        //     Animated.timing(this.iconHeight, {
-        //         duration: event.duration,
-        //         toValue: ICON_HEIGTH * 0.65,
-        //     }),
-        // ]).start();
-
-        Animated.timing(this.paddingBottom, {
-            duration: event.duration,
-            toValue: event.endCoordinates.height,
-        }).start();
-    }
-
-    keyboardWillHide(event) {
-        // Animated.parallel([
-        //     Animated.timing(this.paddingBottom, {
-        //         duration: event.duration,
-        //         toValue: 0,
-        //     }),
-        //     Animated.timing(this.iconHeight, {
-        //         duration: event.duration,
-        //         toValue: ICON_HEIGTH,
-        //     }),
-        // ]).start();
-
-        Animated.timing(this.paddingBottom, {
-            duration: event.duration,
-            toValue: 0,
-        }).start();
     }
 
     login() {
@@ -145,7 +103,8 @@ class Login extends Component<LoginProps> {
             },
             error => {
                 // console.log(error);
-                this.setState({ loading: false });
+                this.setState({ loading: false, username: '', password: '' });
+                this.pwdRef.current.input.blur();
                 Alert.alert('Login failed', error, [{ text: 'OK' }]);
             });
     }
@@ -156,7 +115,9 @@ class Login extends Component<LoginProps> {
 
     render() {
         const {
-            root, iconContainer, inputContainer, submitContainer, forgot, forgotText, submit, submitDisabled,
+            root, iconContainer, inputContainer,
+            submitContainer, forgot, forgotText,
+            submit, submitDisabled, inputAccessory,
         } = styles;
         const {
             username, password, loading,
@@ -166,7 +127,8 @@ class Login extends Component<LoginProps> {
         const id = 'alskdjf';
 
         return (
-            <Animated.View style={[root, { paddingBottom: this.paddingBottom }]}>
+
+            <KeyboardAvoidingView style={root} behavior="padding">
                 <View style={iconContainer}>
                     <LeetcodeIcon />
                 </View>
@@ -193,8 +155,8 @@ class Login extends Component<LoginProps> {
                             onSubmitEditing={() => this.login()}
                         />
                         <InputAccessoryView nativeID={id}>
-                            <View style={{ flex: 1, backgroundColor: 'rgb(213, 213, 213)', alignItems: 'flex-end', justifyContent: 'center' }}>
-                                <NativeButton onPress={() => Keyboard.dismiss()} title="Ok" />
+                            <View style={inputAccessory}>
+                                <NativeButton onPress={Login.dimissKeyboard} title="Ok" />
                             </View>
                         </InputAccessoryView>
                     <View style={submitContainer}>
@@ -211,7 +173,8 @@ class Login extends Component<LoginProps> {
                         </TouchableOpacity>
                     </View>
                 </View>
-            </Animated.View>
+            </KeyboardAvoidingView>
+
         );
     }
 }

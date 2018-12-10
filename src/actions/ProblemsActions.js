@@ -8,6 +8,7 @@ import {
 } from './types';
 import {
     URLs,
+    ERRs,
     leetcodeGetFetch,
     leetcodePostFetch,
     leetcodeGraphqlFetch,
@@ -60,27 +61,30 @@ const queryRuncodeResult = (dispatch, id) => {
     queryResult(dispatch, LEETCODE_RUN_CODE_SUCCESS, LEETCODE_RUN_CODE_FAILED, id);
 };
 
-export const leetcodeProblems = () => {
+export const leetcodeProblems = (completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_ALL_PROBLEMS });
         leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, Problems)
         .then(resp => {
             if (resp.status !== 200) {
                 dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED });
+                errorHandler(ERRs.ERR_NETWORK);
 
-                return Promise.resolve();
+                return;
             }
 
             resp.json().then(json => {
                 const { allQuestions } = json.data;
 
                 dispatch({ type: LEETCODE_ALL_PROBLEMS_SUCCESS, payload: allQuestions });
+                completionHandler(true);
+                // Keep it for simple test for error situation
+                // errorHandler('Opps, error!');
             });
-
-            return Promise.resolve();
         })
         .catch(error => {
             dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED, error });
+            errorHandler(`error: ${error}`);
         });
     };
 };
