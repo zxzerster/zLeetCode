@@ -7,6 +7,7 @@ const INITIAL_STATE = {
 
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
+        case LEETCODE_ALL_PROBLEMS_FAILED:
         case LEETCODE_ALL_PROBLEMS:
             return { ...INITIAL_STATE };
         case LEETCODE_ALL_PROBLEMS_SUCCESS:
@@ -14,8 +15,6 @@ export default (state = INITIAL_STATE, action) => {
             ...state,
             allQuestions: action.payload,
         };
-        case LEETCODE_ALL_PROBLEMS_FAILED:
-            return { ...INITIAL_STATE };
         default:
             return state;
     }

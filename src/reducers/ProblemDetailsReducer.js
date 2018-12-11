@@ -1,26 +1,33 @@
 import { LEETCODE_PROBLEM, LEETCODE_PROBLEM_SUCCESS, LEETCODE_PROBLEM_FAILED } from '../actions/types';
 
 const INITIAL_STATE = {
-    // UI
-    loading: false,
-    error: null,
     // Data
-    question: null,
+    question: {
+        titleSlug: '',
+        title: '',
+        content: '',
+        questionId: '',
+        judgeType: '',
+        difficulty: '',
+        likes: 0,
+        dislikes: 0,
+        categoryTitle: '',
+        stats: '',
+        similarQuestions: '',
+        topicTags: [],
+    },
 };
 
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case LEETCODE_PROBLEM:
-            return { ...INITIAL_STATE, loading: true, error: null };
+        case LEETCODE_PROBLEM_FAILED:
+            return { ...INITIAL_STATE };
         case LEETCODE_PROBLEM_SUCCESS:
             return {
                 ...state,
                 ...action.payload,
-                loading: false,
-                error: null,
             };
-        case LEETCODE_PROBLEM_FAILED:
-            return { ...INITIAL_STATE, loading: false, error: action.error };
         default:
             return state;
     }

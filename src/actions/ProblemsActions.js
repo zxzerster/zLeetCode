@@ -89,27 +89,28 @@ export const leetcodeProblems = (completionHandler, errorHandler) => {
     };
 };
 
-export const leetcodeProblemDetail = titleSlug => {
+export const leetcodeProblemDetail = (titleSlug, completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_PROBLEM });
         leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, ProblemDetails(titleSlug))
         .then(resp => {
             if (resp.status !== 200) {
                 dispatch({ type: LEETCODE_PROBLEM_FAILED });
+                errorHandler(ERRs.ERR_NETWORK);
 
-                return Promise.resolve();
+                return;
             }
 
             resp.json().then(json => {
                 dispatch({ type: LEETCODE_PROBLEM_SUCCESS, payload: json.data });
-
-                return Promise.resolve();
+                completionHandler(true);
+                // Keep it for simple test for error situation
+                // errorHandler('Opps, error!');
             });
-
-            return Promise.resolve();
         })
         .catch(error => {
             dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED, error });
+            errorHandler(`error: ${error}`);
         });
     };
 };

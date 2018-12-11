@@ -60,16 +60,8 @@ type ProblemsProps = {
 };
 
 class Problems extends Component<ProblemsProps> {
-    static renderItem({ item }) {
-        return <ProblemItem problem={item} />;
-    }
-
-    static renderLoading() {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator animating />
-            </View>
-        );
+    static renderItem({ item, index }) {
+        return <ProblemItem problem={item} index={index} />;
     }
 
     constructor(props) {
@@ -79,7 +71,6 @@ class Problems extends Component<ProblemsProps> {
             loading: false,
             error: null,
         };
-
         this.fade = new Animated.Value(OPACITY);
     }
 
@@ -91,6 +82,7 @@ class Problems extends Component<ProblemsProps> {
         const { problems } = this.props;
 
         this.setState({ loading: true });
+        this.animatedLoading();
         problems(() => {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
             this.setState({ loading: false });
@@ -98,8 +90,6 @@ class Problems extends Component<ProblemsProps> {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
             this.setState({ loading: false, error });
         });
-
-        this.animatedLoading();
     }
 
     animatedLoading() {
