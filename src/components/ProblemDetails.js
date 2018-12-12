@@ -33,6 +33,7 @@ const HTMLStyles = {
     },
     pre: {
         color: 'rgb(38, 50, 56)',
+        lineHeight: 21,
     },
 };
 
@@ -77,7 +78,6 @@ const styles = {
         shadowColor: 'black',
         shadowOpacity: 0.05,
         shadowOffset: { width: 0, height: 1 },
-        // paddingBottom: 8,
     },
     titleStyle: {
         flex: 17,
@@ -148,7 +148,7 @@ class ProblemDetails extends Component<Props> {
             return null;
         }
 
-        if (node.type === 'tag' ) {
+        if (node.type === 'tag') {
             const { HTMLText } = styles;
 
             if (node.name === 'pre') {
@@ -182,11 +182,34 @@ class ProblemDetails extends Component<Props> {
     static renderSimilars(similars) {
         return _.map(similars, similar => {
             return (
-                <Badge containerStyle={{ marginHorizontal: 2, backgroundColor: 'lightgray' }}>
+                <Badge key={similar.title} containerStyle={{ marginHorizontal: 2, backgroundColor: 'lightgray' }}>
                     <Text style={{ color: 'white', fontSize: 10 }}>{similar.title}</Text>
                 </Badge>
             );
         });
+    }
+
+    static renderStats(statsObj) {
+        if (statsObj) {
+            return (
+                <View style={{ flexDirection: 'row', margin: 4 }}>
+                    <Text style={{ marginHorizontal: 8, color: 'rgb(89, 89, 89)' }}>
+                        Subs:
+                        <Text style={{ color: 'rgb(73, 78, 82)', marginLeft: 4 }}>  {`${statsObj.totalSubmission}`}</Text>
+                    </Text>
+                    <Text style={{ marginHorizontal: 8, color: 'rgb(89, 89, 89)' }}>
+                        Total:
+                        <Text style={{ color: 'rgb(73, 78, 82)', marginLeft: 4 }}>  {`${statsObj.totalAccepted}`}</Text>
+                    </Text>
+                    <Text style={{ marginHorizontal: 8, color: 'rgb(89, 89, 89)' }}>
+                        Rate:
+                        <Text style={{ color: 'rgb(73, 78, 82)', marginLeft: 4 }}>  {`${statsObj.acRate}`}</Text>
+                    </Text>
+                </View>
+            );
+        }
+
+        return null;
     }
 
     constructor(props) {
@@ -248,9 +271,10 @@ class ProblemDetails extends Component<Props> {
         const { loading, error } = this.state;
         const { detail } = this.props;
         const {
-            title, questionId, difficulty, likes, dislikes, titleSlug, similarQuestions,
+            title, questionId, difficulty, likes, dislikes, titleSlug, similarQuestions, stats,
         } = detail;
         let similars = null;
+        let statsObj = null;
         let difficultyColor;
 
         if (difficulty === 'Easy') {
@@ -265,19 +289,9 @@ class ProblemDetails extends Component<Props> {
             similars = JSON.parse(similarQuestions);
         }
 
-        // const { content}
-
-        // let content = detail ? (detail.content || '') : '';
-        // let title = detail ? (detail.title || '') : '';
-        // let titleSlug = detail ? (detail.titleSlug || '') : '';
-        // let questionId = detail ? (detail.questionId || '') : '';
-        // let likes = detail ? (detail.likes || 0) : 0;
-        // let dislikes = detail ? (detail.dislikes || 0) : 0;
-        // let difficulty = detail ? (detail.difficulty || ' ') : ' ';
-        // let isLiked = detail ? (detail.isLiked || ' ') : ' ';
-        // const content = detail.content || '';
-
-        console.log(`${similars}`);
+        if (stats) {
+            statsObj = JSON.parse(stats);
+        }
 
         if (loading) {
             return (
@@ -325,6 +339,7 @@ class ProblemDetails extends Component<Props> {
                     <ScrollView horizontal style={{ marginTop: 5, paddingBottom: 8 }}>
                         {ProblemDetails.renderSimilars(similars)}
                     </ScrollView>
+                    {ProblemDetails.renderStats(statsObj)}
                 </View>
                 <ScrollView style={{ flex: 2 }}>
                     <HTMLView

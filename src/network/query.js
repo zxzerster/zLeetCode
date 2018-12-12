@@ -52,6 +52,7 @@ export const ProblemDetails = titleSlug => {
             '           dislikes',
             '           categoryTitle',
             '           stats',
+            '           isLiked',
             '           similarQuestions',
             '           topicTags {',
             '               name',
