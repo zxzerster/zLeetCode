@@ -6,6 +6,7 @@ import { Badge, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import HTMLView from 'react-native-htmlview';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import { leetcodeProblemDetail } from '../actions';
 
@@ -72,7 +73,11 @@ const styles = {
         color: 'gray',
     },
     titleWrapper: {
-        flexDirection: 'row',
+        backgroundColor: 'white',
+        shadowColor: 'black',
+        shadowOpacity: 0.05,
+        shadowOffset: { width: 0, height: 1 },
+        // paddingBottom: 8,
     },
     titleStyle: {
         flex: 17,
@@ -86,7 +91,7 @@ const styles = {
     titleIcon: {
         flex: 8,
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         paddingTop: 10,
         paddingRight: 15,
     },
@@ -174,6 +179,16 @@ class ProblemDetails extends Component<Props> {
         Actions.problemSubmission({ titleSlug });
     }
 
+    static renderSimilars(similars) {
+        return _.map(similars, similar => {
+            return (
+                <Badge containerStyle={{ marginHorizontal: 2, backgroundColor: 'lightgray' }}>
+                    <Text style={{ color: 'white', fontSize: 10 }}>{similar.title}</Text>
+                </Badge>
+            );
+        });
+    }
+
     constructor(props) {
         super(props);
 
@@ -233,8 +248,9 @@ class ProblemDetails extends Component<Props> {
         const { loading, error } = this.state;
         const { detail } = this.props;
         const {
-            title, questionId, difficulty, likes, dislikes, titleSlug,
+            title, questionId, difficulty, likes, dislikes, titleSlug, similarQuestions,
         } = detail;
+        let similars = null;
         let difficultyColor;
 
         if (difficulty === 'Easy') {
@@ -244,6 +260,11 @@ class ProblemDetails extends Component<Props> {
         } else {
             difficultyColor = hardRed;
         }
+
+        if (similarQuestions) {
+            similars = JSON.parse(similarQuestions);
+        }
+
         // const { content}
 
         // let content = detail ? (detail.content || '') : '';
@@ -255,6 +276,8 @@ class ProblemDetails extends Component<Props> {
         // let difficulty = detail ? (detail.difficulty || ' ') : ' ';
         // let isLiked = detail ? (detail.isLiked || ' ') : ' ';
         // const content = detail.content || '';
+
+        console.log(`${similars}`);
 
         if (loading) {
             return (
@@ -281,22 +304,27 @@ class ProblemDetails extends Component<Props> {
         return (
             <View style={{ flex: 1, backgroundColor: 'white' }}>
                 <View style={titleWrapper}>
-                    <Text style={titleStyle}>{`#${questionId} ${title}`}</Text>
-                    <View style={titleIcon}>
-                        <Badge containerStyle={[{ width: 70, marginTop: 5, alignSelf: 'center' }, difficultyColor]}>
-                            <Text style={{ fontSize: 11, color: 'white' }}>{detail.difficulty}</Text>
-                        </Badge>
-                        <View style={{ flexDirection: 'row' }}>
-                            <View style={{ flexDirection: 'row', marginRight: 8 }}>
-                                <Icon type="simple-line-icon" name="like" size={14} color="gray" containerStyle={{ marginTop: 4, marginRight: 5 }} />
-                                <Text style={{ fontSize: 12, marginTop: 5, color: 'gray' }}>{likes}</Text>
-                            </View>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={titleStyle}>{`#${questionId} ${title}`}</Text>
+                        <View style={titleIcon}>
+                            <Badge containerStyle={[{ width: 70, marginTop: 5 }, difficultyColor]}>
+                                <Text style={{ fontSize: 11, color: 'white' }}>{detail.difficulty}</Text>
+                            </Badge>
                             <View style={{ flexDirection: 'row' }}>
-                                <Icon type="simple-line-icon" name="dislike" size={14} color="gray" containerStyle={{ marginTop: 4, marginRight: 5 }} />
-                                <Text style={{ fontSize: 12, marginTop: 5, color: 'gray' }}>{dislikes}</Text>
+                                <View style={{ flexDirection: 'row', marginRight: 8 }}>
+                                    <Icon type="simple-line-icon" name="like" size={14} color="gray" containerStyle={{ marginTop: 4, marginRight: 5 }} />
+                                    <Text style={{ fontSize: 12, marginTop: 5, color: 'gray' }}>{likes}</Text>
+                                </View>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Icon type="simple-line-icon" name="dislike" size={14} color="gray" containerStyle={{ marginTop: 4, marginRight: 5 }} />
+                                    <Text style={{ fontSize: 12, marginTop: 5, color: 'gray' }}>{dislikes}</Text>
+                                </View>
                             </View>
                         </View>
                     </View>
+                    <ScrollView horizontal style={{ marginTop: 5, paddingBottom: 8 }}>
+                        {ProblemDetails.renderSimilars(similars)}
+                    </ScrollView>
                 </View>
                 <ScrollView style={{ flex: 2 }}>
                     <HTMLView
