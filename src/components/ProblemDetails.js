@@ -175,8 +175,10 @@ class ProblemDetails extends Component<Props> {
         return undefined;
     }
 
-    static resolveQuestion(titleSlug) {
-        Actions.problemSubmission({ titleSlug });
+    static resolveQuestion(titleSlug, title, questionId, judgeType) {
+        Actions.problemSubmission({
+            titleSlug, title, questionId, judgeType,
+        });
     }
 
     static renderSimilars(similars) {
@@ -233,7 +235,7 @@ class ProblemDetails extends Component<Props> {
         this.animatedLoading();
         problemDetails(titleSlug, () => {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
-            this.setState({ loading: false });
+            this.setState({ loading: false, error: null });
         }, error => {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
             this.setState({ loading: false, error });
@@ -271,7 +273,7 @@ class ProblemDetails extends Component<Props> {
         const { loading, error } = this.state;
         const { detail } = this.props;
         const {
-            title, questionId, difficulty, likes, dislikes, titleSlug, similarQuestions, stats,
+            title, questionId, difficulty, likes, dislikes, titleSlug, similarQuestions, stats, judgeType,
         } = detail;
         let similars = null;
         let statsObj = null;
@@ -348,7 +350,7 @@ class ProblemDetails extends Component<Props> {
                         stylesheet={HTMLStyles}
                     />
                 </ScrollView>
-                <TouchableOpacity style={resolveButton} onPress={() => ProblemDetails.resolveQuestion(titleSlug)}>
+                <TouchableOpacity style={resolveButton} onPress={() => ProblemDetails.resolveQuestion(titleSlug, title, questionId, judgeType)}>
                     <Text style={{ color: 'white', fontSize: 34, fontWeight: '600' }}>+</Text>
                 </TouchableOpacity>
             </View>

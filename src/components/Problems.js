@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    View, FlatList, ActivityIndicator, Animated, LayoutAnimation, Text, TouchableOpacity,
+    View, FlatList, Animated, LayoutAnimation, Text, TouchableOpacity,
 } from 'react-native';
 import { connect } from 'react-redux';
 
@@ -85,7 +85,7 @@ class Problems extends Component<ProblemsProps> {
         this.animatedLoading();
         problems(() => {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
-            this.setState({ loading: false });
+            this.setState({ loading: false, error: null });
         }, error => {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
             this.setState({ loading: false, error });

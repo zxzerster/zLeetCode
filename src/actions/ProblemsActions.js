@@ -17,48 +17,47 @@ import {
     Problems, ProblemDetails, Submissions, CodeDefinition,
 } from '../network/query';
 
-const queryResult = (dispatch, successType, failedType, id) => {
+const queryResult = (dispatch, successType, failedType, id, completionHandler, errorHandler) => {
     leetcodeGetFetch(URLs.runCodeResult(id))
     .then(resp => {
         if (resp.status !== 200) {
             dispatch({ type: failedType });
-
-            return Promise.resolve();
+            errorHandler(`error: ${failedType}`);
+            // return Promise.reject(new Error(ERRs.ERR_NETWORK));
         }
 
         resp.json().then(json => {
             const { state } = json;
-
+            console.log(`==========  query result: ${state}`);
             switch (state) {
                 case 'STARTED':
                 case 'PENDING':
-                    setTimeout(queryResult, 1000, dispatch, successType, failedType, id);
+                    setTimeout(queryResult, 1000, dispatch, successType, failedType, id, completionHandler, errorHandler);
                     break;
                 case 'SUCCESS':
                     dispatch({ type: successType, payload: json });
+                    completionHandler(true);
                     break;
+                    // return Promise.resolve({ payload: json });
                 default:
                     dispatch({ type: failedType });
+                    errorHandler('Unknown error');
+                    // return Promise.reject(new Error('Unknown errors'));
             }
         });
-
-        return Promise.resolve();
-    })
-    .catch(error => {
-        dispatch({ type: failedType, error });
     });
 };
 
-const querySubmissionResult = (dispatch, submissionId) => {
-    queryResult(dispatch, LEETCODE_SUBMIT_CODE_SUCCESS, LEETCODE_SUBMIT_CODE_FAILED, submissionId);
+const querySubmissionResult = (dispatch, submissionId, completionHandler, errorHandler) => {
+    queryResult(dispatch, LEETCODE_SUBMIT_CODE_SUCCESS, LEETCODE_SUBMIT_CODE_FAILED, submissionId, completionHandler, errorHandler);
 };
 
-const queryExpectedResult = (dispatch, expectedId) => {
-    queryResult(dispatch, LEETCODE_EXPECTED_RESULT_SUCCESS, LEETCODE_EXPECTED_RESULT_FAILED, expectedId);
+const queryExpectedResult = (dispatch, expectedId, completionHandler, errorHandler) => {
+    queryResult(dispatch, LEETCODE_EXPECTED_RESULT_SUCCESS, LEETCODE_EXPECTED_RESULT_FAILED, expectedId, completionHandler, errorHandler);
 };
 
-const queryRuncodeResult = (dispatch, id) => {
-    queryResult(dispatch, LEETCODE_RUN_CODE_SUCCESS, LEETCODE_RUN_CODE_FAILED, id);
+const queryRuncodeResult = (dispatch, id, completionHandler, errorHandler) => {
+    queryResult(dispatch, LEETCODE_RUN_CODE_SUCCESS, LEETCODE_RUN_CODE_FAILED, id, completionHandler, errorHandler);
 };
 
 export const leetcodeProblems = (completionHandler, errorHandler) => {
@@ -115,57 +114,58 @@ export const leetcodeProblemDetail = (titleSlug, completionHandler, errorHandler
     };
 };
 
-export const leetcodeCodeDefinition = titleSlug => {
+export const leetcodeCodeDefinition = (titleSlug, completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_CODE_DEFINITION });
         leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, CodeDefinition(titleSlug))
         .then(resp => {
             if (resp.status !== 200) {
                 dispatch({ type: LEETCODE_CODE_DEFINITION_FAILED });
-
-                return Promise.resolve();
+                errorHandler(ERRs.ERR_NETWORK);
             }
 
             resp.json().then(json => {
                 dispatch({ type: LEETCODE_CODE_DEFINITION_SUCCESS, payload: json.data.question.codeSnippets });
-
-                return Promise.resolve();
+                completionHandler(true);
+                // Keep it for simple test for error situation
+                // errorHandler('Opps, error!');
             });
-
-            return Promise.resolve();
         })
         .catch(error => {
             dispatch({ type: LEETCODE_CODE_DEFINITION_FAILED, error });
+            errorHandler(`error: ${error}`);
         });
     };
 };
 
-export const leetcodeSubmissions = (offset = 0, key = '') => {
+export const leetcodeSubmissions = (offset = 0, key = '', completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_SUBMISSIONS });
         leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, Submissions(offset, key))
         .then(resp => {
             if (resp.status !== 200) {
                 dispatch({ type: LEETCODE_SUBMISSIONS_FAILED });
-
-                return Promise.resolve();
+                errorHandler(ERRs.ERR_NETWORK);
             }
 
             resp.json().then(json => {
                 dispatch({ type: LEETCODE_SUBMISSIONS_SUCCESS, payload: json.data.submissionList });
-
-                return Promise.resolve();
+                completionHandler(true);
             });
-
-            return Promise.resolve();
         })
         .catch(error => {
             dispatch({ type: LEETCODE_SUBMISSIONS_FAILED, error });
+            errorHandler(`error: ${error}`);
         });
     };
 };
 
-export const leetcodeRunCode = (input, titleSlug) => {
+export const leetcodeRunCode = (input, titleSlug, runCompletionHandler, runErrorHandler, expectedCompletionHandler, expectedErrorHandler) => {
+    const handler1 = runCompletionHandler;
+    const handler2 = expectedCompletionHandler;
+    const error1 = runErrorHandler;
+    const error2 = expectedErrorHandler;
+
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_RUN_CODE });
         leetcodePostFetch(URLs.runCode(titleSlug), csrftoken, LEETCODE_SESSION, JSON.stringify(input))
@@ -174,22 +174,21 @@ export const leetcodeRunCode = (input, titleSlug) => {
                 const error = resp.status === 429 ? 'Sorry but you are sending requests too fast. Please try again later.' : 'Unknown errors.';
 
                 dispatch({ type: LEETCODE_RUN_CODE_FAILED, error });
-
-                return Promise.resolve();
+                runErrorHandler(error);
             }
 
-            resp.json().then(json => {
-                /* eslint camelcase: ["error", {ignoreDestructuring: true}] */
-                const { interpret_id, interpret_expected_id } = json;
+            return resp.json();
+        })
+        .then(json => {
+            /* eslint camelcase: ["error", {ignoreDestructuring: true}] */
+            const { interpret_id, interpret_expected_id } = json;
 
-                queryRuncodeResult(dispatch, interpret_id);
-                queryExpectedResult(dispatch, interpret_expected_id);
-            });
-
-            return Promise.resolve();
+            queryRuncodeResult(dispatch, interpret_id, handler1, error1);
+            queryExpectedResult(dispatch, interpret_expected_id, handler2, error2);
         })
         .catch(error => {
             dispatch({ type: LEETCODE_RUN_CODE_FAILED, error });
+            runErrorHandler(`error: ${error}`);
         });
     };
 };

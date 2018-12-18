@@ -1,28 +1,119 @@
 import React, { Component } from 'react';
 import {
-    View, ActivityIndicator, Text, FlatList,
+    View, Text, FlatList, Animated, LayoutAnimation, TouchableOpacity,
 } from 'react-native';
-import { List, ListItem } from 'react-native-elements';
-import _ from 'lodash';
+import { ListItem } from 'react-native-elements';
 
 import { connect } from 'react-redux';
 import { leetcodeSubmissions } from '../actions';
 
+import LeetcodeIcon from './common/LeetcodeIcon';
+
+const ANIMATION_DURATION = 1000;
+const OPACITY = 0.2;
 
 const styles = {
     container: {
         flex: 1,
     },
+    loadingErrorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+    },
+    errorString: {
+        fontSize: 24,
+        fontWeight: '500',
+        color: 'gray',
+        marginTop: 20,
+    },
+    reloadButton: {
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 5,
+        // padding: 10,
+        width: '35%',
+        height: 35,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 15,
+    },
+    reloadButtonTitle: {
+        fontSize: 18,
+        color: 'gray',
+    },
 };
 
-class Submissions extends Component {
-    static defaultProps = {
-        submissionList: {
-            submissions: [],
-        },
-    };
+type Props = {
+    submissionList: {
+        submissions: Array,
+    },
+    recentSubmissions: (number, string, boolean => void, string => void) => void,
+}
 
-    static renderSubmissionItem({ item }) {
+class Submissions extends Component<Props> {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            loading: false,
+            error: null,
+        };
+        this.fade = new Animated.Value(OPACITY);
+    }
+
+    componentDidMount() {
+        const { recentSubmissions } = this.props;
+
+        this.setState({ loading: true });
+        this.animatedLoading();
+        recentSubmissions(0, '', () => {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+            this.setState({ loading: false, error: null });
+        }, error => {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+            this.setState({ loading: false, error });
+        });
+    }
+
+    animatedLoading() {
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(
+                    this.fade,
+                    {
+                        toValue: 1,
+                        duration: ANIMATION_DURATION,
+                    }
+                ),
+                Animated.timing(
+                    this.fade,
+                    {
+                        toValue: OPACITY,
+                        duration: ANIMATION_DURATION,
+                    }
+                ),
+            ])
+        ).start();
+    }
+
+    renderSubmissionsList() {
+        const { submissionList } = this.props;
+        const { submissions } = submissionList;
+
+        return (
+            <FlatList
+                style={{ flex: 1 }}
+                data={submissions}
+                keyExtractor={submission => submission.timestamp}
+                renderItem={this.renderSubmissionItem}
+                ListEmptyComponent={this.renderEmpty}
+            />
+        );
+    }
+
+    renderSubmissionItem = ({ item }) => {
         const colorStyle = item.statusDisplay === 'Accepted' ? 'green' : 'red';
 
         return (
@@ -36,7 +127,7 @@ class Submissions extends Component {
         );
     }
 
-    static renderEmpty() {
+    renderEmpty = () => {
         const { container } = styles;
 
         return (
@@ -46,55 +137,32 @@ class Submissions extends Component {
         );
     }
 
-    componentDidMount() {
-        const { recentSubmissions } = this.props;
-
-        recentSubmissions();
-    }
-
-    renderSubmissionsList() {
-        const { submissionList } = this.props;
-        let submissions = [];
-
-        if (submissionList) {
-            submissions = submissionList.submissions;
-        }
-
-        return (
-            <FlatList
-                style={{ flex: 1 }}
-                data={submissions}
-                keyExtractor={submission => submission.timestamp}
-                renderItem={Submissions.renderSubmissionItem}
-                ListEmptyComponent={Submissions.renderEmpty}
-            />
-        );
-    }
-
-    renderError() {
-        const { error } = this.props;
-
-        return (
-            <View>
-                <Text>{`Failed to get your recent submissions ${error}.`}</Text>
-            </View>
-        );
-    }
-
     render() {
-        const { loading, error } = this.props;
-        const { container } = styles;
+        const { loading, error } = this.state;
+        const {
+            container, loadingErrorContainer, errorString, reloadButton, reloadButtonTitle,
+        } = styles;
 
         if (loading) {
             return (
-                <View style={[container, { justifyContent: 'center', alignItems: 'center' }]}>
-                    <ActivityIndicator animating />
+                <View style={loadingErrorContainer}>
+                    <Animated.View style={{ ...this.props.style, opacity: this.fade }}>
+                        <LeetcodeIcon />
+                    </Animated.View>
                 </View>
             );
         }
 
         if (error) {
-            return this.renderError();
+            return (
+                <View style={loadingErrorContainer}>
+                   <LeetcodeIcon />
+                   <Text style={errorString}>{error}</Text>
+                   <TouchableOpacity style={reloadButton} onPress={() => { this.loadProblems(); }}>
+                       <Text style={reloadButtonTitle}>Reload it</Text>
+                   </TouchableOpacity>
+                </View>
+            );
         }
 
         return (
@@ -102,28 +170,6 @@ class Submissions extends Component {
                 {this.renderSubmissionsList()}
             </View>
         );
-
-        // if (loading) {
-        //     return (
-        //         <View style={[container, { justifyContent: 'center', alignItems: 'center' }]}>
-        //             <ActivityIndicator animating />
-        //         </View>
-        //     );
-        // }
-
-        // if (error) {
-        //     return (
-        //         <View style={container}>
-        //             <Text>Failed to get your recent submissions.</Text>
-        //         </View>
-        //     );
-        // }
-
-        // return (
-        //     <View style={container}>
-        //         {this.renderSubmissionsList()}
-        //     </View>
-        // );
     }
 }
 
@@ -131,8 +177,7 @@ const mapStateToProps = state => {
     const { submissions } = state;
 
     return {
-        loading: submissions.loading,
-        error: submissions.error,
+        lastKey: submissions.lastKey,
         submissionList: submissions.submissionList,
     };
 };

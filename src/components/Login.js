@@ -124,7 +124,7 @@ class Login extends Component<LoginProps> {
         } = this.state;
         const leftIcon = loading ? {} : { name: 'arrow-upward', size: 23 };
         const title = loading ? '' : 'Sign in';
-        const id = 'alskdjf';
+        const id = 'login_input_accessory_id';
 
         return (
 

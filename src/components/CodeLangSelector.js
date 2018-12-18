@@ -8,35 +8,45 @@ import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { leetcodeSelectedIndex } from '../actions';
 
-class CodeLangSelector extends Component {
-    static renderLangItem({ item, index }) {
-        const { selectedIndex, select } = this.props;
-        const title = index === selectedIndex ? '✓' : ' ';
+type Props = {
+    langsConfig: Array,
+    selectedIndex: number,
+    langSelected: number => Object,
+};
+
+class CodeLangSelector extends Component<Props> {
+    indexSelected = index => {
+        // action(index);
+        const { langSelected } = this.props;
+
+        langSelected(index);
+        Actions.pop();
+    };
+
+    renderLangItem = ({ item, index }) => {
+        const { selectedIndex } = this.props;
+        const rightCheck = index === selectedIndex ? '✓' : ' ';
 
         return (
             <ListItem
                 key={item.lang}
                 title={item.displayName}
-                rightTitle={title}
-                onPress={() => select(index, select)}
+                rightTitle={rightCheck}
+                onPress={() => this.indexSelected(index)}
                 hideChevron
             />
         );
-    }
-
-    static indexSelected(index, action) {
-        action(index);
-        Actions.pop();
-    }
+    };
 
     render() {
         const { langsConfig } = this.props;
 
         return (
             <FlatList
+                style={{ backgroundColor: 'white' }}
                 data={langsConfig}
                 keyExtractor={item => item.lang}
-                renderItem={CodeLangSelector.renderLangItem.bind(this)}
+                renderItem={this.renderLangItem}
             />
         );
     }
@@ -44,7 +54,7 @@ class CodeLangSelector extends Component {
 
 const mapDispatchToProps = dispatch => {
     return {
-        select: (...args) => dispatch(leetcodeSelectedIndex(...args)),
+        langSelected: (...args) => dispatch(leetcodeSelectedIndex(...args)),
     };
 };
 
