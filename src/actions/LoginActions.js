@@ -119,23 +119,30 @@ export const leetcodeLogin = (username, password, completionHandler, errorHandle
     };
 };
 
-export const leetcodeLogout = () => {
+export const leetcodeLogout = (completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_LOGOUT });
         leetcodeGetFetch(URLs.logout, csrftoken, LEETCODE_SESSION)
         .then(resp => {
             if (resp.status !== 200) {
                 dispatch({ type: LEETCODE_LOGOUT_FAILED });
+                if (errorHandler) {
+                    errorHandler(ERRs.ERR_NETWORK);
+                }
 
-                return Promise.resolve();
+                return;
             }
 
             dispatch({ type: LEETCODE_LOGOUT_SUCCESS });
-
-            return Promise.resolve();
+            if (completionHandler) { 
+                completionHandler(true);
+            }
         })
         .catch(error => {
             dispatch({ type: LEETCODE_LOGOUT_FAILED, error });
+            if (errorHandler) {
+                errorHandler(`error: ${error}`);
+            }
         });
     };
 };

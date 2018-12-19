@@ -62,6 +62,7 @@ const styles = {
     },
     tagTextWrapper: {
         flex: 1,
+        // maxWidth: '90%',
         marginTop: 5,
         backgroundColor: '#f7f9fa',
         padding: 5,
@@ -152,6 +153,19 @@ export default ({ problem, index }: ProblemItemProps) => {
         return null;
     };
 
+    const renderTags = () => {
+        if (topicTags.length > 0) {
+            return (
+                <View style={{ flexDirection: 'row' }}>
+                    <Icon size={16} type="font-awesome" name="tags" color="gray" containerStyle={tagIcon} />
+                    <View style={tagTextWrapper}><Text numberOfLines={100} style={tagText}>{tags(topicTags)}</Text></View>
+                </View>
+            );
+        }
+
+        return null;
+    };
+
     return (
         <TouchableOpacity disabled={isPaidOnly} style={listItem} key={questionId} onPress={() => { goToDetails(); }}>
             <View style={leftPart}>
@@ -168,10 +182,7 @@ export default ({ problem, index }: ProblemItemProps) => {
                     <Badge containerStyle={[{ width: 70, marginTop: 5 }, difficultyColor]}>
                         <Text style={{ fontSize: 11, color: 'white' }}>{difficulty}</Text>
                     </Badge>
-                    <View style={{ flexDirection: 'row' }}>
-                    <Icon size={16} type="font-awesome" name="tags" color="gray" containerStyle={tagIcon} />
-                        <View style={tagTextWrapper}><Text numberOfLines={100} style={tagText}>{tags(topicTags)}</Text></View>
-                    </View>
+                    {renderTags()}
                     <View style={{ flexDirection: 'row' }}>
                         <Icon type="simple-line-icon" name="like" size={17} color="gray" containerStyle={{ marginTop: 4, marginRight: 5 }} />
                         <Text style={{ marginTop: 5, color: 'gray' }}>{likes}</Text>

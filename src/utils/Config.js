@@ -10,5 +10,5 @@ export default {
         runCodeExpectedResult:  expectedInterpretId => `https://leetcode.com/submissions/detail/${expectedInterpretId}/check/`,
         submitCode:             titleSlug => `https://leetcode.com/problems/${titleSlug}/submit/`,
         submitCodeResult:       submissionId => `https://leetcode.com/submissions/detail/${submissionId}/check/`
-    }
+    },
 };

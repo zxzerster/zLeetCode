@@ -4,10 +4,10 @@ import {
     Linking, Keyboard, InputAccessoryView,
     Alert, Button as NativeButton, KeyboardAvoidingView,
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
 import {
-    FormInput, Button,
+    FormInput, Button, Icon,
 } from 'react-native-elements';
+import { Actions } from 'react-native-router-flux';
 
 import { connect } from 'react-redux';
 import { leetcodeLogin } from '../actions';
@@ -28,9 +28,7 @@ const styles = {
     },
     inputContainer: {
         flex: 5,
-        justifyContent: 'flex-start',
-        marginTop: 20,
-        // backgroundColor: 'blue',
+        // marginTop: 20,
     },
     submitContainer: {
         flex: 12,
@@ -93,7 +91,7 @@ class Login extends Component<LoginProps> {
         const { username, password } = this.state;
         const { login } = this.props;
 
-        this.pwdRef.current.input.blur();
+        this.nameRef.current.input.focus();
         this.setState({ loading: true });
         login(username, password,
             () => {
@@ -104,7 +102,6 @@ class Login extends Component<LoginProps> {
             error => {
                 // console.log(error);
                 this.setState({ loading: false, username: '', password: '' });
-                this.pwdRef.current.input.blur();
                 Alert.alert('Login failed', error, [{ text: 'OK' }]);
             });
     }
@@ -133,9 +130,12 @@ class Login extends Component<LoginProps> {
                     <LeetcodeIcon />
                 </View>
                 <View style={inputContainer}>
+                    <View style={{ flexDirection: 'row', marginBottom: 30 }}>
+                        <Icon containerStyle={{ alignSelf: 'center', marginLeft: 10, marginTop: 5 }} type="evilicon" name="user" color="#bababa" size={36} />
                         <FormInput
                             ref={this.nameRef}
                             inputAccessoryViewID={id}
+                            containerStyle={{ width: '80%', marginLeft: 8 }}
                             returnKeyType="next"
                             placeholder="Username or E-mail"
                             autoCapitalize="none"
@@ -144,9 +144,13 @@ class Login extends Component<LoginProps> {
                             onChangeText={text => this.setState({ username: text })}
                             onSubmitEditing={() => this.handleNameInputEnterPressed()}
                         />
+                    </View>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Icon containerStyle={{ marginLeft: 10 }} type="evilicon" name="lock" color="#bababa" size={36} />
                         <FormInput
                             ref={this.pwdRef}
                             inputAccessoryViewID={id}
+                            containerStyle={{ width: '80%', marginLeft: 8 }}
                             returnKeyType="go"
                             placeholder="Password"
                             secureTextEntry
@@ -154,11 +158,12 @@ class Login extends Component<LoginProps> {
                             onChangeText={text => this.setState({ password: text })}
                             onSubmitEditing={() => this.login()}
                         />
-                        <InputAccessoryView nativeID={id}>
-                            <View style={inputAccessory}>
-                                <NativeButton onPress={Login.dimissKeyboard} title="Ok" />
-                            </View>
-                        </InputAccessoryView>
+                    </View>
+                    <InputAccessoryView nativeID={id}>
+                        <View style={inputAccessory}>
+                            <NativeButton onPress={Login.dimissKeyboard} title="Ok" />
+                        </View>
+                    </InputAccessoryView>
                     <View style={submitContainer}>
                         <Button
                             leftIcon={leftIcon}
@@ -168,7 +173,7 @@ class Login extends Component<LoginProps> {
                             title={title}
                             onPress={() => this.login()}
                         />
-                        <TouchableOpacity style={forgot} onPress={() => Login.forgotPassword()}>
+                        <TouchableOpacity disabled={loading} style={forgot} onPress={() => Login.forgotPassword()}>
                             <Text style={forgotText}>Forgot Password?</Text>
                         </TouchableOpacity>
                     </View>
@@ -192,76 +197,3 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
-
-// class Login extends Component {
-//     Login() {
-//         const { leetcodeLogin } = this.props;
-
-//         leetcodeLogin('zxz_er', '454127927');
-//     }
-
-//     Longout() {
-//         const { leetcodeLogout } = this.props;
-
-//         leetcodeLogout();
-//     }
-
-//     userProfile() {
-//         const { leetcodeUserProfile } = this.props;
-
-//         leetcodeUserProfile();
-//     }
-
-//     allProblems() {
-//         const { leetcodeAllProblems } = this.props;
-
-//         leetcodeAllProblems();
-//     }
-
-//     problemDetail() {
-//         const { leetcodeProblemDetail } = this.props;
-
-//         leetcodeProblemDetail('two-sum');
-//     }
-
-//     runCode() {
-//         const { leetcodeRunCode } = this.props;
-//         const titleSlug = 'two-sum';
-//         const input = {
-//             question_id: '1',
-//             judge_type: 'small',
-//             data_input: '[2, 7, 11, 15]\n9',
-//             lang: 'python',
-//             typed_code: 'class Solution(object):\n    def twoSum(self, nums, target):\n        \"\"\"\n        :type nums: List[int]\n        :type target: int\n        :rtype: List[int]\n        \"\"\"\n        \n        indices = []\n        length = len(nums)\n        for i in range(0, length):\n            del indices[:]\n            remaining = target - nums[i]\n            indices.append(i)\n            for j in range(i + 1, length):\n                if nums[j] == remaining:\n                    indices.append(j)\n                    return indices\n\n        return indices\n        ',
-//         };
-
-//         leetcodeRunCode(input, titleSlug);
-//     }
-
-//     render() {
-//         return (
-//             <View>
-//                 <TouchableOpacity onPress={() => this.Login()}>
-//                     <Text>Login</Text>
-//                 </TouchableOpacity>
-//                 <TouchableOpacity onPress={() => this.logout()}>
-//                     <Text>Logout</Text>
-//                 </TouchableOpacity>
-//                 <TouchableOpacity onPress={() => this.userProfile()}>
-//                     <Text>User Profile</Text>
-//                 </TouchableOpacity>
-//                 <TouchableOpacity onPress={() => this.allProblems()}>
-//                     <Text>All Problems</Text>
-//                 </TouchableOpacity>
-//                 <TouchableOpacity onPress={() => this.problemDetail()}>
-//                     <Text>Problem Detail</Text>
-//                 </TouchableOpacity>
-//                 <TouchableOpacity onPress={() => this.runCode()}>
-//                     <Text>Run Code</Text>
-//                 </TouchableOpacity>
-//             </View>
-//         );
-//     }
-// }
-
-// export default connect(null, actions)(Login);

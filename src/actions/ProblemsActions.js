@@ -28,7 +28,7 @@ const queryResult = (dispatch, successType, failedType, id, completionHandler, e
 
         resp.json().then(json => {
             const { state } = json;
-            console.log(`==========  query result: ${state}`);
+
             switch (state) {
                 case 'STARTED':
                 case 'PENDING':
@@ -122,6 +122,8 @@ export const leetcodeCodeDefinition = (titleSlug, completionHandler, errorHandle
             if (resp.status !== 200) {
                 dispatch({ type: LEETCODE_CODE_DEFINITION_FAILED });
                 errorHandler(ERRs.ERR_NETWORK);
+
+                return;
             }
 
             resp.json().then(json => {
@@ -146,6 +148,8 @@ export const leetcodeSubmissions = (offset = 0, key = '', completionHandler, err
             if (resp.status !== 200) {
                 dispatch({ type: LEETCODE_SUBMISSIONS_FAILED });
                 errorHandler(ERRs.ERR_NETWORK);
+
+                return;
             }
 
             resp.json().then(json => {
@@ -175,6 +179,8 @@ export const leetcodeRunCode = (input, titleSlug, runCompletionHandler, runError
 
                 dispatch({ type: LEETCODE_RUN_CODE_FAILED, error });
                 runErrorHandler(error);
+
+                return;
             }
 
             return resp.json();

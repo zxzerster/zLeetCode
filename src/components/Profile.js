@@ -4,8 +4,9 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { Badge, Divider, Button } from 'react-native-elements';
-
 import { connect } from 'react-redux';
+
+import LeetcodeIcon from './common/LeetcodeIcon';
 import { leetcodeUserProfile, leetcodeLogout } from '../actions';
 
 import { versionString } from '../../ZLC-Config';
@@ -80,6 +81,7 @@ const profileStyles = {
     },
     badge: {
         flex: 1,
+        paddingVertical: 3,
         marginLeft: 3,
         marginRight: 3,
     },
@@ -113,14 +115,15 @@ const logoutStyles = {
     button: {
         flex: 1,
         height: 48,
+        borderRadius: 5,
     },
     buttonDisabled: {
         backgroundColor: '#888888',
         opacity: 0.6,
     },
     containerView: {
-        marginLeft: 0,
-        marginRight: 0,
+        // marginLeft: 0,
+        // marginRight: 0
         marginTop: 45,
     },
 };
@@ -131,6 +134,12 @@ const renderProfile = ({
     // Avatar
     const renderAvatar = () => {
         const { avatar } = profileStyles;
+
+        if (avatarUri === '--') {
+            return (
+                <LeetcodeIcon style={avatar} />
+            );
+        }
 
         return (
             <View>
@@ -249,30 +258,36 @@ const renderSettingItems = ({ submissionHandler, helperHandler, logoutHandler })
 };
 
 type Props = {
-    profile: Function,
-    logout: Function,
-    userProfile?: Object,
-    loading: boolean,
-    error: Object,
-    logoutLoading: boolean,
+    profile: (boolean => void, string => void) => void,
+    logout: (boolean => void, string => void) => void,
+    userProfile: {
+        userSlug: string,
+        realName: string,
+        aboutMe: string,
+        reputation: number,
+        occupation: string,
+        countryName: string,
+        school: string,
+        company: string,
+        location: string,
+        lastModified: string,
+        userAvatar: string,
+        gender: string,
+        acStats: {
+            acQuestionCount: number,
+            acSubmissionCount: number,
+            totalSubmissionCount: number,
+            acRate: number,
+        },
+    }
 };
 
 class Profile extends Component<Props> {
-    static defaultProps = {
-        userProfile: {
-            userAvatar: '',
-        },
-    };
-
-    static allSubmissions() {
-        Actions.submissions();
-    }
-
     constructor(props) {
         super(props);
 
         this.state = {
-            showLogoutLoading: false,
+            logoutLoading: false,
         };
     }
 
@@ -282,23 +297,23 @@ class Profile extends Component<Props> {
         profile();
     }
 
-    componentDidUpdate(prepProps) {
-        const { logoutLoading } = this.props;
-
-        if (prepProps.logoutLoading && !logoutLoading) {
-            Actions.popTo('login', { needVerify: false });
-        }
-    }
-
-    logout() {
+    logoutAction = () => {
         const { logout } = this.props;
 
-        logout();
+        this.setState({ logoutLoading: true });
+        logout(() => {
+            this.setState({ logoutLoading: false });
+            Actions.popTo('login', { needVerify: false });
+        });
+    }
+
+    allSubmissions = () => {
+        Actions.submissions();
     }
 
     renderLogout() {
         const { button, buttonDisabled, containerView } = logoutStyles;
-        const { logout, logoutLoading } = this.props;
+        const { logoutLoading } = this.state;
 
         return (
             <Button
@@ -309,23 +324,15 @@ class Profile extends Component<Props> {
                 disabled={logoutLoading}
                 loading={logoutLoading}
                 title={logoutLoading ? '' : 'Sign out'}
-                onPress={logout}
+                onPress={this.logoutAction}
             />
         );
     }
 
     render() {
         const { container, settingContainer } = profileStyles;
-        const { userProfile, loading, error } = this.props;
+        const { userProfile } = this.props;
         const avatarUri = userProfile.userAvatar;
-
-        if (loading || error) {
-        return (
-                <View>
-                    <Text>Loading</Text>
-                </View>
-            );
-        }
 
         return (
             <View style={container}>
@@ -335,7 +342,7 @@ class Profile extends Component<Props> {
                 <View style={settingContainer}>
                     <ScrollView>
                         {renderSettingItems({
-                            submissionHandler: Profile.allSubmissions,
+                            submissionHandler: this.allSubmissions,
                             helperHandler: this.helpHandler,
                             logoutHandler: this.logout,
                         })}
@@ -349,13 +356,9 @@ class Profile extends Component<Props> {
 
 const mapStateToProps = state => {
     const { profile } = state;
-    const { loading } = state.session;
 
     return {
-        loading: profile.loading,
-        error: profile.error,
         userProfile: profile.user.profile,
-        logoutLoading: loading,
     };
 };
 

@@ -15,6 +15,7 @@ const OPACITY = 0.2;
 const styles = {
     container: {
         flex: 1,
+        backgroundColor: 'white',
     },
     loadingErrorContainer: {
         flex: 1,
