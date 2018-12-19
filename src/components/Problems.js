@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    View, FlatList, Animated, LayoutAnimation, Text, TouchableOpacity,
+    View, FlatList, Animated, LayoutAnimation, Text, TouchableOpacity, Alert,
 } from 'react-native';
 import { connect } from 'react-redux';
 
@@ -70,12 +70,35 @@ class Problems extends Component<ProblemsProps> {
         this.state = {
             loading: false,
             error: null,
+            refreshing: false,
         };
         this.fade = new Animated.Value(OPACITY);
     }
 
     componentDidMount() {
         this.loadProblems.apply(this);
+    }
+
+    onRefresh = () => {
+        Alert.alert(
+            'Problems',
+            'Do you want to reload all problems?',
+            [
+                { text: 'Cancel' },
+                { text: 'Ok', onPress: this.refreshProblems() },
+            ],
+        );
+    }
+
+    refreshProblems = () => {
+        const { problems } = this.props;
+
+        this.setState({ refreshing: true });
+        problems(() => {
+            this.setState({ refreshing: false });
+        }, () => {
+            this.setState({ refreshing: false });
+        });
     }
 
     loadProblems() {
@@ -114,7 +137,7 @@ class Problems extends Component<ProblemsProps> {
     }
 
     render() {
-        const { loading, error } = this.state;
+        const { loading, error, refreshing } = this.state;
         const {
             container, loadingErrorContainer, errorString, reloadButton, reloadButtonTitle,
         } = styles;
@@ -149,6 +172,8 @@ class Problems extends Component<ProblemsProps> {
                     data={allQuestions}
                     keyExtractor={item => item.questionId}
                     renderItem={Problems.renderItem}
+                    refreshing={refreshing}
+                    onRefresh={this.refreshProblems}
                 />
             </View>
         );
