@@ -137,7 +137,7 @@ const renderProfile = ({
 
         if (avatarUri === '--') {
             return (
-                <LeetcodeIcon style={avatar} />
+                <LeetcodeIcon width={95} height={95} style={avatar} />
             );
         }
 
