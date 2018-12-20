@@ -170,7 +170,7 @@ export default ({ problem, index }: ProblemItemProps) => {
         <TouchableOpacity disabled={isPaidOnly} style={listItem} key={questionId} onPress={() => { goToDetails(); }}>
             <View style={leftPart}>
                 <View style={[listId]}>
-                    <Text numberOfLines={1} style={idTextStyle}>{`${index}`}</Text>
+                    <Text numberOfLines={1} style={idTextStyle}>{`${questionId}`}</Text>
                 </View>
                 <View style={{ flex: 3, marginLeft: 10 }}>
                     <Text

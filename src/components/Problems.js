@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import {
     View, FlatList, Alert,
 } from 'react-native';
+import { SearchBar } from 'react-native-elements';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
@@ -40,6 +42,8 @@ class Problems extends Component<ProblemsProps> {
             loading: false,
             error: null,
             refreshing: false,
+            searchKeyword: '',
+            displayedQuestions: [],
         };
     }
 
@@ -63,9 +67,11 @@ class Problems extends Component<ProblemsProps> {
 
         this.setState({ refreshing: true });
         problems(() => {
-            this.setState({ refreshing: false });
-        }, () => {
-            this.setState({ refreshing: false });
+            const { allQuestions } = this.props;
+
+            this.setState({ refreshing: false, error: null, displayedQuestions: allQuestions });
+        }, error => {
+            this.setState({ refreshing: false, error, displayedQuestions: [] });
         });
     }
 
@@ -74,16 +80,63 @@ class Problems extends Component<ProblemsProps> {
 
         this.setState({ loading: true });
         problems(() => {
-            this.setState({ loading: false, error: null });
+            const { allQuestions } = this.props;
+
+            this.setState({ loading: false, error: null, displayedQuestions: allQuestions });
         }, error => {
-            this.setState({ loading: false, error });
+            this.setState({ loading: false, error, displayedQuestions: [] });
         });
+    }
+
+    searchBar = () => {
+        return (
+            <SearchBar
+                containerStyle={{ backgroundColor: 'white' }}
+                inputContainerStyle={{ backgroundClor: 'white' }}
+                inputStyle={{ backgroundColor: '#f7f9fa' }}
+                returnKeyType="search"
+                lightTheme
+                round
+                placeholder="Search problems..."
+                searchIcon={{ size: 24 }}
+                onChangeText={text => this.setState({ searchKeyword: text })}
+                onEndEditing={this.simpleSearchProblems}
+            />
+        );
+    }
+
+    simpleSearchProblems = () => {
+        const { searchKeyword } = this.state;
+
+        if (searchKeyword && searchKeyword.length > 0) {
+            this.doSearch(searchKeyword);
+        } else {
+            const { allQuestions } = this.props;
+
+            this.setState({ displayedQuestions: allQuestions });
+        }
+    }
+
+    doSearch = key => {
+        const { displayedQuestions } = this.state;
+
+        this.setState({ loading: true });
+        const searched = _.filter(displayedQuestions, ({ title }) => {
+            const a = title.toLowerCase();
+            const b = key.toLowerCase();
+
+            return a.includes(b);
+        });
+
+        this.setState({ loading: false, displayedQuestions: searched });
     }
 
     render() {
         const { container } = styles;
-        const { allQuestions } = this.props;
-        const { loading, error, refreshing } = this.state;
+        // const { allQuestions } = this.props;
+        const {
+            displayedQuestions, loading, error, refreshing,
+        } = this.state;
 
         return (
             <LoadingErrorWrapper loading={loading} error={error}>
@@ -91,11 +144,12 @@ class Problems extends Component<ProblemsProps> {
                     <View style={[container, { marginTop: 0 }]}>
                         <FlatList
                             style={{ backgroundColor: 'white' }}
-                            data={allQuestions}
+                            data={displayedQuestions}
                             keyExtractor={item => item.questionId}
                             renderItem={Problems.renderItem}
                             refreshing={refreshing}
                             onRefresh={this.refreshProblems}
+                            ListHeaderComponent={this.searchBar}
                         />
                     </View>
                 )}

@@ -1,8 +1,14 @@
 import React from 'react';
 import { Icon } from 'react-native-elements';
 
-export default () => {
+type Props = {
+    tintColor: string,
+};
+
+export default (props: Props) => {
+    const { tintColor } = props;
+
     return (
-        <Icon type="ionicon" name="md-ribbon" />
+        <Icon type="ionicon" name="md-ribbon" color={tintColor} />
     );
 };

@@ -191,10 +191,10 @@ const renderProfile = ({
                     <Badge containerStyle={greenBadge} value={acStats.acQuestionCount} />
                 </View>
                 <View style={[badge]}>
-                    <Badge containerStyle={greenBadge} value={`${acStats.acSubmissionCount}/${acStats.totalSubmissionCount}`} />
+                    <Badge containerStyle={greenBadge} value={`${acStats.acSubmissionCount} / ${acStats.totalSubmissionCount}`} />
                 </View>
                 <View style={[badge]}>
-                    <Badge containerStyle={blueBadge} value={`${acStats.acRate}%`} />
+                    <Badge containerStyle={blueBadge} value={`${acStats.acRate} %`} />
                 </View>
             </View>
         );

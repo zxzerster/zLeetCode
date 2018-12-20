@@ -1,5 +1,4 @@
 import React from 'react';
-import { StatusBar } from 'react-native';
 import { Router, Scene, Stack } from 'react-native-router-flux';
 
 import Loading from './src/components/Loading';
@@ -11,11 +10,13 @@ import ProblemDetails from './src/components/ProblemDetails';
 import ProblemSubmission from './src/components/ProblemSubmission';
 import CodeLangSelector from './src/components/CodeLangSelector';
 import SearchProblem from './src/components/SearchProblem';
+import FavoriteProblems from './src/components/FavoriteProblems';
 
 import ProblemTabIcon from './src/components/common/ProblemTabIcon';
 import ProblemRighttButton from './src/components/common/ProblemRightButton';
 import ProfileTabIcon from './src/components/common/ProfileTabIcon';
 import SearchTabIcon from './src/components/common/SearchTabIcon';
+import FavoriteTabIcon from './src/components/common/FavoriteTabIcon';
 
 const LeetCodeRoutes = () => {
     return (
@@ -33,10 +34,9 @@ const LeetCodeRoutes = () => {
                 <Scene
                     key="main"
                     tabs
-                    activeTintColor="red"
-                    nactiveTintColor="gray"
                     showLabel={false}
-                    indicatorStyle={{ backgroundColor: 'green' }}
+                    activeTintColor="rgba(236, 162, 64, 128)"
+                    inactiveTintColor="gray"
                 >
                     <Stack key="problemsWrapper" icon={ProblemTabIcon}>
                         <Scene key="problems" title="Problems" initial component={Problems} renderRightButton={ProblemRighttButton} onRight={() => {}} />
@@ -46,6 +46,9 @@ const LeetCodeRoutes = () => {
                     </Stack>
                     <Stack icon={SearchTabIcon}>
                         <Scene key="searchProblem" component={SearchProblem} title="Search" />
+                    </Stack>
+                    <Stack icon={FavoriteTabIcon}>
+                        <Scene key="favoriteProblems" component={FavoriteProblems} title="Search" />
                     </Stack>
                     <Stack key="profileWrapper" title="Profile" icon={ProfileTabIcon}>
                         <Scene key="profile" component={Profile} initial />

@@ -9,6 +9,6 @@ export default (props: Props) => {
     const { tintColor } = props;
 
     return (
-        <Icon type="ionicon" name="ios-paper" color={tintColor} />
+        <Icon type="ionicon" name="ios-heart" color={tintColor} />
     );
 };
