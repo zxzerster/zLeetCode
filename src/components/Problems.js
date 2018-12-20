@@ -45,6 +45,8 @@ class Problems extends Component<ProblemsProps> {
             searchKeyword: '',
             displayedQuestions: [],
         };
+
+        this.searchRef = React.createRef();
     }
 
     componentDidMount() {
@@ -64,11 +66,13 @@ class Problems extends Component<ProblemsProps> {
 
     refreshProblems = () => {
         const { problems } = this.props;
+        const ref = this.searchRef;
 
         this.setState({ refreshing: true });
         problems(() => {
             const { allQuestions } = this.props;
 
+            ref.current.input.clear();
             this.setState({ refreshing: false, error: null, displayedQuestions: allQuestions });
         }, error => {
             this.setState({ refreshing: false, error, displayedQuestions: [] });
@@ -91,6 +95,7 @@ class Problems extends Component<ProblemsProps> {
     searchBar = () => {
         return (
             <SearchBar
+                ref={this.searchRef}
                 containerStyle={{ backgroundColor: 'white' }}
                 inputContainerStyle={{ backgroundClor: 'white' }}
                 inputStyle={{ backgroundColor: '#f7f9fa' }}
@@ -120,6 +125,7 @@ class Problems extends Component<ProblemsProps> {
     doSearch = key => {
         const { displayedQuestions } = this.state;
 
+        // TODO: a background worker is needed here!!!
         this.setState({ loading: true });
         const searched = _.filter(displayedQuestions, ({ title }) => {
             const a = title.toLowerCase();
@@ -130,6 +136,18 @@ class Problems extends Component<ProblemsProps> {
 
         this.setState({ loading: false, displayedQuestions: searched });
     }
+
+    // onlyOneLevel = difficulty => {
+
+    // }
+
+    // sortAscending = () => {
+
+    // }
+
+    // sortDescending = () => {
+
+    // }
 
     render() {
         const { container } = styles;
