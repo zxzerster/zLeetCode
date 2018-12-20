@@ -22,6 +22,8 @@ const LeetCodeRoutes = () => {
         <Router
             navigationBarStyle={{ backgroundColor: 'rgba(236, 162, 64, 128)' }}
             titleStyle={{ color: 'white' }}
+            headerBackTitleStyle={{ color: 'white' }}
+            tintColor="white"
         >
             <Scene key="rootScene" hideNavBar modal>
                 <Scene key="loadingWrapper" initial>
