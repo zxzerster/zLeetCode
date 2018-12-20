@@ -151,7 +151,6 @@ class Problems extends Component<ProblemsProps> {
 
     render() {
         const { container } = styles;
-        // const { allQuestions } = this.props;
         const {
             displayedQuestions, loading, error, refreshing,
         } = this.state;
