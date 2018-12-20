@@ -189,9 +189,7 @@ export default ({ problem, index }: ProblemItemProps) => {
                     </View>
                 </View>
             </View>
-            {
-                renderRightPart()
-            }
+            {renderRightPart()}
         </TouchableOpacity>
     );
 };

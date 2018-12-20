@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    View, Text, Animated, ScrollView, TouchableOpacity, LayoutAnimation,
+    View, Text, ScrollView, TouchableOpacity,
 } from 'react-native';
 import { Badge, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -8,12 +8,8 @@ import HTMLView from 'react-native-htmlview';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 import { leetcodeProblemDetail } from '../actions';
-
-import LeetcodeIcon from './common/LeetcodeIcon';
-
-const ANIMATION_DURATION = 1000;
-const OPACITY = 0.2;
 
 const HTMLStyles = {
     p: {
@@ -45,33 +41,6 @@ const styles = {
         margin: 15,
         borderRadius: 5,
         padding: 8,
-    },
-    loadingErrorContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'white',
-    },
-    errorString: {
-        fontSize: 24,
-        fontWeight: '500',
-        color: 'gray',
-        marginTop: 20,
-    },
-    reloadButton: {
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 5,
-        // padding: 10,
-        width: '35%',
-        height: 35,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 15,
-    },
-    reloadButtonTitle: {
-        fontSize: 18,
-        color: 'gray',
     },
     titleWrapper: {
         backgroundColor: 'white',
@@ -221,7 +190,6 @@ class ProblemDetails extends Component<Props> {
             loading: false,
             error: null,
         };
-        this.fade = new Animated.Value(OPACITY);
     }
 
     componentDidMount() {
@@ -232,40 +200,15 @@ class ProblemDetails extends Component<Props> {
         const { problemDetails, titleSlug } = this.props;
 
         this.setState({ loading: true });
-        this.animatedLoading();
         problemDetails(titleSlug, () => {
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
             this.setState({ loading: false, error: null });
         }, error => {
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
             this.setState({ loading: false, error });
         });
     }
 
-    animatedLoading() {
-        Animated.loop(
-            Animated.sequence([
-                Animated.timing(
-                    this.fade,
-                    {
-                        toValue: 1,
-                        duration: ANIMATION_DURATION,
-                    }
-                ),
-                Animated.timing(
-                    this.fade,
-                    {
-                        toValue: OPACITY,
-                        duration: ANIMATION_DURATION,
-                    }
-                ),
-            ])
-        ).start();
-    }
-
     render() {
         const {
-            loadingErrorContainer, errorString, reloadButton, reloadButtonTitle,
             titleWrapper, titleStyle, titleIcon,
             resolveButton,
             easyGreen, mediumYellow, hardRed,
@@ -295,65 +238,47 @@ class ProblemDetails extends Component<Props> {
             statsObj = JSON.parse(stats);
         }
 
-        if (loading) {
-            return (
-                <View style={loadingErrorContainer}>
-                    <Animated.View style={{ ...this.props.style, opacity: this.fade }}>
-                        <LeetcodeIcon />
-                    </Animated.View>
-                </View>
-            );
-        }
-
-        if (error) {
-            return (
-                <View style={loadingErrorContainer}>
-                   <LeetcodeIcon />
-                   <Text style={errorString}>{error}</Text>
-                   <TouchableOpacity style={reloadButton} onPress={() => { this.loadProblemDetails(); }}>
-                       <Text style={reloadButtonTitle}>Reload it</Text>
-                   </TouchableOpacity>
-                </View>
-            );
-        }
-
         return (
-            <View style={{ flex: 1, backgroundColor: 'white' }}>
-                <View style={titleWrapper}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={titleStyle}>{`#${questionId} ${title}`}</Text>
-                        <View style={titleIcon}>
-                            <Badge containerStyle={[{ width: 70, marginTop: 5 }, difficultyColor]}>
-                                <Text style={{ fontSize: 11, color: 'white' }}>{detail.difficulty}</Text>
-                            </Badge>
+            <LoadingErrorWrapper loading={loading} error={error}>
+                {() => (
+                    <View style={{ flex: 1, backgroundColor: 'white' }}>
+                        <View style={titleWrapper}>
                             <View style={{ flexDirection: 'row' }}>
-                                <View style={{ flexDirection: 'row', marginRight: 8 }}>
-                                    <Icon type="simple-line-icon" name="like" size={14} color="gray" containerStyle={{ marginTop: 4, marginRight: 5 }} />
-                                    <Text style={{ fontSize: 12, marginTop: 5, color: 'gray' }}>{likes}</Text>
-                                </View>
-                                <View style={{ flexDirection: 'row' }}>
-                                    <Icon type="simple-line-icon" name="dislike" size={14} color="gray" containerStyle={{ marginTop: 4, marginRight: 5 }} />
-                                    <Text style={{ fontSize: 12, marginTop: 5, color: 'gray' }}>{dislikes}</Text>
+                                <Text style={titleStyle}>{`#${questionId} ${title}`}</Text>
+                                <View style={titleIcon}>
+                                    <Badge containerStyle={[{ width: 70, marginTop: 5 }, difficultyColor]}>
+                                        <Text style={{ fontSize: 11, color: 'white' }}>{detail.difficulty}</Text>
+                                    </Badge>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <View style={{ flexDirection: 'row', marginRight: 8 }}>
+                                            <Icon type="simple-line-icon" name="like" size={14} color="gray" containerStyle={{ marginTop: 4, marginRight: 5 }} />
+                                            <Text style={{ fontSize: 12, marginTop: 5, color: 'gray' }}>{likes}</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Icon type="simple-line-icon" name="dislike" size={14} color="gray" containerStyle={{ marginTop: 4, marginRight: 5 }} />
+                                            <Text style={{ fontSize: 12, marginTop: 5, color: 'gray' }}>{dislikes}</Text>
+                                        </View>
+                                    </View>
                                 </View>
                             </View>
+                            <ScrollView horizontal style={{ marginTop: 5, paddingBottom: 8 }}>
+                                {ProblemDetails.renderSimilars(similars)}
+                            </ScrollView>
+                            {ProblemDetails.renderStats(statsObj)}
                         </View>
+                        <ScrollView style={{ flex: 2 }}>
+                            <HTMLView
+                                value={detail.content}
+                                renderNode={ProblemDetails.renderBlocks}
+                                stylesheet={HTMLStyles}
+                            />
+                        </ScrollView>
+                        <TouchableOpacity style={resolveButton} onPress={() => ProblemDetails.resolveQuestion(titleSlug, title, questionId, judgeType)}>
+                            <Text style={{ color: 'white', fontSize: 34, fontWeight: '600' }}>+</Text>
+                        </TouchableOpacity>
                     </View>
-                    <ScrollView horizontal style={{ marginTop: 5, paddingBottom: 8 }}>
-                        {ProblemDetails.renderSimilars(similars)}
-                    </ScrollView>
-                    {ProblemDetails.renderStats(statsObj)}
-                </View>
-                <ScrollView style={{ flex: 2 }}>
-                    <HTMLView
-                        value={detail.content}
-                        renderNode={ProblemDetails.renderBlocks}
-                        stylesheet={HTMLStyles}
-                    />
-                </ScrollView>
-                <TouchableOpacity style={resolveButton} onPress={() => ProblemDetails.resolveQuestion(titleSlug, title, questionId, judgeType)}>
-                    <Text style={{ color: 'white', fontSize: 34, fontWeight: '600' }}>+</Text>
-                </TouchableOpacity>
-            </View>
+                )}
+            </LoadingErrorWrapper>
         );
     }
 }

@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import {
-    View, Text, TouchableOpacity, ScrollView, Animated,
-    LayoutAnimation, Alert, ActivityIndicator, TextInput,
+    View, Text, TouchableOpacity, ScrollView,
+    Alert, ActivityIndicator, TextInput, Button,
     KeyboardAvoidingView, Keyboard, InputAccessoryView,
-    Button
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
@@ -11,10 +10,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { leetcodeCodeDefinition, leetcodeRunCode, leetcodeSubmitCode } from '../actions';
 
-import LeetcodeIcon from './common/LeetcodeIcon';
-
-const ANIMATION_DURATION = 1000;
-const OPACITY = 0.2;
+import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 
 // Temparay test code
 const emptyCode = '';
@@ -194,7 +190,6 @@ class ProblemSubmission extends Component<Props> {
             error: null,
             uploading: false,
         };
-        this.fade = new Animated.Value(OPACITY);
     }
 
     componentDidMount() {
@@ -236,13 +231,10 @@ class ProblemSubmission extends Component<Props> {
         const { codeDefinition, titleSlug } = this.props;
 
         this.setState({ loading: true });
-        this.animatedLoading();
         codeDefinition(titleSlug, () => {
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
             this.setState({ loading: false, error: null });
             this.updateRightTitle();
         }, error => {
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
             this.setState({ loading: false, error });
             this.setRightTitle('');
         });
@@ -277,8 +269,7 @@ class ProblemSubmission extends Component<Props> {
                 }
             },
             error => {
-                this.setState({ uploading: false });
-                console.log(`error: ${error}`);
+                this.setState({ uploading: false, error });
             },
             // Expected part callback
             () => {
@@ -291,30 +282,8 @@ class ProblemSubmission extends Component<Props> {
                 }
             },
             error => {
-                this.setState({ uploading: false });
-                console.log(`error: ${error}`);
+                this.setState({ uploading: false, error });
             });
-    }
-
-    animatedLoading() {
-        Animated.loop(
-            Animated.sequence([
-                Animated.timing(
-                    this.fade,
-                    {
-                        toValue: 1,
-                        duration: ANIMATION_DURATION,
-                    }
-                ),
-                Animated.timing(
-                    this.fade,
-                    {
-                        toValue: OPACITY,
-                        duration: ANIMATION_DURATION,
-                    }
-                ),
-            ])
-        ).start();
     }
 
     showRunResult = (title, content) => {
@@ -335,82 +304,50 @@ class ProblemSubmission extends Component<Props> {
     render() {
         const { loading, error, uploading } = this.state;
         const {
-            loadingErrorContainer, errorString, reloadButton, reloadButtonTitle,
             Run, Submit,
             editorWrapper,
             paramsWrapper, paramsTitle, paramsInput, inputAccessory,
         } = styles;
+        const { snippets, selectedIndex } = this.props;
         const id = 'login_input_accessory_id';
 
-        if (loading) {
-            return (
-                <View style={loadingErrorContainer}>
-                    <Animated.View style={{ ...this.props.style, opacity: this.fade }}>
-                        <LeetcodeIcon />
-                    </Animated.View>
-                </View>
-            );
-        }
-
-        if (error) {
-            return (
-                <View style={loadingErrorContainer}>
-                   <LeetcodeIcon />
-                   <Text style={errorString}>{error}</Text>
-                   <TouchableOpacity style={reloadButton} onPress={() => { this.loadCodeDefinition(); }}>
-                        <Text style={reloadButtonTitle}>Reload it</Text>
-                   </TouchableOpacity>
-                </View>
-            );
-        }
-
-        const { snippets, selectedIndex } = this.props;
-
         return (
-            <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-                <ScrollView>
-                    <View style={editorWrapper}>
-                        <Text>{snippets[selectedIndex] ? snippets[selectedIndex].code : ''}</Text>
-                    </View>
-                </ScrollView>
-                {/* <View style={{ flex: 1, flexDirection: 'row', backgroundColor: 'blue' }}>
-                    <TouchableOpacity onPress={this.langSelection.bind(this)}>
-                        <Text>{snippets.length > 0 ? snippets[selectedIndex].lang : ''}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                        <Text>Check Solutions</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                        <Text>Discussions</Text>
-                    </TouchableOpacity>
-                </View> */}
-                {/* <Modal style={{ width: '40%', height: '30%', opcity: 0.2 }} visible presentationStyle="formSheet" /> */}
-                <View style={paramsWrapper}>
-                    <Text style={paramsTitle}>Input here</Text>
-                    <TextInput
-                        style={paramsInput}
-                        inputAccessoryViewID={id}
-                        returnKeyType="done"
-                        multiline
-                        clearButtonMode="while-editing"
-                        autoCorrect={false}
-                        autoCapitalize={false}
-                    />
-                    <InputAccessoryView nativeID={id}>
-                        <View style={inputAccessory}>
-                            <Button onPress={() => Keyboard.dismiss()} title="Ok" />
+            <LoadingErrorWrapper loading={loading} error={error}>
+                {() => (
+                    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+                        <ScrollView>
+                            <View style={editorWrapper}>
+                                <Text>{snippets[selectedIndex] ? snippets[selectedIndex].code : ''}</Text>
+                            </View>
+                        </ScrollView>
+                        <View style={paramsWrapper}>
+                            <Text style={paramsTitle}>Input here</Text>
+                            <TextInput
+                                style={paramsInput}
+                                inputAccessoryViewID={id}
+                                returnKeyType="done"
+                                multiline
+                                clearButtonMode="while-editing"
+                                autoCorrect={false}
+                                autoCapitalize="none"
+                            />
+                            <InputAccessoryView nativeID={id}>
+                                <View style={inputAccessory}>
+                                    <Button onPress={() => Keyboard.dismiss()} title="Ok" />
+                                </View>
+                            </InputAccessoryView>
                         </View>
-                    </InputAccessoryView>
-                </View>
-                <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity style={Submit} disabled={uploading}>
-                        {this.renderActionButton('S')}
-                    </TouchableOpacity>
-                    <TouchableOpacity style={Run} disabled={uploading} onPress={() => this.runIt()}>
-                        {this.renderActionButton('R')}
-                    </TouchableOpacity>
-                </View>
-            </KeyboardAvoidingView>
+                        <View style={{ flexDirection: 'row' }}>
+                            <TouchableOpacity style={Submit} disabled={uploading}>
+                                {this.renderActionButton('S')}
+                            </TouchableOpacity>
+                            <TouchableOpacity style={Run} disabled={uploading} onPress={() => this.runIt()}>
+                                {this.renderActionButton('R')}
+                            </TouchableOpacity>
+                        </View>
+                    </KeyboardAvoidingView>
+                )}
+            </LoadingErrorWrapper>
         );
     }
 }
