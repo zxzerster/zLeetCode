@@ -3,6 +3,6 @@ import { Icon } from 'react-native-elements';
 
 export default () => {
     return (
-        <Icon type="ionicon" name="md-ribbon" color="#dadada" />
+        <Icon type="ionicon" name="md-ribbon" />
     );
 };

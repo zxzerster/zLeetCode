@@ -1,8 +1,11 @@
 import React from 'react';
+import { TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 export default () => {
     return (
-        <Icon containerStyle={{ marginRight: 16 }} type="ionicon" name="ios-options" color="black" />
+        <TouchableOpacity>
+            <Icon containerStyle={{ marginRight: 16 }} type="ionicon" name="ios-options" color="white" />
+        </TouchableOpacity>
     );
 };

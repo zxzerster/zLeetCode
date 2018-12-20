@@ -1,4 +1,5 @@
 import React from 'react';
+import { StatusBar } from 'react-native';
 import { Router, Scene, Stack } from 'react-native-router-flux';
 
 import Loading from './src/components/Loading';
@@ -9,30 +10,45 @@ import Submissions from './src/components/Submissions';
 import ProblemDetails from './src/components/ProblemDetails';
 import ProblemSubmission from './src/components/ProblemSubmission';
 import CodeLangSelector from './src/components/CodeLangSelector';
+import SearchProblem from './src/components/SearchProblem';
 
 import ProblemTabIcon from './src/components/common/ProblemTabIcon';
 import ProblemRighttButton from './src/components/common/ProblemRightButton';
 import ProfileTabIcon from './src/components/common/ProfileTabIcon';
+import SearchTabIcon from './src/components/common/SearchTabIcon';
 
 const LeetCodeRoutes = () => {
     return (
-        <Router sceneStyle={{ }}>
+        <Router
+            navigationBarStyle={{ backgroundColor: 'rgba(236, 162, 64, 128)' }}
+            titleStyle={{ color: 'white' }}
+        >
             <Scene key="rootScene" hideNavBar modal>
                 <Scene key="loadingWrapper" initial>
                     <Scene key="loading" component={Loading} hideNavBar />
                     <Scene key="login" component={Login} title="Login" hideNavBar />
                 </Scene>
-                <Scene key="main" tabs>
-                    <Stack key="problemsWrapper" title="Problems" icon={ProblemTabIcon}>
-                        <Scene key="problems" component={Problems} renderRightButton={ProblemRighttButton} onRight={() => {}} title="Problems" initial />
+                <Scene
+                    key="main"
+                    tabs
+                    activeTintColor="red"
+                    nactiveTintColor="gray"
+                    showLabel={false}
+                    indicatorStyle={{ backgroundColor: 'green' }}
+                >
+                    <Stack key="problemsWrapper" icon={ProblemTabIcon}>
+                        <Scene key="problems" title="Problems" initial component={Problems} renderRightButton={ProblemRighttButton} onRight={() => {}} />
                         <Scene key="problemDetails" component={ProblemDetails} title="Details" />
                         <Scene key="problemSubmission" component={ProblemSubmission} title="Submission" />
                         <Scene key="codelangselector" component={CodeLangSelector} title="Select Languate" />
                     </Stack>
-                    <Scene key="profileWrapper" title="Profile" icon={ProfileTabIcon}>
+                    <Stack icon={SearchTabIcon}>
+                        <Scene key="searchProblem" component={SearchProblem} title="Search" />
+                    </Stack>
+                    <Stack key="profileWrapper" title="Profile" icon={ProfileTabIcon}>
                         <Scene key="profile" component={Profile} initial />
                         <Scene key="submissions" component={Submissions} title="Recent Submissions" />
-                    </Scene>
+                    </Stack>
                 </Scene>
             </Scene>
         </Router>
