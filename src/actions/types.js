@@ -22,6 +22,8 @@ export const LEETCODE_PROBLEM = 'leetcode_problem';
 export const LEETCODE_PROBLEM_SUCCESS = 'leetcode_problem_success';
 export const LEETCODE_PROBLEM_FAILED = 'leetcode_problem_failed';
 
+export const LEETCODE_SET_FILTER_PROBLEMS_KEYWORD = 'leetcode_set_filter_problems_keyword';
+
 export const LEETCODE_ALL_TAGS = 'leetcode_all_tags';
 export const LEETCODE_ALL_TAGS_SUCCESS = 'leetcode_all_tags_success';
 export const LEETCODE_ALL_TAGS_FAILED = 'leetcode_all_tags_failed';

@@ -1,8 +1,16 @@
-import { LEETCODE_ALL_PROBLEMS, LEETCODE_ALL_PROBLEMS_SUCCESS, LEETCODE_ALL_PROBLEMS_FAILED } from '../actions/types';
+import {
+    LEETCODE_ALL_PROBLEMS, LEETCODE_ALL_PROBLEMS_SUCCESS, LEETCODE_ALL_PROBLEMS_FAILED,
+    LEETCODE_SET_FILTER_PROBLEMS_KEYWORD,
+} from '../actions/types';
 
 const INITIAL_STATE = {
     // Data
     allQuestions: null,
+    filter: {
+        searchKey: '',
+        questionIds: [],
+        tags: [],
+    },
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -15,6 +23,15 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 allQuestions: action.payload,
+            };
+        case LEETCODE_SET_FILTER_PROBLEMS_KEYWORD:
+            return {
+                ...state,
+                ...{
+                    filter: {
+                        searchKey: action.payload,
+                    },
+                },
             };
         default:
             return state;

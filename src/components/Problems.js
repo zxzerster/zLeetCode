@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 import ProblemItem from './ProblemItem';
-import { leetcodeProblems } from '../actions';
+import { leetcodeProblems, leetcodeSetFilterKeyword } from '../actions';
 
 const styles = {
     container: {
@@ -19,6 +19,7 @@ const styles = {
 
 type ProblemsProps = {
     problems: (boolean => void, string => void) => void,
+    filterByKeyword: string => Object,
     allQuestions: {
         title: string,
         titleSlug: string,
@@ -27,6 +28,9 @@ type ProblemsProps = {
         status: string,
         like: number,
         dislike: number,
+    },
+    filter: {
+        searchKey: string,
     },
 };
 
@@ -43,7 +47,6 @@ class Problems extends Component<ProblemsProps> {
             error: null,
             refreshing: false,
             searchKeyword: '',
-            displayedQuestions: [],
         };
 
         this.searchRef = React.createRef();
@@ -65,17 +68,18 @@ class Problems extends Component<ProblemsProps> {
     }
 
     refreshProblems = () => {
-        const { problems } = this.props;
+        const { problems, filterByKeyword } = this.props;
         const ref = this.searchRef;
+
+        // Clear filter first
+        filterByKeyword('');
 
         this.setState({ refreshing: true });
         problems(() => {
-            const { allQuestions } = this.props;
-
             ref.current.input.clear();
-            this.setState({ refreshing: false, error: null, displayedQuestions: allQuestions });
+        this.setState({ refreshing: false, error: null });
         }, error => {
-            this.setState({ refreshing: false, error, displayedQuestions: [] });
+            this.setState({ refreshing: false, error });
         });
     }
 
@@ -84,15 +88,15 @@ class Problems extends Component<ProblemsProps> {
 
         this.setState({ loading: true });
         problems(() => {
-            const { allQuestions } = this.props;
-
-            this.setState({ loading: false, error: null, displayedQuestions: allQuestions });
+            this.setState({ loading: false, error: null });
         }, error => {
-            this.setState({ loading: false, error, displayedQuestions: [] });
+            this.setState({ loading: false, error });
         });
     }
 
     searchBar = () => {
+        const { searchKeyword } = this.state;
+
         return (
             <SearchBar
                 ref={this.searchRef}
@@ -104,6 +108,7 @@ class Problems extends Component<ProblemsProps> {
                 round
                 placeholder="Search problems..."
                 searchIcon={{ size: 24 }}
+                value={searchKeyword}
                 onChangeText={text => this.setState({ searchKeyword: text })}
                 onEndEditing={this.simpleSearchProblems}
             />
@@ -111,49 +116,37 @@ class Problems extends Component<ProblemsProps> {
     }
 
     simpleSearchProblems = () => {
+        const { filterByKeyword } = this.props;
         const { searchKeyword } = this.state;
 
-        if (searchKeyword && searchKeyword.length > 0) {
-            this.doSearch(searchKeyword);
-        } else {
-            const { allQuestions } = this.props;
-
-            this.setState({ displayedQuestions: allQuestions });
-        }
+        filterByKeyword(searchKeyword);
     }
 
-    doSearch = key => {
-        const { displayedQuestions } = this.state;
+    doLocalSearch = key => {
+        const { allQuestions } = this.props;
 
-        // TODO: a background worker is needed here!!!
-        this.setState({ loading: true });
-        const searched = _.filter(displayedQuestions, ({ title }) => {
+        const searched = _.filter(allQuestions, ({ title }) => {
             const a = title.toLowerCase();
             const b = key.toLowerCase();
 
             return a.includes(b);
         });
 
-        this.setState({ loading: false, displayedQuestions: searched });
+        return searched;
     }
-
-    // onlyOneLevel = difficulty => {
-
-    // }
-
-    // sortAscending = () => {
-
-    // }
-
-    // sortDescending = () => {
-
-    // }
 
     render() {
         const { container } = styles;
+        const { allQuestions, filter } = this.props;
         const {
-            displayedQuestions, loading, error, refreshing,
+            loading, error, refreshing,
         } = this.state;
+        const { searchKey } = filter;
+        let questions = allQuestions;
+
+        if (searchKey && searchKey.length > 0) {
+            questions = this.doLocalSearch(searchKey);
+        }
 
         return (
             <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadProblems}>
@@ -161,7 +154,7 @@ class Problems extends Component<ProblemsProps> {
                     <View style={[container, { marginTop: 0 }]}>
                         <FlatList
                             style={{ backgroundColor: 'white' }}
-                            data={displayedQuestions}
+                            data={questions}
                             keyExtractor={item => item.questionId}
                             renderItem={Problems.renderItem}
                             refreshing={refreshing}
@@ -180,12 +173,18 @@ const mapStateToProps = state => {
 
     return {
         allQuestions: problems.allQuestions,
+        filter: {
+            searchKey: problems.filter.searchKey,
+            questionIds: problems.filter.questionIds,
+            tags: problems.filter.tags,
+        },
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         problems: (...args) => dispatch(leetcodeProblems(...args)),
+        filterByKeyword: (...args) => dispatch(leetcodeSetFilterKeyword(...args)),
     };
  };
 
