@@ -156,7 +156,7 @@ class Problems extends Component<ProblemsProps> {
         } = this.state;
 
         return (
-            <LoadingErrorWrapper loading={loading} error={error}>
+            <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadProblems}>
                 {() => (
                     <View style={[container, { marginTop: 0 }]}>
                         <FlatList

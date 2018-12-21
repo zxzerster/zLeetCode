@@ -40,6 +40,7 @@ type Props = {
     duration?: number,
     loading: boolean,
     error?: string,
+    errorReload?: () => void,
     children: () => Component,
 };
 
@@ -48,6 +49,7 @@ class LoadingErrorWrapper extends Component<Props> {
         opacity: 0.2,
         duration: 1000,
         error: null,
+        errorReload: () => {},
     };
 
     constructor(props) {
@@ -94,7 +96,7 @@ class LoadingErrorWrapper extends Component<Props> {
 
     render() {
         const {
-            loading, error, children,
+            loading, error, errorReload, children,
         } = this.props;
         const {
             loadingErrorContainer, errorString, reloadButton, reloadButtonTitle,
@@ -115,7 +117,7 @@ class LoadingErrorWrapper extends Component<Props> {
                 <View style={loadingErrorContainer}>
                    <LeetcodeIcon />
                    <Text style={errorString}>{error}</Text>
-                   <TouchableOpacity style={reloadButton} onPress={() => { this.loadProblems(); }}>
+                   <TouchableOpacity style={reloadButton} onPress={errorReload}>
                        <Text style={reloadButtonTitle}>Reload it</Text>
                    </TouchableOpacity>
                 </View>

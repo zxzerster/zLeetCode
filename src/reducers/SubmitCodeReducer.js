@@ -27,7 +27,7 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case LEETCODE_SUBMIT_CODE:
-            return { ...INITIAL_STATE, loading: true, error: null };
+            return { ...state, loading: true, error: null };
         case LEETCODE_SUBMIT_CODE_SUCCESS:
             return { loading: false, error: null, result: action.payload };
         case LEETCODE_SUBMIT_CODE_FAILED:

@@ -11,7 +11,7 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case LEETCODE_CODE_DEFINITION:
-            return { ...INITIAL_STATE };
+            return { ...state };
         case LEETCODE_CODE_DEFINITION_SUCCESS:
             return {
                 ...state,

@@ -40,7 +40,7 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case LEETCODE_RUN_CODE:
-            return { ...INITIAL_STATE };
+            return { ...state };
         case LEETCODE_RUN_CODE_SUCCESS:
             return {
                 ...state,

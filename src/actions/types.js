@@ -10,6 +10,10 @@ export const LEETCODE_USERPROFILE = 'leetcode_userprofile';
 export const LEETCODE_USERPROFILE_SUCCESS = 'leetcode_userprofile_success';
 export const LEETCODE_USERPROFILE_FAILED = 'leetcode_userprofile_failed';
 
+export const LEETCODE_USER_PROGRESS = 'leetcode_user_progress';
+export const LEETCODE_USER_PROGRESS_SUCCESS = 'leetcode_user_progress_success';
+export const LEETCODE_USER_PROGRESS_FAILED = 'leetcode_user_progress_failed';
+
 export const LEETCODE_ALL_PROBLEMS = 'leetcode_all_problems';
 export const LEETCODE_ALL_PROBLEMS_SUCCESS = 'leetcode_all_problems_success';
 export const LEETCODE_ALL_PROBLEMS_FAILED = 'leetcode_all_problems_failed';

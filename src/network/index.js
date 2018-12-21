@@ -7,6 +7,7 @@ export const URLs = {
     logout: `${base}/accounts/logout/`,
     graphql: `${base}/graphql/`,
     forgot: `${base}/accounts/password/reset/`,
+    progress: `${base}/api/progress/all`,
     runCode: titleSlug => `https://leetcode.com/problems/${titleSlug}/interpret_solution/`,
     runCodeRefer: titleSlug => `https://leetcode.com/problems/${titleSlug}`,
     runCodeResult: interpretId => `https://leetcode.com/submissions/detail/${interpretId}/check/`,

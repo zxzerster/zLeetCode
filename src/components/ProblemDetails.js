@@ -239,7 +239,7 @@ class ProblemDetails extends Component<Props> {
         }
 
         return (
-            <LoadingErrorWrapper loading={loading} error={error}>
+            <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadProblemDetails}>
                 {() => (
                     <View style={{ flex: 1, backgroundColor: 'white' }}>
                         <View style={titleWrapper}>

@@ -312,7 +312,7 @@ class ProblemSubmission extends Component<Props> {
         const id = 'login_input_accessory_id';
 
         return (
-            <LoadingErrorWrapper loading={loading} error={error}>
+            <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadCodeDefinition}>
                 {() => (
                     <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
                         <ScrollView>

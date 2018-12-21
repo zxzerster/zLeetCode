@@ -12,7 +12,7 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case LEETCODE_LOGIN:
-            return { ...INITIAL_STATE };
+            return { ...state };
         case LEETCODE_LOGOUT:
             return { ...state };
         case LEETCODE_LOGIN_SUCCESS:

@@ -7,7 +7,7 @@ import { Badge, Divider, Button } from 'react-native-elements';
 import { connect } from 'react-redux';
 
 import LeetcodeIcon from './common/LeetcodeIcon';
-import { leetcodeUserProfile, leetcodeLogout } from '../actions';
+import { leetcodeUserProfile, leetcodeUserProgress, leetcodeLogout } from '../actions';
 
 import { versionString } from '../../ZLC-Config';
 
@@ -129,7 +129,7 @@ const logoutStyles = {
 };
 
 const renderProfile = ({
-    avatarUri, realName, userSlug, acStats,
+    avatarUri, realName, userSlug, solved, total, XP
 }) => {
     // Avatar
     const renderAvatar = () => {
@@ -171,10 +171,10 @@ const renderProfile = ({
                     <Text numberOfLines={1} ellipsizeMode="tail" style={statsLabelText}>Resolved</Text>
                 </View>
                 <View style={statsLableTextContainer}>
-                    <Text numberOfLines={1} ellipsizeMode="tail" style={statsLabelText}>Accepted</Text>
+                    <Text numberOfLines={1} ellipsizeMode="tail" style={statsLabelText}>Total</Text>
                 </View>
                 <View style={statsLableTextContainer}>
-                    <Text numberOfLines={1} ellipsizeMode="tail" style={[statsLabelText, { marginLeft: 10 }]}>Rate</Text>
+                    <Text numberOfLines={1} ellipsizeMode="tail" style={[statsLabelText, { marginLeft: 10 }]}>XP</Text>
                 </View>
             </View>
         );
@@ -188,13 +188,13 @@ const renderProfile = ({
         return (
             <View style={badgeContainer}>
                 <View style={[badge]}>
-                    <Badge containerStyle={greenBadge} value={acStats.acQuestionCount} />
+                    <Badge containerStyle={greenBadge} value={solved} />
                 </View>
                 <View style={[badge]}>
-                    <Badge containerStyle={greenBadge} value={`${acStats.acSubmissionCount} / ${acStats.totalSubmissionCount}`} />
+                    <Badge containerStyle={greenBadge} value={total} />
                 </View>
                 <View style={[badge]}>
-                    <Badge containerStyle={blueBadge} value={`${acStats.acRate} %`} />
+                    <Badge containerStyle={blueBadge} value={XP} />
                 </View>
             </View>
         );
@@ -260,6 +260,7 @@ const renderSettingItems = ({ submissionHandler, helperHandler, logoutHandler })
 type Props = {
     profile: (boolean => void, string => void) => void,
     logout: (boolean => void, string => void) => void,
+    progress: (boolean => void, string => void) => void,
     userProfile: {
         userSlug: string,
         realName: string,
@@ -279,7 +280,22 @@ type Props = {
             totalSubmissionCount: number,
             acRate: number,
         },
-    }
+    },
+    userProgress: {
+        XP: number,
+        attempted: number,
+        leetCoins: number,
+        questionTotal: number,
+        sessionList: Array,
+        sessionName: string,
+        solvedPerDifficulty: {
+            Easy: number,
+            Hard: number,
+            Medium: number,
+        },
+        solvedTotal: number,
+        unsolved:number,
+    },
 };
 
 class Profile extends Component<Props> {
@@ -292,8 +308,9 @@ class Profile extends Component<Props> {
     }
 
     componentDidMount() {
-        const { profile } = this.props;
+        const { profile, progress } = this.props;
 
+        progress();
         profile();
     }
 
@@ -331,13 +348,18 @@ class Profile extends Component<Props> {
 
     render() {
         const { container, settingContainer } = profileStyles;
-        const { userProfile } = this.props;
+        const { userProfile, userProgress } = this.props;
         const avatarUri = userProfile.userAvatar;
 
         return (
             <View style={container}>
                 {renderProfile({
-                    avatarUri, realName: userProfile.realName, userSlug: userProfile.userSlug, acStats: userProfile.acStats,
+                    avatarUri,
+                    realName: userProfile.realName,
+                    userSlug: userProfile.userSlug,
+                    solved: userProgress.solvedTotal,
+                    total: userProgress.questionTotal,
+                    XP: userProgress.XP,
                 })}
                 <View style={settingContainer}>
                     <ScrollView>
@@ -355,16 +377,18 @@ class Profile extends Component<Props> {
 }
 
 const mapStateToProps = state => {
-    const { profile } = state;
+    const { profile, progress } = state;
 
     return {
         userProfile: profile.user.profile,
+        userProgress: progress,
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         profile: (...args) => dispatch(leetcodeUserProfile(...args)),
+        progress: (...args) => dispatch(leetcodeUserProgress(...args)),
         logout: (...args) => dispatch(leetcodeLogout(...args)),
     };
 };

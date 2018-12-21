@@ -34,6 +34,10 @@ class Submissions extends Component<Props> {
     }
 
     componentDidMount() {
+        this.loadSubmissions();
+    }
+
+    loadSubmissions = () => {
         const { recentSubmissions } = this.props;
 
         this.setState({ loading: true });
@@ -88,7 +92,7 @@ class Submissions extends Component<Props> {
         const { container } = styles;
 
         return (
-            <LoadingErrorWrapper loading={loading} error={error}>
+            <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadSubmissions}>
                 {() => (
                     <View style={container}>
                         {this.renderSubmissionsList()}
