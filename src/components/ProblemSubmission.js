@@ -154,6 +154,7 @@ type Props = {
         status_msg: string,
         state: string,
     },
+    from?: string,
     codeDefinition: (string, boolean => void, string => void) => void,
     runCode: (string, string, boolean => void, string => void, boolean => void, string => void) => void,
 };
@@ -180,6 +181,7 @@ class ProblemSubmission extends Component<Props> {
             status_msg: '',
             state: '',
         },
+        from: null,
     };
 
     constructor(props) {
@@ -241,12 +243,16 @@ class ProblemSubmission extends Component<Props> {
     }
 
     langSelection = () => {
-        const { snippets, selectedIndex } = this.props;
+        const { snippets, selectedIndex, from } = this.props;
         const langsConfig = _.map(snippets, value => {
             return { lang: value.langSlug, displayName: value.lang };
         });
 
-        Actions.codelangselector({ langsConfig, selectedIndex });
+        if (from && from === 'SearchTab') {
+            Actions.taggedCodelangselector({ langsConfig, selectedIndex });
+        } else {
+            Actions.codelangselector({ langsConfig, selectedIndex });
+        }
     }
 
     runIt = () => {

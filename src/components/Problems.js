@@ -32,12 +32,13 @@ type ProblemsProps = {
     filter: {
         searchKey: string,
     },
+    from?: string,
 };
 
 class Problems extends Component<ProblemsProps> {
-    static renderItem({ item, index }) {
-        return <ProblemItem problem={item} index={index} />;
-    }
+    static defaultProps = {
+        from: null,
+    };
 
     constructor(props) {
         super(props);
@@ -145,6 +146,12 @@ class Problems extends Component<ProblemsProps> {
         return searched;
     }
 
+    renderItem = ({ item, index }) => {
+        const { from } = this.props;
+
+        return <ProblemItem problem={item} index={index} from={from} />;
+    }
+
     render() {
         const { container } = styles;
         const { allQuestions, filter, from } = this.props;
@@ -173,7 +180,7 @@ class Problems extends Component<ProblemsProps> {
                             style={{ backgroundColor: 'white' }}
                             data={questions}
                             keyExtractor={item => item.questionId}
-                            renderItem={Problems.renderItem}
+                            renderItem={this.renderItem}
                             refreshing={r}
                             onRefresh={ra}
                             ListHeaderComponent={this.searchBar}

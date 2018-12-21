@@ -109,10 +109,53 @@ type Props = {
         similarQuestions: '',
         topicTags: Array<Object>,
     },
+    from?: string,
 };
 
 class ProblemDetails extends Component<Props> {
-    static renderBlocks(node, index, siblings, parent, defaultRenderer) {
+    static defaultProps = {
+        from: null,
+    };
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            loading: false,
+            error: null,
+        };
+    }
+
+    componentDidMount() {
+        this.loadProblemDetails.apply(this);
+    }
+
+    resolveQuestion = (titleSlug, title, questionId, judgeType) => {
+        const { from } = this.props;
+
+        if (from && from === 'SearchTab') {
+            Actions.taggedProblemSubmission({
+                titleSlug, title, questionId, judgeType, from,
+            });
+        } else {
+            Actions.problemSubmission({
+                titleSlug, title, questionId, judgeType,
+            });
+        }
+    }
+
+    loadProblemDetails() {
+        const { problemDetails, titleSlug } = this.props;
+
+        this.setState({ loading: true });
+        problemDetails(titleSlug, () => {
+            this.setState({ loading: false, error: null });
+        }, error => {
+            this.setState({ loading: false, error });
+        });
+    }
+
+    renderBlocks = (node, index, siblings, parent, defaultRenderer) => {
         if (node.type === 'text' && node.data.trim() === '') {
             return null;
         }
@@ -144,13 +187,7 @@ class ProblemDetails extends Component<Props> {
         return undefined;
     }
 
-    static resolveQuestion(titleSlug, title, questionId, judgeType) {
-        Actions.problemSubmission({
-            titleSlug, title, questionId, judgeType,
-        });
-    }
-
-    static renderSimilars(similars) {
+    renderSimilars = similars => {
         return _.map(similars, similar => {
             return (
                 <Badge key={similar.title} containerStyle={{ marginHorizontal: 2, backgroundColor: 'lightgray' }}>
@@ -160,7 +197,7 @@ class ProblemDetails extends Component<Props> {
         });
     }
 
-    static renderStats(statsObj) {
+    renderStats = statsObj => {
         if (statsObj) {
             return (
                 <View style={{ flexDirection: 'row', margin: 4 }}>
@@ -181,30 +218,6 @@ class ProblemDetails extends Component<Props> {
         }
 
         return null;
-    }
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            loading: false,
-            error: null,
-        };
-    }
-
-    componentDidMount() {
-        this.loadProblemDetails.apply(this);
-    }
-
-    loadProblemDetails() {
-        const { problemDetails, titleSlug } = this.props;
-
-        this.setState({ loading: true });
-        problemDetails(titleSlug, () => {
-            this.setState({ loading: false, error: null });
-        }, error => {
-            this.setState({ loading: false, error });
-        });
     }
 
     render() {
@@ -262,18 +275,18 @@ class ProblemDetails extends Component<Props> {
                                 </View>
                             </View>
                             <ScrollView horizontal style={{ marginTop: 5, paddingBottom: 8 }}>
-                                {ProblemDetails.renderSimilars(similars)}
+                                {this.renderSimilars(similars)}
                             </ScrollView>
-                            {ProblemDetails.renderStats(statsObj)}
+                            {this.renderStats(statsObj)}
                         </View>
                         <ScrollView style={{ flex: 2 }}>
                             <HTMLView
                                 value={detail.content}
-                                renderNode={ProblemDetails.renderBlocks}
+                                renderNode={this.renderBlocks}
                                 stylesheet={HTMLStyles}
                             />
                         </ScrollView>
-                        <TouchableOpacity style={resolveButton} onPress={() => ProblemDetails.resolveQuestion(titleSlug, title, questionId, judgeType)}>
+                        <TouchableOpacity style={resolveButton} onPress={() => this.resolveQuestion(titleSlug, title, questionId, judgeType)}>
                             <Text style={{ color: 'white', fontSize: 34, fontWeight: '600' }}>+</Text>
                         </TouchableOpacity>
                     </View>

@@ -81,9 +81,10 @@ type ProblemItemProps = {
         like: number,
         dislike: number,
     },
+    from: string,
 };
 
-export default ({ problem, index }: ProblemItemProps) => {
+export default ({ problem, index, from }: ProblemItemProps) => {
     const {
         itemStyle, leftPart, rightPart, topBorder, idTextStyle, idStyle,
         easyGreen, mediumYellow, hardRed, titleStyle, tagIcon, tagText, tagTextWrapper,
@@ -136,7 +137,11 @@ export default ({ problem, index }: ProblemItemProps) => {
 
     const goToDetails = () => {
         if (!isPaidOnly) {
-            Actions.problemDetails({ titleSlug });
+            if (from && from === 'SearchTab') {
+                Actions.taggedProblemDetails({ titleSlug, from });
+            } else {
+                Actions.problemDetails({ titleSlug });
+            }
         }
     };
 
