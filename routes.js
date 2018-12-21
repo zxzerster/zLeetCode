@@ -46,6 +46,7 @@ const LeetCodeRoutes = () => {
                     </Stack>
                     <Stack icon={SearchTabIcon}>
                         <Scene key="searchProblem" component={SearchProblem} title="Search" />
+                        <Scene key="taggedProblems" component={Problems} />
                     </Stack>
                     <Stack icon={FavoriteTabIcon}>
                         <Scene key="favoriteProblems" component={FavoriteProblems} title="Search" />

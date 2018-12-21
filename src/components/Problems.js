@@ -122,7 +122,7 @@ class Problems extends Component<ProblemsProps> {
         filterByKeyword(searchKeyword);
     }
 
-    doLocalSearch = key => {
+    doLocalKeywordSearch = key => {
         const { allQuestions } = this.props;
 
         const searched = _.filter(allQuestions, ({ title }) => {
@@ -135,17 +135,34 @@ class Problems extends Component<ProblemsProps> {
         return searched;
     }
 
+    doLocalTagSearch = ids => {
+        const { allQuestions } = this.props;
+
+        const searched = _.filter(allQuestions, ({ questionId }) => {
+            return ids.includes(parseInt(questionId, 10));
+        });
+
+        return searched;
+    }
+
     render() {
         const { container } = styles;
-        const { allQuestions, filter } = this.props;
+        const { allQuestions, filter, from } = this.props;
         const {
             loading, error, refreshing,
         } = this.state;
-        const { searchKey } = filter;
+        const { searchKey, questionIds } = filter;
         let questions = allQuestions;
+        // TODO: think out a good names for these two variables.
+        const r = from ? null : refreshing;
+        const ra = from ? null : this.refreshProblems;
 
-        if (searchKey && searchKey.length > 0) {
-            questions = this.doLocalSearch(searchKey);
+        if (from && from === 'SearchTab') {
+            if (questionIds && questionIds.length > 0) {
+                questions = this.doLocalTagSearch(questionIds);
+            }
+        } else if (searchKey && searchKey.length > 0) {
+            questions = this.doLocalKeywordSearch(searchKey);
         }
 
         return (
@@ -157,8 +174,8 @@ class Problems extends Component<ProblemsProps> {
                             data={questions}
                             keyExtractor={item => item.questionId}
                             renderItem={Problems.renderItem}
-                            refreshing={refreshing}
-                            onRefresh={this.refreshProblems}
+                            refreshing={r}
+                            onRefresh={ra}
                             ListHeaderComponent={this.searchBar}
                         />
                     </View>
