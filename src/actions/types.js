@@ -22,6 +22,10 @@ export const LEETCODE_PROBLEM = 'leetcode_problem';
 export const LEETCODE_PROBLEM_SUCCESS = 'leetcode_problem_success';
 export const LEETCODE_PROBLEM_FAILED = 'leetcode_problem_failed';
 
+export const LEETCODE_ALL_TAGS = 'leetcode_all_tags';
+export const LEETCODE_ALL_TAGS_SUCCESS = 'leetcode_all_tags_success';
+export const LEETCODE_ALL_TAGS_FAILED = 'leetcode_all_tags_failed';
+
 export const LEETCODE_CODE_DEFINITION = 'leetcode_code_definition';
 export const LEETCODE_CODE_DEFINITION_SUCCESS = 'leetcode_code_definition_success';
 export const LEETCODE_CODE_DEFINITION_FAILED = 'leetcode_code_definition_failed';

@@ -12,6 +12,7 @@ import SubmitCodeReducer from './SubmitCodeReducer';
 import SubmissionsReducer from './SubmissionsReducer';
 import CodeDefinitionReducer from './CodeDefinitionReducer';
 import UserProgressReducer from './UserProgressReducer';
+import AllTagsReducer from './AllTagsReducer';
 
 const rootPersistConfig = {
   key: 'root',
@@ -31,6 +32,7 @@ export default persistReducer(rootPersistConfig, combineReducers({
     session: persistReducer(sessionPersistConfig, SessionReducer),
     profile: UserProfileReducer,
     progress: UserProgressReducer,
+    tags: AllTagsReducer,
     problems: ProblemsReducer,
     problem: ProblemDetailsReducer,
     runcode: RunCodeReducer,

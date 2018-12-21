@@ -5,6 +5,7 @@ import {
     LEETCODE_EXPECTED_RESULT_SUCCESS, LEETCODE_EXPECTED_RESULT_FAILED,
     LEETCODE_SUBMIT_CODE, LEETCODE_SUBMIT_CODE_SUCCESS, LEETCODE_SUBMIT_CODE_FAILED, LEETCODE_SUBMISSIONS, LEETCODE_SUBMISSIONS_FAILED, LEETCODE_SUBMISSIONS_SUCCESS,
     LEETCODE_CODE_DEFINITION, LEETCODE_CODE_DEFINITION_SUCCESS, LEETCODE_CODE_DEFINITION_FAILED, LEETCODE_CODE_DEFINITION_SELECTED_INDEX,
+    LEETCODE_ALL_TAGS, LEETCODE_ALL_TAGS_SUCCESS, LEETCODE_ALL_TAGS_FAILED,
 } from './types';
 import {
     URLs,
@@ -223,6 +224,31 @@ export const leetcodeSubmitCode = (input, titleSlug) => {
         })
         .then(error => {
             dispatch({ type: LEETCODE_SUBMIT_CODE_FAILED, error });
+        });
+    };
+};
+
+export const leetcodeAllTags = (completionHandler, errorHandler) => {
+    return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
+        dispatch({ type: LEETCODE_ALL_TAGS });
+        leetcodeGetFetch(URLs.tags, csrftoken, LEETCODE_SESSION)
+        .then(resp => {
+            if (resp.status !== 200) {
+                if (errorHandler) {
+                    errorHandler(ERRs.ERR_NETWORK);
+                }
+                dispatch({ type: LEETCODE_ALL_TAGS_FAILED, error: ERRs.ERR_NETWORK });
+            } else {
+                return resp.json();
+            }
+        })
+        .then(json => {
+            dispatch({ type: LEETCODE_ALL_TAGS_SUCCESS, payload: json });
+            completionHandler(true);
+        })
+        .catch(error => {
+            dispatch({ type: LEETCODE_ALL_TAGS_FAILED, error });
+            errorHandler(`error: ${error}`);
         });
     };
 };
