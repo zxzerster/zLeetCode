@@ -71,7 +71,10 @@ export const leetcodeLogin = (username, password, completionHandler, errorHandle
                 const t = getCookieValue(resp.headers.map, 'csrftoken');
                 const s = getCookieValue(resp.headers.map, 'LEETCODE_SESSION');
 
-                if (t && s) {
+                // if (t && s) {
+                // Looks like "first" time you login, there's no session field
+                // So once we got csrftoken, then we consider login succesfully
+                if (t) {
                     const payload = {
                         csrftoken: t,
                         LEETCODE_SESSION: s,
