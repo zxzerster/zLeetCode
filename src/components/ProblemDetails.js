@@ -8,6 +8,7 @@ import HTMLView from 'react-native-htmlview';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import FloatingButton from './common/FloatingButton';
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 import { leetcodeProblemDetail } from '../actions';
 
@@ -63,23 +64,6 @@ const styles = {
         alignItems: 'flex-start',
         paddingTop: 10,
         paddingRight: 15,
-    },
-    resolveButton: {
-        width: 55,
-        height: 55,
-        borderRadius: 27,
-        backgroundColor: 'rgb(64, 137, 214)',
-        opacity: 0.8,
-        position: 'absolute',
-        bottom: 0,
-        right: 0,
-        marginRight: 15,
-        marginBottom: 15,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.3,
     },
     easyGreen: {
         backgroundColor: 'rgb(116,181, 102)',
@@ -223,7 +207,6 @@ class ProblemDetails extends Component<Props> {
     render() {
         const {
             titleWrapper, titleStyle, titleIcon,
-            resolveButton,
             easyGreen, mediumYellow, hardRed,
         } = styles;
         const { loading, error } = this.state;
@@ -286,9 +269,12 @@ class ProblemDetails extends Component<Props> {
                                 stylesheet={HTMLStyles}
                             />
                         </ScrollView>
-                        <TouchableOpacity style={resolveButton} onPress={() => this.resolveQuestion(titleSlug, title, questionId, judgeType)}>
-                            <Text style={{ color: 'white', fontSize: 34, fontWeight: '600' }}>+</Text>
-                        </TouchableOpacity>
+                        <FloatingButton
+                            position="right"
+                            style={{ marginRight: 15, marginBottom: 15 }}
+                            title="+"
+                            onPress={() => this.resolveQuestion(titleSlug, title, questionId, judgeType)}
+                        />
                     </View>
                 )}
             </LoadingErrorWrapper>

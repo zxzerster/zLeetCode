@@ -26,18 +26,6 @@ const styles = {
         borderBottomWidth: 0.5,
         bottomBottomColor: 'rgb(239, 239, 239)',
     },
-    idStyle: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    idTextStyle: {
-        fontSize: 18,
-        fontWeight: '500',
-        color: 'rgb(73, 78, 82)',
-    },
     titleStyle: {
         fontSize: 18,
         fontWeight: '500',
@@ -61,7 +49,7 @@ const styles = {
         color: 'gray',
     },
     tagTextWrapper: {
-        flex: 1,
+        // flex: 1,
         // maxWidth: '90%',
         marginTop: 5,
         backgroundColor: '#f7f9fa',
@@ -86,7 +74,7 @@ type ProblemItemProps = {
 
 export default ({ problem, index, from }: ProblemItemProps) => {
     const {
-        itemStyle, leftPart, rightPart, topBorder, idTextStyle, idStyle,
+        itemStyle, leftPart, rightPart, topBorder,
         easyGreen, mediumYellow, hardRed, titleStyle, tagIcon, tagText, tagTextWrapper,
     } = styles;
     const {
@@ -105,7 +93,6 @@ export default ({ problem, index, from }: ProblemItemProps) => {
         itemStyle,
         index === 0 ? {} : topBorder, isPaidOnly ? { backgroundColor: '#eaeaea' } : {},
     ];
-    const listId = [idStyle, difficultyColor];
 
     const tags = arr => {
         const t = _.map(arr, item => {
@@ -115,8 +102,8 @@ export default ({ problem, index, from }: ProblemItemProps) => {
         return t;
     };
 
-    const check = resovled => {
-        if (resovled) {
+    const check = resolved => {
+        if (resolved) {
             return (
                 <Icon size={36} type="evilicon" name="check" color="rgb(116,181, 102)" />
             );
@@ -146,11 +133,27 @@ export default ({ problem, index, from }: ProblemItemProps) => {
     };
 
     const renderRightPart = () => {
-        if (isPaidOnly) {
+        if (isPaidOnly && status) {
             return (
                 <View style={rightPart}>
                     {check(status)}
                     {lock(isPaidOnly)}
+                </View>
+            );
+        }
+
+        if (isPaidOnly) {
+            return (
+                <View style={rightPart}>
+                    {lock(isPaidOnly)}
+                </View>
+            );
+        }
+
+        if (status) {
+            return (
+                <View style={rightPart}>
+                    {check(status)}
                 </View>
             );
         }
@@ -174,10 +177,11 @@ export default ({ problem, index, from }: ProblemItemProps) => {
     return (
         <TouchableOpacity disabled={isPaidOnly} style={listItem} key={questionId} onPress={() => { goToDetails(); }}>
             <View style={leftPart}>
-                <View style={[listId]}>
+                {/* <View style={[listId]}>
                     <Text numberOfLines={1} style={idTextStyle}>{`${questionId}`}</Text>
-                </View>
+                </View> */}
                 <View style={{ flex: 3, marginLeft: 10 }}>
+                    <Text style={{ color: 'gray' }}>{`#${questionId}`}</Text>
                     <Text
                         style={titleStyle}
                         numberOfLines={1}

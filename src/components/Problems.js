@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    View, FlatList, Alert,
+    View, FlatList, Alert, InteractionManager,
 } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import _ from 'lodash';
@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 import ProblemItem from './ProblemItem';
-import { leetcodeProblems, leetcodeSetFilterKeyword } from '../actions';
+import { leetcodeProblems } from '../actions';
 
 const styles = {
     container: {
@@ -19,7 +19,6 @@ const styles = {
 
 type ProblemsProps = {
     problems: (boolean => void, string => void) => void,
-    filterByKeyword: string => Object,
     allQuestions: {
         title: string,
         titleSlug: string,
@@ -28,9 +27,6 @@ type ProblemsProps = {
         status: string,
         like: number,
         dislike: number,
-    },
-    filter: {
-        searchKey: string,
     },
     from?: string,
 };
@@ -48,6 +44,7 @@ class Problems extends Component<ProblemsProps> {
             error: null,
             refreshing: false,
             searchKeyword: '',
+            displayedQuestions: [],
         };
 
         this.searchRef = React.createRef();
@@ -57,28 +54,17 @@ class Problems extends Component<ProblemsProps> {
         this.loadProblems.apply(this);
     }
 
-    onRefresh = () => {
-        Alert.alert(
-            'Problems',
-            'Do you want to reload all problems?',
-            [
-                { text: 'Cancel' },
-                { text: 'Ok', onPress: this.refreshProblems() },
-            ],
-        );
-    }
-
     refreshProblems = () => {
-        const { problems, filterByKeyword } = this.props;
+        const { problems } = this.props;
         const ref = this.searchRef;
-
-        // Clear filter first
-        filterByKeyword('');
+        const problemsSelf = this;
 
         this.setState({ refreshing: true });
         problems(() => {
+            const { allQuestions } = problemsSelf.props;
+
             ref.current.input.clear();
-        this.setState({ refreshing: false, error: null });
+            this.setState({ refreshing: false, error: null, displayedQuestions: allQuestions });
         }, error => {
             this.setState({ refreshing: false, error });
         });
@@ -86,10 +72,18 @@ class Problems extends Component<ProblemsProps> {
 
     loadProblems() {
         const { problems } = this.props;
+        const problemsSelf = this;
 
         this.setState({ loading: true });
         problems(() => {
-            this.setState({ loading: false, error: null });
+            const { allQuestions, from, tagIds } = problemsSelf.props;
+
+            if (!from) {
+                this.setState({ loading: false, error: null, displayedQuestions: allQuestions });
+            } else if (from && from === 'SearchTab') {
+                this.setState({ loading: false, error: null });
+                problemsSelf.doLocalTagSearch(tagIds);
+            }
         }, error => {
             this.setState({ loading: false, error });
         });
@@ -111,39 +105,45 @@ class Problems extends Component<ProblemsProps> {
                 searchIcon={{ size: 24 }}
                 value={searchKeyword}
                 onChangeText={text => this.setState({ searchKeyword: text })}
-                onEndEditing={this.simpleSearchProblems}
+                onEndEditing={this.doLocalKeywordSearch}
             />
         );
     }
 
-    simpleSearchProblems = () => {
-        const { filterByKeyword } = this.props;
+    doLocalKeywordSearch = () => {
         const { searchKeyword } = this.state;
-
-        filterByKeyword(searchKeyword);
-    }
-
-    doLocalKeywordSearch = key => {
         const { allQuestions } = this.props;
 
-        const searched = _.filter(allQuestions, ({ title }) => {
-            const a = title.toLowerCase();
-            const b = key.toLowerCase();
+        if (!searchKeyword || searchKeyword.length < 1) {
+            this.setState({ displayedQuestions: allQuestions });
+        } else {
+            InteractionManager.runAfterInteractions(() => {
+                const searched = _.filter(allQuestions, ({ title }) => {
+                    const a = title.toLowerCase();
+                    const b = searchKeyword.toLowerCase();
 
-            return a.includes(b);
-        });
+                    return a.includes(b);
+                });
 
-        return searched;
+                this.setState({ displayedQuestions: searched });
+            });
+        }
     }
 
     doLocalTagSearch = ids => {
         const { allQuestions } = this.props;
 
-        const searched = _.filter(allQuestions, ({ questionId }) => {
-            return ids.includes(parseInt(questionId, 10));
-        });
+        if (!ids || ids.length < 1) {
+            this.setState({ displayedQuestions: allQuestions });
+        } else {
+            InteractionManager.runAfterInteractions(() => {
+                const searched = _.filter(allQuestions, ({ questionId }) => {
+                    return ids.includes(parseInt(questionId, 10));
+                });
 
-        return searched;
+                this.setState({ displayedQuestions: searched });
+            });
+        }
     }
 
     renderItem = ({ item, index }) => {
@@ -154,23 +154,26 @@ class Problems extends Component<ProblemsProps> {
 
     render() {
         const { container } = styles;
-        const { allQuestions, filter, from } = this.props;
+        const { from } = this.props;
         const {
-            loading, error, refreshing,
+            loading, error, refreshing, displayedQuestions,
         } = this.state;
-        const { searchKey, questionIds } = filter;
-        let questions = allQuestions;
-        // TODO: think out a good names for these two variables.
         const r = from ? null : refreshing;
         const ra = from ? null : this.refreshProblems;
+        const searchBar = from ? null : this.searchBar;
+        // const { searchKey, questionIds } = filter;
+        // let questions = allQuestions;
+        // // TODO: think out a good names for these two variables.
+        // const r = from ? null : refreshing;
+        // const ra = from ? null : this.refreshProblems;
 
-        if (from && from === 'SearchTab') {
-            if (questionIds && questionIds.length > 0) {
-                questions = this.doLocalTagSearch(questionIds);
-            }
-        } else if (searchKey && searchKey.length > 0) {
-            questions = this.doLocalKeywordSearch(searchKey);
-        }
+        // if (from && from === 'SearchTab') {
+        //     if (questionIds && questionIds.length > 0) {
+        //         questions = this.doLocalTagSearch(questionIds);
+        //     }
+        // } else if (searchKey && searchKey.length > 0) {
+        //     questions = this.doLocalKeywordSearch(searchKey);
+        // }
 
         return (
             <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadProblems}>
@@ -178,12 +181,12 @@ class Problems extends Component<ProblemsProps> {
                     <View style={[container, { marginTop: 0 }]}>
                         <FlatList
                             style={{ backgroundColor: 'white' }}
-                            data={questions}
+                            data={displayedQuestions}
                             keyExtractor={item => item.questionId}
                             renderItem={this.renderItem}
                             refreshing={r}
                             onRefresh={ra}
-                            ListHeaderComponent={this.searchBar}
+                            ListHeaderComponent={searchBar}
                         />
                     </View>
                 )}
@@ -197,18 +200,12 @@ const mapStateToProps = state => {
 
     return {
         allQuestions: problems.allQuestions,
-        filter: {
-            searchKey: problems.filter.searchKey,
-            questionIds: problems.filter.questionIds,
-            tags: problems.filter.tags,
-        },
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         problems: (...args) => dispatch(leetcodeProblems(...args)),
-        filterByKeyword: (...args) => dispatch(leetcodeSetFilterKeyword(...args)),
     };
  };
 

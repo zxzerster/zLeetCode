@@ -151,3 +151,29 @@ export const Submissions = (offset, key) => {
         ].join('\n'),
     };
 };
+
+export const FavoritesLists = {
+    query: [
+        '{',
+        '   favoritesLists {',
+        '       publicFavorites {',
+        '           id',
+        '           name',
+        '           questions {',
+        '               title',
+        '               questionId',
+        '           }',
+        '       }',
+        '       privateFavorites {',
+        '           id',
+        '           name',
+        '           questions {',
+        '               title',
+        '               questionId',
+        '           }',
+        '       }',
+        '   }',
+        '}',
+    ].join('\n'),
+    variables: {},
+};

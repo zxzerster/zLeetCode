@@ -9,13 +9,13 @@ import Submissions from './src/components/Submissions';
 import ProblemDetails from './src/components/ProblemDetails';
 import ProblemSubmission from './src/components/ProblemSubmission';
 import CodeLangSelector from './src/components/CodeLangSelector';
-import SearchProblem from './src/components/SearchProblem';
+import TagsProblem from './src/components/TagsProblem';
 import FavoriteProblems from './src/components/FavoriteProblems';
 
 import ProblemTabIcon from './src/components/common/ProblemTabIcon';
 import ProblemRighttButton from './src/components/common/ProblemRightButton';
 import ProfileTabIcon from './src/components/common/ProfileTabIcon';
-import SearchTabIcon from './src/components/common/SearchTabIcon';
+import SearchTabIcon from './src/components/common/TagsTabIcon';
 import FavoriteTabIcon from './src/components/common/FavoriteTabIcon';
 
 const LeetCodeRoutes = () => {
@@ -45,7 +45,7 @@ const LeetCodeRoutes = () => {
                         <Scene key="codelangselector" component={CodeLangSelector} title="Select Languate" />
                     </Stack>
                     <Stack icon={SearchTabIcon}>
-                        <Scene key="searchProblem" component={SearchProblem} title="Search" />
+                        <Scene key="searchProblem" component={TagsProblem} title="Search" />
                         <Scene key="taggedProblems" component={Problems} />
                         <Scene key="taggedProblemDetails" component={ProblemDetails} title="Details" />
                         <Scene key="taggedProblemSubmission" component={ProblemSubmission} title="Submission" />

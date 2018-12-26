@@ -13,6 +13,7 @@ import SubmissionsReducer from './SubmissionsReducer';
 import CodeDefinitionReducer from './CodeDefinitionReducer';
 import UserProgressReducer from './UserProgressReducer';
 import AllTagsReducer from './AllTagsReducer';
+import FavoriteProblemsReducer from './FavoriteProblemsReducers';
 
 const rootPersistConfig = {
   key: 'root',
@@ -39,4 +40,5 @@ export default persistReducer(rootPersistConfig, combineReducers({
     submitcode: SubmitCodeReducer,
     submissions: SubmissionsReducer,
     codeDefinition: CodeDefinitionReducer,
+    favorites: FavoriteProblemsReducer,
 }));

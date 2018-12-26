@@ -1,4 +1,5 @@
 import {
+    LEETCODE_FAVORITES_PROBLEMS, LEETCODE_FAVORITES_PROBLEMS_SUCCESS, LEETCODE_FAVORITES_PROBLEMS_FAILED,
     LEETCODE_ALL_PROBLEMS, LEETCODE_ALL_PROBLEMS_SUCCESS, LEETCODE_ALL_PROBLEMS_FAILED,
     LEETCODE_PROBLEM, LEETCODE_PROBLEM_SUCCESS, LEETCODE_PROBLEM_FAILED,
     LEETCODE_RUN_CODE, LEETCODE_RUN_CODE_SUCCESS, LEETCODE_RUN_CODE_FAILED,
@@ -16,7 +17,7 @@ import {
     leetcodeGraphqlFetch,
 } from '../network';
 import {
-    Problems, ProblemDetails, Submissions, CodeDefinition,
+    Problems, ProblemDetails, Submissions, CodeDefinition, FavoritesLists,
 } from '../network/query';
 
 const queryResult = (dispatch, successType, failedType, id, completionHandler, errorHandler) => {
@@ -254,23 +255,31 @@ export const leetcodeAllTags = (completionHandler, errorHandler) => {
     };
 };
 
+export const leetcodeFavoritesLists = (completionHandler, errorHandler) => {
+    return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
+        dispatch({ type: LEETCODE_FAVORITES_PROBLEMS });
+        leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, FavoritesLists)
+        .then(resp => {
+            if (resp.status !== 200) {
+                dispatch({ type: LEETCODE_FAVORITES_PROBLEMS_FAILED });
+                errorHandler(ERRs.ERR_NETWORK);
+            }
+
+            resp.json().then(json => {
+                dispatch({ type: LEETCODE_FAVORITES_PROBLEMS_SUCCESS, payload: json.data });
+                completionHandler(true);
+            });
+        })
+        .catch(error => {
+            dispatch({ type: LEETCODE_FAVORITES_PROBLEMS_FAILED, error });
+            errorHandler(`error: ${error}`);
+        });
+    };
+};
+
 export const leetcodeSelectedIndex = index => {
     return {
         type: LEETCODE_CODE_DEFINITION_SELECTED_INDEX,
         payload: index || 0,
-    };
-};
-
-export const leetcodeSetFilterKeyword = keyword => {
-    return {
-        type: LEETCODE_SET_FILTER_PROBLEMS_KEYWORD,
-        payload: keyword,
-    };
-};
-
-export const leetcodeSetFilterIds = keyword => {
-    return {
-        type: LEETCODE_SET_FILTER_PROBLEMS_IDS,
-        payload: keyword,
     };
 };

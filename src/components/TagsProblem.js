@@ -7,7 +7,7 @@ import { SearchBar } from 'react-native-elements';
 
 import { connect } from 'react-redux';
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
-import { leetcodeAllTags, leetcodeSetFilterIds } from '../actions';
+import { leetcodeAllTags } from '../actions';
 
 const styles = {
     ListItem: {
@@ -41,7 +41,7 @@ type Props = {
     filterByIds: () => Object,
 };
 
-class SearchProblem extends Component<Props> {
+class TagsProblem extends Component<Props> {
     constructor(props) {
         super(props);
 
@@ -79,7 +79,6 @@ class SearchProblem extends Component<Props> {
             const ids = topics[index].questions;
             const title = topics[index].name;
 
-            filterByIds(ids);
             Actions.taggedProblems({ title: `${title} (${ids.length})`, tagIds: ids, from: 'SearchTab' });
         };
 
@@ -140,8 +139,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         allTags: (...args) => dispatch(leetcodeAllTags(...args)),
-        filterByIds: (...args) => dispatch(leetcodeSetFilterIds(...args)),
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SearchProblem);
+export default connect(mapStateToProps, mapDispatchToProps)(TagsProblem);

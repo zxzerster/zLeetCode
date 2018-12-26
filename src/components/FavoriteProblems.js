@@ -1,16 +1,120 @@
 import React, { Component } from 'react';
 import {
-    View, Text,
+    View, SectionList, TouchableOpacity, Text,
 } from 'react-native';
 
-class FavoriteProblems extends Component {
-    render() {
+import { connect } from 'react-redux';
+import LoadingErrorWrapper from './common/LoadingErrorWrapper';
+import { leetcodeFavoritesLists } from '../actions';
+
+const styles = {
+    ListItem: {
+        flex: 1,
+        height: 35,
+        justifyContent:
+        'center',
+        alignItems: 'center',
+    },
+    ListItemText: {
+        textDecorationLine: 'underline',
+        fontSize: 16,
+        color: 'rgb(6, 69, 173)',
+    },
+    ListHeader: {
+        height: 30,
+        backgroundColor: '#f7f9fa',
+        justifyContent: 'center',
+    },
+    ListHeaderText: {
+        marginLeft: 10,
+        fontWeight: '600',
+        color: 'gray',
+    },
+};
+
+type Props = {
+    publicFavorites: Array,
+    privateFavorites: Array,
+    favorites: (boolean => void, string => void) => void,
+};
+
+class FavoriteProblems extends Component<Props> {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            loading: false,
+            error: null,
+        };
+    }
+
+    componentDidMount() {
+        const { favorites } = this.props;
+
+        this.setState({ loading: true });
+        favorites(() => {
+            this.setState({ loading: false, error: null });
+        }, error => {
+            this.setState({ loading: false, error });
+        });
+    }
+
+    renderSectionHeader = ({ section }) => {
+        const { ListHeader, ListHeaderText } = styles;
+
         return (
-            <View>
-                <Text>Favorite Problems</Text>
+            <View style={ListHeader}>
+                <Text style={ListHeaderText}>{section.title}</Text>
             </View>
+        );
+    };
+
+    renderFavoriteItem = ({ item, index, section }) => {
+        const { ListItem, ListItemText } = styles;
+
+        return (
+            <TouchableOpacity style={ListItem}>
+                <Text style={ListItemText}>{item.title}</Text>
+            </TouchableOpacity>
+        );
+    };
+
+    render() {
+        const { loading, error } = this.state;
+        const { publicFavorites, privateFavorites } = this.props;
+
+        return (
+            <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadProblems}>
+                {() => (
+                    <SectionList
+                        style={{ backgroundColor: 'white' }}
+                        sections={[
+                            { title: 'Private favorites', data: privateFavorites },
+                            { title: 'Public favorites', data: publicFavorites },
+                        ]}
+                        keyExtractor={item => item.questionId}
+                        renderSectionHeader={this.renderSectionHeader}
+                        renderItem={this.renderFavoriteItem}
+                    />
+                )}
+            </LoadingErrorWrapper>
         );
     }
 }
 
-export default FavoriteProblems;
+const mapStateToProps = state => {
+    const { favorites: { favoritesLists: { publicFavorites, privateFavorites } } } = state;
+
+    return {
+        publicFavorites: publicFavorites.length > 0 ? publicFavorites[0].questions : [],
+        privateFavorites: privateFavorites.length > 0 ? privateFavorites[0].questions : [],
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        favorites: (...args) => dispatch(leetcodeFavoritesLists(...args)),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(FavoriteProblems);
