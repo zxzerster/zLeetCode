@@ -14,6 +14,7 @@ const INITIAL_STATE = {
         categoryTitle: '',
         stats: '',
         similarQuestions: '',
+        sampleTestCase: '',
         topicTags: [],
     },
 };

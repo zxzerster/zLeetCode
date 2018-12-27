@@ -117,7 +117,7 @@ class LoadingErrorWrapper extends Component<Props> {
                 <View style={loadingErrorContainer}>
                    <LeetcodeIcon />
                    <Text style={errorString}>{error}</Text>
-                   <TouchableOpacity style={reloadButton} onPress={errorReload}>
+                   <TouchableOpacity style={reloadButton} onPress={errorReload || (() => {})}>
                        <Text style={reloadButtonTitle}>Reload it</Text>
                    </TouchableOpacity>
                 </View>

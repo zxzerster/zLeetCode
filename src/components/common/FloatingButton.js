@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text } from 'react-native';
+import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 
 const styles = {
     buttonStyle: {
@@ -28,34 +28,43 @@ type Props = {
     title: string,
     color: string,
     position: string,
+    loading: boolean,
     style: Object,
     onPress: (object) => void,
 };
 
-export default (props: Props) => {
-    const {
-        position, title, color, style, onPress,
-    } = props;
+export default ({
+    position, title, color, style, onPress, loading, ...others
+}: Props) => {
     const { buttonStyle, titleStyle } = styles;
     const buttonPosition = position || 'right';
     const positonStyle = buttonPosition === 'right' ? { right: 0 } : { left: 0 };
-    const verticalMargin = { marginBottom: style.marginBottom || 0 };
+    const verticalMargin = { marginBottom: style ? (style.marginBottom || 0) : 0 };
     const colorStyle = color || buttonStyle.backgroundColor;
     const pressHandler = onPress || (() => {});
     let horizontalMargin = 0;
 
     if (buttonPosition === 'right') {
-        horizontalMargin = { marginRight: style.marginRight || 0 };
+        horizontalMargin = { marginRight: style ? (style.marginRight || 0) : 0 };
     } else {
-        horizontalMargin = { marginLeft: style.marginLeft || 0 };
+        horizontalMargin = { marginLeft: style ? (style.marginLeft || 0) : 0 };
     }
+    const renderChildren = text => {
+        if (loading) {
+            return <ActivityIndicator color="white" animating />;
+        }
+
+        return <Text style={titleStyle}>{text}</Text>;
+    };
 
     return (
         <TouchableOpacity
+            {...others}
+            disabled={loading}
             style={[buttonStyle, { backgroundColor: colorStyle }, positonStyle, horizontalMargin, verticalMargin]}
             onPress={pressHandler}
         >
-            <Text style={titleStyle}>{title}</Text>
+            {renderChildren(title)}
         </TouchableOpacity>
     );
 };

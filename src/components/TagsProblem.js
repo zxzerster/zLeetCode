@@ -52,6 +52,21 @@ class TagsProblem extends Component<Props> {
     }
 
     componentDidMount() {
+        const { companies, topics } = this.props;
+
+        if (companies.length < 1 && topics.length < 1) {
+            const { allTags } = this.props;
+
+            this.setState({ loading: true });
+            allTags(() => {
+                this.setState({ loading: false, error: null });
+            }, error => {
+                this.setState({ loading: false, error });
+            });
+        }
+    }
+
+    refresh = () => {
         const { allTags } = this.props;
 
         this.setState({ loading: true });
@@ -61,6 +76,24 @@ class TagsProblem extends Component<Props> {
             this.setState({ loading: false, error });
         });
     }
+
+    searchBar = () => {
+        return (
+            <SearchBar
+                // ref={this.searchRef}
+                containerStyle={{ backgroundColor: 'white' }}
+                inputContainerStyle={{ backgroundClor: 'white' }}
+                inputStyle={{ backgroundColor: '#f7f9fa' }}
+                returnKeyType="search"
+                lightTheme
+                round
+                placeholder="Search tag / company / problem..."
+                searchIcon={{ size: 24 }}
+                // onChangeText={text => this.setState({ searchKeyword: text })}
+                // onEndEditing={this.simpleSearchProblems}
+            />
+        );
+    };
 
     renderSectionHeader = ({ section }) => {
         const { ListHeader, ListHeaderText } = styles;
@@ -97,19 +130,6 @@ class TagsProblem extends Component<Props> {
             <LoadingErrorWrapper loading={loading} error={error}>
             {() => (
                 <View style={{ flex: 1 }}>
-                <SearchBar
-                    // ref={this.searchRef}
-                    containerStyle={{ backgroundColor: 'white' }}
-                    inputContainerStyle={{ backgroundClor: 'white' }}
-                    inputStyle={{ backgroundColor: '#f7f9fa' }}
-                    returnKeyType="search"
-                    lightTheme
-                    round
-                    placeholder="Search tag / company / problem..."
-                    searchIcon={{ size: 24 }}
-                    // onChangeText={text => this.setState({ searchKeyword: text })}
-                    // onEndEditing={this.simpleSearchProblems}
-                />
                 <SectionList
                     style={{ backgroundColor: 'white' }}
                     sections={[
@@ -119,6 +139,9 @@ class TagsProblem extends Component<Props> {
                     keyExtractor={item => item.slug}
                     renderSectionHeader={this.renderSectionHeader}
                     renderItem={this.renderTagItem}
+                    ListHeaderComponent={this.searchBar}
+                    onRefresh={this.refresh}
+                    refreshing={loading}
                 />
                 </View>
             )}

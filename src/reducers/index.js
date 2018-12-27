@@ -29,12 +29,33 @@ const sessionPersistConfig = {
     blacklist: ['error'],
 };
 
+const problemsPersistConfig = {
+    key: 'problems',
+    storage,
+    whitelist: ['allQuestions'],
+};
+
+const profilePersistConfig = {
+    key: 'profile',
+    storage,
+};
+
+const progressPersistConfig = {
+    key: 'progress',
+    storage,
+};
+
+const tagsPersistConfig = {
+    key: 'tags',
+    storage,
+};
+
 export default persistReducer(rootPersistConfig, combineReducers({
     session: persistReducer(sessionPersistConfig, SessionReducer),
-    profile: UserProfileReducer,
-    progress: UserProgressReducer,
-    tags: AllTagsReducer,
-    problems: ProblemsReducer,
+    profile: persistReducer(profilePersistConfig, UserProfileReducer),
+    progress: persistReducer(progressPersistConfig, UserProgressReducer),
+    tags: persistReducer(tagsPersistConfig, AllTagsReducer),
+    problems: persistReducer(problemsPersistConfig, ProblemsReducer),
     problem: ProblemDetailsReducer,
     runcode: RunCodeReducer,
     submitcode: SubmitCodeReducer,

@@ -2,30 +2,31 @@ import React, { Component } from 'react';
 import {
     View, Text, TouchableOpacity, ScrollView,
     Alert, ActivityIndicator, TextInput, Button,
-    KeyboardAvoidingView, Keyboard, InputAccessoryView,
+    Keyboard, InputAccessoryView,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 
 import { connect } from 'react-redux';
 import { leetcodeCodeDefinition, leetcodeRunCode, leetcodeSubmitCode } from '../actions';
+import FloatingButton from './common/FloatingButton';
 
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 
 // Temparay test code
-const emptyCode = '';
-const wrongCode = 'abc';
-const correctCode = 'class Solution(object):\n    def twoSum(self, nums, target):\n        \"\"\"\n        :type nums: List[int]\n        :type target: int\n        :rtype: List[int]\n        \"\"\"\n        \n        indices = []\n        length = len(nums)\n        for i in range(0, length):\n            del indices[:]\n            remaining = target - nums[i]\n            indices.append(i)\n            for j in range(i + 1, length):\n                if nums[j] == remaining:\n                    indices.append(j)\n                    return indices\n\n        return indices\n        ';
+// const emptyCode = '';
+// const wrongCode = 'abc';
+// const correctCode = 'class Solution(object):\n    def twoSum(self, nums, target):\n        \"\"\"\n        :type nums: List[int]\n        :type target: int\n        :rtype: List[int]\n        \"\"\"\n        \n        indices = []\n        length = len(nums)\n        for i in range(0, length):\n            del indices[:]\n            remaining = target - nums[i]\n            indices.append(i)\n            for j in range(i + 1, length):\n                if nums[j] == remaining:\n                    indices.append(j)\n                    return indices\n\n        return indices\n        ';
 
-const codeInput = (questionId, judgeType) => {
-    return {
-        question_id: questionId,
-        judge_type: judgeType,
-        data_input: '[2, 7, 11, 15]\n9',
-        lang: 'python',
-        typed_code: correctCode,
-    };
-};
+// const codeInput = (questionId, judgeType) => {
+//     return {
+//         question_id: questionId,
+//         judge_type: judgeType,
+//         data_input: '[2, 7, 11, 15]\n9',
+//         lang: 'python',
+//         typed_code: correctCode,
+//     };
+// };
 // Temparay test code
 
 const styles = {
@@ -55,40 +56,6 @@ const styles = {
         fontSize: 18,
         color: 'gray',
     },
-    Submit: {
-        width: 55,
-        height: 55,
-        borderRadius: 27,
-        backgroundColor: 'rgb(210, 64, 59)',
-        opacity: 0.8,
-        position: 'absolute',
-        bottom: 0,
-        right: 0,
-        marginRight: 15,
-        marginBottom: 15,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.3,
-    },
-    Run: {
-        width: 55,
-        height: 55,
-        borderRadius: 27,
-        backgroundColor: 'rgb(115, 175, 79)',
-        opacity: 0.8,
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        marginLeft: 15,
-        marginBottom: 15,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.3,
-    },
     ButtonTitle: {
         color: '#eeeeee',
         fontWeight: '600',
@@ -98,26 +65,26 @@ const styles = {
         flex: 1,
         margin: 8,
     },
-    paramsWrapper: {
-        backgroundColor: 'white',
-        height: 180,
-    },
-    paramsTitle: {
-        marginTop: 8,
-        fontSize: 18,
-        fontWeight: '500',
-        color: 'gray',
-        marginHorizontal: 8,
-    },
-    paramsInput: {
-        backgroundColor: 'white',
-        flex: 1,
-        margin: 8,
-        borderRadius: 5,
-        shadowColor: 'black',
-        shadowOpacity: 0.2,
-        shadowOffset: { width: 0, height: 1 },
-    },
+    // paramsWrapper: {
+    //     backgroundColor: 'white',
+    //     height: 180,
+    // },
+    // paramsTitle: {
+    //     marginTop: 8,
+    //     fontSize: 18,
+    //     fontWeight: '500',
+    //     color: 'gray',
+    //     marginHorizontal: 8,
+    // },
+    // paramsInput: {
+    //     backgroundColor: 'white',
+    //     flex: 1,
+    //     margin: 8,
+    //     borderRadius: 5,
+    //     shadowColor: 'black',
+    //     shadowOpacity: 0.2,
+    //     shadowOffset: { width: 0, height: 1 },
+    // },
     inputAccessory: {
         flex: 1,
         backgroundColor: 'rgb(213, 213, 213)',
@@ -134,6 +101,7 @@ type Props = {
     judgeType: string,
     snippets: Array,
     selectedIndex: number,
+    sampleTestCase: string,
     result?: {
         code_output: Array,
         status_code: number,
@@ -191,6 +159,7 @@ class ProblemSubmission extends Component<Props> {
             loading: false,
             error: null,
             uploading: false,
+            code: '',
         };
     }
 
@@ -202,10 +171,11 @@ class ProblemSubmission extends Component<Props> {
     }
 
     componentDidUpdate(prevProps) {
-        const { selectedIndex } = this.props;
+        const { snippets, selectedIndex } = this.props;
 
         if (selectedIndex !== prevProps.selectedIndex) {
-            this.updateRightTitle('alsdfjasldkf');
+            this.updateRightTitle();
+            this.setState({ code: snippets[selectedIndex] ? snippets[selectedIndex].code : '' });
         }
     }
 
@@ -229,16 +199,19 @@ class ProblemSubmission extends Component<Props> {
         }
     }
 
-    loadCodeDefinition() {
+    loadCodeDefinition = () => {
         const { codeDefinition, titleSlug } = this.props;
+        const problemSubmissionSelf = this;
 
         this.setState({ loading: true });
         codeDefinition(titleSlug, () => {
-            this.setState({ loading: false, error: null });
-            this.updateRightTitle();
+            const { snippets, selectedIndex } = problemSubmissionSelf.props;
+
+            problemSubmissionSelf.setState({ loading: false, error: null, code: snippets[selectedIndex] ? snippets[selectedIndex].code : '' });
+            problemSubmissionSelf.updateRightTitle();
         }, error => {
-            this.setState({ loading: false, error });
-            this.setRightTitle('');
+            problemSubmissionSelf.setState({ loading: false, error });
+            problemSubmissionSelf.setRightTitle('');
         });
     }
 
@@ -255,11 +228,24 @@ class ProblemSubmission extends Component<Props> {
         }
     }
 
+    codeInput = (code, paramInput, questionId, judgeType, lang) => {
+        return {
+            question_id: questionId,
+            judge_type: judgeType,
+            data_input: paramInput,
+            lang,
+            typed_code: code,
+        };
+    };
+
     runIt = () => {
         const {
-            runCode, titleSlug, questionId, judgeType,
+            runCode, titleSlug, questionId, judgeType, sampleTestCase,
         } = this.props;
-        const input = codeInput(questionId, judgeType);
+        const { snippets, selectedIndex } = this.props;
+        const lang = snippets[selectedIndex].langSlug;
+        const { code } = this.state;
+        const input = this.codeInput(code, sampleTestCase, questionId, judgeType, lang);
         let rc = 0;
 
         this.setState({ uploading: true });
@@ -308,25 +294,29 @@ class ProblemSubmission extends Component<Props> {
     }
 
     render() {
-        const { loading, error, uploading } = this.state;
         const {
-            Run, Submit,
+            loading, error, uploading, code,
+        } = this.state;
+        const {
             editorWrapper,
-            paramsWrapper, paramsTitle, paramsInput, inputAccessory,
         } = styles;
-        const { snippets, selectedIndex } = this.props;
+        // const { snippets, selectedIndex } = this.props;
         const id = 'login_input_accessory_id';
 
         return (
             <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadCodeDefinition}>
                 {() => (
-                    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-                        <ScrollView>
+                    <View style={{ flex: 1 }}>
+                        <ScrollView style={{ backgroundColor: 'white' }}>
                             <View style={editorWrapper}>
-                                <Text>{snippets[selectedIndex] ? snippets[selectedIndex].code : ''}</Text>
+                                <TextInput
+                                    multiline
+                                    onChangeText={text => { this.setState({ code: text }); }}
+                                    value={code}
+                                />
                             </View>
                         </ScrollView>
-                        <View style={paramsWrapper}>
+                        {/* <View style={paramsWrapper}>
                             <Text style={paramsTitle}>Input here</Text>
                             <TextInput
                                 style={paramsInput}
@@ -336,22 +326,32 @@ class ProblemSubmission extends Component<Props> {
                                 clearButtonMode="while-editing"
                                 autoCorrect={false}
                                 autoCapitalize="none"
+                                value={params}
+                                onChangeText={text => this.setState({ params: text })}
                             />
                             <InputAccessoryView nativeID={id}>
                                 <View style={inputAccessory}>
                                     <Button onPress={() => Keyboard.dismiss()} title="Ok" />
                                 </View>
                             </InputAccessoryView>
-                        </View>
+                        </View> */}
                         <View style={{ flexDirection: 'row' }}>
-                            <TouchableOpacity style={Submit} disabled={uploading}>
-                                {this.renderActionButton('S')}
-                            </TouchableOpacity>
-                            <TouchableOpacity style={Run} disabled={uploading} onPress={() => this.runIt()}>
-                                {this.renderActionButton('R')}
-                            </TouchableOpacity>
+                            <FloatingButton
+                                style={{ marginLeft: 15, marginBottom: 15 }}
+                                position="left"
+                                title="S"
+                                color="rgb(210, 64, 59)"
+                            />
+                            <FloatingButton
+                                style={{ marginRight: 15, marginBottom: 15 }}
+                                position="right"
+                                loading={uploading}
+                                title="R"
+                                color="rgb(115, 175, 79)"
+                                onPress={this.runIt}
+                            />
                         </View>
-                    </KeyboardAvoidingView>
+                    </View>
                 )}
             </LoadingErrorWrapper>
         );

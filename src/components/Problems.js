@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    View, FlatList, Alert, InteractionManager,
+    View, FlatList, InteractionManager, NetInfo,
 } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import _ from 'lodash';
@@ -28,6 +28,7 @@ type ProblemsProps = {
         like: number,
         dislike: number,
     },
+    tagIds: Array,
     from?: string,
 };
 
@@ -52,41 +53,52 @@ class Problems extends Component<ProblemsProps> {
 
     componentDidMount() {
         this.loadProblems.apply(this);
+
+        NetInfo.addEventListener('connectionChange', info => {
+            console.log(`connection chagned, info: ${JSON.stringify(info)}`);
+        });
     }
 
     refreshProblems = () => {
         const { problems } = this.props;
         const ref = this.searchRef;
         const problemsSelf = this;
-
-        this.setState({ refreshing: true });
-        problems(() => {
+        const completionHandler = () => {
             const { allQuestions } = problemsSelf.props;
 
             ref.current.input.clear();
             this.setState({ refreshing: false, error: null, displayedQuestions: allQuestions });
-        }, error => {
+        };
+        const errorHandler = error => {
             this.setState({ refreshing: false, error });
-        });
+        };
+
+        this.setState({ refreshing: true });
+        problems(completionHandler.bind(this), errorHandler.bind(this));
     }
 
     loadProblems() {
-        const { problems } = this.props;
-        const problemsSelf = this;
-
-        this.setState({ loading: true });
-        problems(() => {
-            const { allQuestions, from, tagIds } = problemsSelf.props;
+        const { problems, allQuestions } = this.props;
+        const completionHandler = () => {
+            const { from, tagIds } = this.props;
 
             if (!from) {
-                this.setState({ loading: false, error: null, displayedQuestions: allQuestions });
+                this.setState({ loading: false, error: null, displayedQuestions: this.props.allQuestions });
             } else if (from && from === 'SearchTab') {
                 this.setState({ loading: false, error: null });
-                problemsSelf.doLocalTagSearch(tagIds);
+                this.doLocalTagSearch(tagIds);
             }
-        }, error => {
+        };
+        const errorHandler = error => {
             this.setState({ loading: false, error });
-        });
+        };
+
+        if (allQuestions && allQuestions.length > 1) {
+            this.setState({ displayedQuestions: allQuestions });
+        } else {
+            this.setState({ loading: true });
+            problems(completionHandler.bind(this), errorHandler.bind(this));
+        }
     }
 
     searchBar = () => {
@@ -161,19 +173,6 @@ class Problems extends Component<ProblemsProps> {
         const r = from ? null : refreshing;
         const ra = from ? null : this.refreshProblems;
         const searchBar = from ? null : this.searchBar;
-        // const { searchKey, questionIds } = filter;
-        // let questions = allQuestions;
-        // // TODO: think out a good names for these two variables.
-        // const r = from ? null : refreshing;
-        // const ra = from ? null : this.refreshProblems;
-
-        // if (from && from === 'SearchTab') {
-        //     if (questionIds && questionIds.length > 0) {
-        //         questions = this.doLocalTagSearch(questionIds);
-        //     }
-        // } else if (searchKey && searchKey.length > 0) {
-        //     questions = this.doLocalKeywordSearch(searchKey);
-        // }
 
         return (
             <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadProblems}>

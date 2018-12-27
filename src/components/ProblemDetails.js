@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    View, Text, ScrollView, TouchableOpacity,
+    View, Text, ScrollView,
 } from 'react-native';
 import { Badge, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -89,8 +89,9 @@ type Props = {
         likes: number,
         dislikes: number,
         categoryTitle: string,
-        stats: '',
-        similarQuestions: '',
+        stats: string,
+        similarQuestions: string,
+        sampleTestCase: string,
         topicTags: Array<Object>,
     },
     from?: string,
@@ -114,16 +115,16 @@ class ProblemDetails extends Component<Props> {
         this.loadProblemDetails.apply(this);
     }
 
-    resolveQuestion = (titleSlug, title, questionId, judgeType) => {
+    resolveQuestion = (titleSlug, title, questionId, judgeType, sampleTestCase) => {
         const { from } = this.props;
 
         if (from && from === 'SearchTab') {
             Actions.taggedProblemSubmission({
-                titleSlug, title, questionId, judgeType, from,
+                titleSlug, title, questionId, judgeType, from, sampleTestCase,
             });
         } else {
             Actions.problemSubmission({
-                titleSlug, title, questionId, judgeType,
+                titleSlug, title, questionId, judgeType, sampleTestCase,
             });
         }
     }
@@ -212,7 +213,7 @@ class ProblemDetails extends Component<Props> {
         const { loading, error } = this.state;
         const { detail } = this.props;
         const {
-            title, questionId, difficulty, likes, dislikes, titleSlug, similarQuestions, stats, judgeType,
+            title, questionId, difficulty, likes, dislikes, titleSlug, similarQuestions, stats, judgeType, sampleTestCase
         } = detail;
         let similars = null;
         let statsObj = null;
@@ -273,7 +274,7 @@ class ProblemDetails extends Component<Props> {
                             position="right"
                             style={{ marginRight: 15, marginBottom: 15 }}
                             title="+"
-                            onPress={() => this.resolveQuestion(titleSlug, title, questionId, judgeType)}
+                            onPress={() => this.resolveQuestion(titleSlug, title, questionId, judgeType, sampleTestCase)}
                         />
                     </View>
                 )}
