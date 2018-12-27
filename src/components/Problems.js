@@ -1,4 +1,3 @@
-// @flow
 import React, { Component } from 'react';
 import {
     View, FlatList, InteractionManager, NetInfo,
@@ -7,6 +6,7 @@ import { SearchBar } from 'react-native-elements';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
+import withLeetcodeWrapper from './common/withLeetcodeWrapper';
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 import ProblemItem from './ProblemItem';
 import { leetcodeProblems } from '../actions';
@@ -29,7 +29,7 @@ type ProblemsProps = {
         like: number,
         dislike: number,
     },
-    tagIds: Array,
+    tagIds: Array<string>,
     from?: string,
 };
 
@@ -205,4 +205,4 @@ const mapDispatchToProps = dispatch => {
     };
  };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Problems);
+export default connect(mapStateToProps, mapDispatchToProps)(withLeetcodeWrapper(Problems));
