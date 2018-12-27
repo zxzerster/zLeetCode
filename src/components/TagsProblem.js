@@ -53,28 +53,32 @@ class TagsProblem extends Component<Props> {
 
     componentDidMount() {
         const { companies, topics } = this.props;
+        const completionHandler = () => {
+            this.setState({ loading: false, error: null });
+        };
+        const errorHandler = error => {
+            this.setState({ loading: false, error });
+        };
 
         if (companies.length < 1 && topics.length < 1) {
             const { allTags } = this.props;
 
             this.setState({ loading: true });
-            allTags(() => {
-                this.setState({ loading: false, error: null });
-            }, error => {
-                this.setState({ loading: false, error });
-            });
+            allTags(completionHandler.bind(this), errorHandler.bind(this));
         }
     }
 
     refresh = () => {
         const { allTags } = this.props;
+        const completionHandler = () => {
+            this.setState({ loading: false, error: null });
+        };
+        const errorHandler = error => {
+            this.setState({ loading: false, error });
+        };
 
         this.setState({ loading: true });
-        allTags(() => {
-            this.setState({ loading: false, error: null });
-        }, error => {
-            this.setState({ loading: false, error });
-        });
+        allTags(completionHandler.bind(this), errorHandler.bind(this));
     }
 
     searchBar = () => {

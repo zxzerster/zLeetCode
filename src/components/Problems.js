@@ -1,3 +1,4 @@
+// @flow
 import React, { Component } from 'react';
 import {
     View, FlatList, InteractionManager, NetInfo,
@@ -53,10 +54,6 @@ class Problems extends Component<ProblemsProps> {
 
     componentDidMount() {
         this.loadProblems.apply(this);
-
-        NetInfo.addEventListener('connectionChange', info => {
-            console.log(`connection chagned, info: ${JSON.stringify(info)}`);
-        });
     }
 
     refreshProblems = () => {

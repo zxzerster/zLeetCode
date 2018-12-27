@@ -50,13 +50,15 @@ class FavoriteProblems extends Component<Props> {
 
     componentDidMount() {
         const { favorites } = this.props;
+        const completionHandler = () => {
+            this.setState({ loading: false, error: null });
+        };
+        const errorHandler = error => {
+            this.setState({ loading: false, error });
+        };
 
         this.setState({ loading: true });
-        favorites(() => {
-            this.setState({ loading: false, error: null });
-        }, error => {
-            this.setState({ loading: false, error });
-        });
+        favorites(completionHandler.bind(this), errorHandler.bind(this));
     }
 
     renderSectionHeader = ({ section }) => {

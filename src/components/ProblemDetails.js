@@ -131,13 +131,15 @@ class ProblemDetails extends Component<Props> {
 
     loadProblemDetails() {
         const { problemDetails, titleSlug } = this.props;
+        const completionHandler = () => {
+            this.setState({ loading: false, error: null });
+        };
+        const errorHandler = error => {
+            this.setState({ loading: false, error });
+        };
 
         this.setState({ loading: true });
-        problemDetails(titleSlug, () => {
-            this.setState({ loading: false, error: null });
-        }, error => {
-            this.setState({ loading: false, error });
-        });
+        problemDetails(titleSlug, completionHandler.bind(this), errorHandler.bind(this));
     }
 
     renderBlocks = (node, index, siblings, parent, defaultRenderer) => {

@@ -201,18 +201,19 @@ class ProblemSubmission extends Component<Props> {
 
     loadCodeDefinition = () => {
         const { codeDefinition, titleSlug } = this.props;
-        const problemSubmissionSelf = this;
+        const completionHandler = () => {
+            const { snippets, selectedIndex } = this.props;
+
+            this.setState({ loading: false, error: null, code: snippets[selectedIndex] ? snippets[selectedIndex].code : '' });
+            this.updateRightTitle();
+        };
+        const errorHandler = error => {
+            this.setState({ loading: false, error });
+            this.setRightTitle('');
+        };
 
         this.setState({ loading: true });
-        codeDefinition(titleSlug, () => {
-            const { snippets, selectedIndex } = problemSubmissionSelf.props;
-
-            problemSubmissionSelf.setState({ loading: false, error: null, code: snippets[selectedIndex] ? snippets[selectedIndex].code : '' });
-            problemSubmissionSelf.updateRightTitle();
-        }, error => {
-            problemSubmissionSelf.setState({ loading: false, error });
-            problemSubmissionSelf.setRightTitle('');
-        });
+        codeDefinition(titleSlug, completionHandler.bind(this), errorHandler.bind(this));
     }
 
     langSelection = () => {

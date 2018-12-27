@@ -90,20 +90,24 @@ class Login extends Component<LoginProps> {
     login() {
         const { username, password } = this.state;
         const { login } = this.props;
+        const completionHandler = () => {
+            this.setState({ loading: false });
+            this.setState({ username: '', password: '' });
+            Actions.main();
+        };
+        const errorHandler = error => {
+            this.setState({ loading: false, username: '', password: '' });
+            Alert.alert('Login failed', error, [{ text: 'OK' }]);
+        };
 
         this.nameRef.current.input.focus();
         this.setState({ loading: true });
-        login(username, password,
-            () => {
-                this.setState({ loading: false });
-                this.setState({ username: '', password: '' });
-                Actions.main();
-            },
-            error => {
-                // console.log(error);
-                this.setState({ loading: false, username: '', password: '' });
-                Alert.alert('Login failed', error, [{ text: 'OK' }]);
-            });
+        login(
+            username,
+            password,
+            completionHandler.bind(this),
+            errorHandler.bind(this)
+        );
     }
 
     handleNameInputEnterPressed() {

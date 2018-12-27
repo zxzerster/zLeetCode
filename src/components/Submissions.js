@@ -39,13 +39,15 @@ class Submissions extends Component<Props> {
 
     loadSubmissions = () => {
         const { recentSubmissions } = this.props;
+        const completionHandler = () => {
+            this.setState({ loading: false, error: null });
+        };
+        const errorHandler = error => {
+            this.setState({ loading: false, error });
+        };
 
         this.setState({ loading: true });
-        recentSubmissions(0, '', () => {
-            this.setState({ loading: false, error: null });
-        }, error => {
-            this.setState({ loading: false, error });
-        });
+        recentSubmissions(0, '', completionHandler.bind(this), errorHandler.bind(this));
     }
 
     renderSubmissionsList() {
