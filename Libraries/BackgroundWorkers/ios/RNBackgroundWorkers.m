@@ -18,10 +18,6 @@
 }
 RCT_EXPORT_MODULE(BackgroundWorkers)
 
-RCT_EXPORT_METHOD(test:(NSString *)message) {
-    RCTLogInfo(@"Version 1: Message from JS world: %@", message);
-}
-
 - (void)filterByKeyword:(NSString *)keyword withData:(NSArray *)data completionHandler:(void(^)(NSArray *))handler{
     NSMutableArray* result = [NSMutableArray new];
     

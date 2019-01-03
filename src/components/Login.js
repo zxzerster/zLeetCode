@@ -87,14 +87,6 @@ class Login extends Component<LoginProps> {
         this.nameRef = React.createRef();
     }
 
-    // Only for test
-    componentDidMount() {
-        const workers = NativeModules.BackgroundWorkers;
-
-        workers.test('Hello, Native world');
-    }
-    // Only for test
-
     login() {
         const { username, password } = this.state;
         const { login } = this.props;
