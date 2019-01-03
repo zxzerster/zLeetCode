@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
     View, TouchableOpacity, Text,
-    Linking, Keyboard, InputAccessoryView,
+    Linking, Keyboard, InputAccessoryView, NativeModules,
     Alert, Button as NativeButton, KeyboardAvoidingView,
 } from 'react-native';
 import {
@@ -86,6 +86,14 @@ class Login extends Component<LoginProps> {
         this.pwdRef = React.createRef();
         this.nameRef = React.createRef();
     }
+
+    // Only for test
+    componentDidMount() {
+        const workers = NativeModules.BackgroundWorkers;
+
+        workers.test('Hello, Native world');
+    }
+    // Only for test
 
     login() {
         const { username, password } = this.state;

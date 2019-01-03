@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    View, FlatList, InteractionManager, NetInfo,
+    View, FlatList, InteractionManager, NativeModules,
 } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import _ from 'lodash';
@@ -50,10 +50,16 @@ class Problems extends Component<ProblemsProps> {
         };
 
         this.searchRef = React.createRef();
+        this.backgroundWorker = NativeModules.BackgroundWorkers;
     }
 
     componentDidMount() {
-        this.loadProblems.apply(this);
+        this.loadProblems();
+
+        // this.backgroundWorker.doInNativeWithAction(0x100, {
+        //     keyworkd: 'Two Sum',
+        //     data: [{ title: 'a', id: 1 }, { title: 'b', id: 2 }],
+        // });
     }
 
     refreshProblems = () => {
@@ -74,14 +80,12 @@ class Problems extends Component<ProblemsProps> {
         problems(completionHandler.bind(this), errorHandler.bind(this));
     }
 
-    loadProblems() {
-        const { problems, allQuestions } = this.props;
+    loadProblems = () => {
+        const { problems, allQuestions, from } = this.props;
         const completionHandler = () => {
-            const { from, tagIds } = this.props;
+            const { tagIds } = this.props;
 
-            if (!from) {
-                this.setState({ loading: false, error: null, displayedQuestions: this.props.allQuestions });
-            } else if (from && from === 'SearchTab') {
+            if (from === 'SearchTab') {
                 this.setState({ loading: false, error: null });
                 this.doLocalTagSearch(tagIds);
             }
@@ -90,11 +94,11 @@ class Problems extends Component<ProblemsProps> {
             this.setState({ loading: false, error });
         };
 
-        if (allQuestions && allQuestions.length > 1) {
-            this.setState({ displayedQuestions: allQuestions });
-        } else {
+        if (from && from === 'SearchTab') {
             this.setState({ loading: true });
             problems(completionHandler.bind(this), errorHandler.bind(this));
+        } else {
+            this.setState({ displayedQuestions: allQuestions });
         }
     }
 
@@ -126,15 +130,27 @@ class Problems extends Component<ProblemsProps> {
         if (!searchKeyword || searchKeyword.length < 1) {
             this.setState({ displayedQuestions: allQuestions });
         } else {
-            InteractionManager.runAfterInteractions(() => {
-                const searched = _.filter(allQuestions, ({ title }) => {
-                    const a = title.toLowerCase();
-                    const b = searchKeyword.toLowerCase();
+            const searchData = _.map(allQuestions, question => {
+                return { title: question.title, questionId: question.questionId };
+            });
 
-                    return a.includes(b);
+            this.backgroundWorker.doInNativeWithAction(0x100, {
+                keyword: searchKeyword,
+                data: searchData,
+            })
+            .then(resp => {
+                const ids = _.map(resp, item => {
+                    return item.questionId;
+                });
+                const filtered = _.filter(allQuestions, item => {
+                    return ids.includes(item.questionId);
                 });
 
-                this.setState({ displayedQuestions: searched });
+                this.setState({ displayedQuestions: filtered });
+            })
+            .catch(error => {
+                // Should be no errors here. let try to show all questions for now
+                // For now, just log errors and do nothing.
             });
         }
     }
