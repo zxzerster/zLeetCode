@@ -3,18 +3,21 @@ import {
     View, Image, Text, ScrollView, TouchableOpacity,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { Badge, Divider, Button, Icon } from 'react-native-elements';
+import {
+    Badge, Divider, Button, Icon,
+} from 'react-native-elements';
 import { connect } from 'react-redux';
 
 import LeetcodeIcon from './common/LeetcodeIcon';
 import { leetcodeUserProfile, leetcodeUserProgress, leetcodeLogout } from '../actions';
+import { ColorScheme } from '../utils/Config';
 
 import { versionString } from '../../ZLC-Config';
 
 const profileStyles = {
     container: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: ColorScheme.white,
     },
     profileContainer: {
         flex: 1,
@@ -40,17 +43,17 @@ const profileStyles = {
     },
     realNameText: {
         fontSize: 20,
-        color: '#606060',
+        color: ColorScheme.textDarkerGray,
         marginLeft: 7,
     },
     nameSlugText: {
         fontSize: 15,
-        color: '#A0A0A0',
+        color: ColorScheme.textGray,
         marginLeft: 7,
     },
     divider: {
         height: 0.5,
-        backgroundColor: '#A0A0A0',
+        backgroundColor: ColorScheme.separateLineGray,
         marginTop: 2,
         marginRight: 5,
         shadowColor: '#000',
@@ -73,7 +76,7 @@ const profileStyles = {
     statsLabelText: {
         marginLeft: 8,
         fontSize: 12,
-        color: '#808080',
+        color: ColorScheme.textGray,
     },
     badgeContainer: {
         flexDirection: 'row',
@@ -86,7 +89,7 @@ const profileStyles = {
         marginRight: 3,
     },
     greenBadge: {
-        backgroundColor: 'rgb(82, 175, 82)',
+        backgroundColor: ColorScheme.easyGreen,
     },
     blueBadge: {
         backgroundColor: 'rgb(81, 184, 217)',
@@ -98,17 +101,18 @@ const settingStyles = {
         flexDirection: 'row',
         height: 45,
         alignItems: 'center',
-        borderBottomColor: '#c0c0c0',
+        borderBottomColor: ColorScheme.separateLineGray,
         borderBottomWidth: 1,
         paddingLeft: 8,
     },
     topBoder: {
-        borderTopColor: '#c0c0c0',
+        borderTopColor: ColorScheme.separateLineGray,
         borderTopWidth: 1,
     },
     text: {
         fontSize: 17,
         fontWeight: '400',
+        color: ColorScheme.textDarkGray,
     },
 };
 
@@ -235,7 +239,7 @@ const renderSettingItems = ({ submissionHandler, favoriteHandler, helperHandler,
         if (index === 3) {
             return (
                 <View style={[item, { borderBottomWidth: 0 }]}>
-                    <Text style={text}>{title}</Text>
+                    <Text style={[text, { color: ColorScheme.textGray }]}>{title}</Text>
                 </View>
             );
         }
@@ -253,9 +257,9 @@ const renderSettingItems = ({ submissionHandler, favoriteHandler, helperHandler,
 
     return (
         <View>
-            {renderItem(0, 'Your Submissions', submissionHandler, () => <Icon color="gray" type="ionicon" name="ios-list-box" />)}
-            {renderItem(1, 'Your Favorites', favoriteHandler, () => <Icon color="gray" type="ionicon" name="ios-heart" />)}
-            {renderItem(2, 'Help', helperHandler, () => <Icon color="gray" type="ionicon" name="ios-help-circle" />)}
+            {renderItem(0, 'Your Submissions', submissionHandler, () => <Icon color={ColorScheme.lightGray} type="ionicon" name="ios-list-box" />)}
+            {renderItem(1, 'Your Favorites', favoriteHandler, () => <Icon color={ColorScheme.lightGray} type="ionicon" name="ios-heart" />)}
+            {renderItem(2, 'Help', helperHandler, () => <Icon color={ColorScheme.lightGray} type="ionicon" name="ios-help-circle" />)}
             {renderItem(3, versionString)}
         </View>
     );

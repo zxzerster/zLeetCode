@@ -27,6 +27,8 @@ const queryResult = (dispatch, successType, failedType, id, completionHandler, e
             dispatch({ type: failedType });
             errorHandler(`error: ${failedType}`);
             // return Promise.reject(new Error(ERRs.ERR_NETWORK));
+
+            return;
         }
 
         resp.json().then(json => {
@@ -263,6 +265,8 @@ export const leetcodeFavoritesLists = (completionHandler, errorHandler) => {
             if (resp.status !== 200) {
                 dispatch({ type: LEETCODE_FAVORITES_PROBLEMS_FAILED });
                 errorHandler(ERRs.ERR_NETWORK);
+
+                return;
             }
 
             resp.json().then(json => {

@@ -9,6 +9,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { leetcodeCodeDefinition, leetcodeRunCode, leetcodeSubmitCode } from '../actions';
 import FloatingButton from './common/FloatingButton';
+import { ColorScheme } from '../utils/Config';
 
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 
@@ -17,43 +18,43 @@ const styles = {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'white',
+        backgroundColor: ColorScheme.white,
     },
-    errorString: {
-        fontSize: 24,
-        fontWeight: '500',
-        color: 'gray',
-        marginTop: 20,
-    },
-    reloadButton: {
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 5,
-        width: '35%',
-        height: 35,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 15,
-    },
-    reloadButtonTitle: {
-        fontSize: 18,
-        color: 'gray',
-    },
-    ButtonTitle: {
-        color: '#eeeeee',
-        fontWeight: '600',
-        fontSize: 20,
-    },
+    // errorString: {
+    //     fontSize: 24,
+    //     fontWeight: '500',
+    //     color: 'gray',
+    //     marginTop: 20,
+    // },
+    // reloadButton: {
+    //     borderWidth: 1,
+    //     borderColor: 'gray',
+    //     borderRadius: 5,
+    //     width: '35%',
+    //     height: 35,
+    //     alignItems: 'center',
+    //     justifyContent: 'center',
+    //     marginTop: 15,
+    // },
+    // reloadButtonTitle: {
+    //     fontSize: 18,
+    //     color: 'gray',
+    // },
+    // ButtonTitle: {
+    //     color: '#eeeeee',
+    //     fontWeight: '600',
+    //     fontSize: 20,
+    // },
     editorWrapper: {
         flex: 1,
         margin: 8,
     },
-    inputAccessory: {
-        flex: 1,
-        backgroundColor: 'rgb(213, 213, 213)',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-    },
+    // inputAccessory: {
+    //     flex: 1,
+    //     backgroundColor: 'rgb(213, 213, 213)',
+    //     alignItems: 'flex-end',
+    //     justifyContent: 'center',
+    // },
 };
 
 type Props = {
@@ -219,9 +220,10 @@ class ProblemSubmission extends Component<Props> {
                 rc += 1;
                 if (rc === 2) {
                     const { result, expected } = this.props;
+                    const { title, content } = this.processRuncodeResult(result, expected);
 
                     this.setState({ uploading: false });
-                    this.showRunResult(result.status_msg, result.full_runtime_error);
+                    this.showRunResult(title, content);
                 }
             },
             error => {
@@ -232,14 +234,40 @@ class ProblemSubmission extends Component<Props> {
                 rc += 1;
                 if (rc === 2) {
                     const { result, expected } = this.props;
+                    const { title, content } = this.processRuncodeResult(result, expected);
 
                     this.setState({ uploading: false });
-                    this.showRunResult(result.status_msg, result.full_runtime_error);
+                    this.showRunResult(title, content);
                 }
             },
             error => {
                 this.setState({ uploading: false, error });
             });
+    }
+
+    processRuncodeResult = (result, expected) => {
+        const { sampleTestCase } = this.props;
+        const title = `${result.status_msg}`;
+        let content = '';
+
+        // Run success dones't mean run correctly, it means no compilation errors only.
+        if (result.run_success) {
+            const input = `${sampleTestCase}`;
+            // debugger;
+            const outputContent = result.code_answer ? `${result.code_answer}` : 'null';
+            const expectedContent = expected.code_answer ? `${expected.code_answer}` : 'null';
+
+            content = `Your input: ${input}\nOutput: ${outputContent}\nExpected: ${expectedContent}`;
+        } else {
+            const errorMsg = `${result.full_compile_error}`;
+
+            content = errorMsg;
+        }
+
+        return {
+            title,
+            content,
+        };
     }
 
     showRunResult = (title, content) => {
@@ -265,13 +293,13 @@ class ProblemSubmission extends Component<Props> {
             editorWrapper,
         } = styles;
         // const { snippets, selectedIndex } = this.props;
-        const id = 'login_input_accessory_id';
+        // const id = 'login_input_accessory_id';
 
         return (
             <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadCodeDefinition}>
                 {() => (
                     <View style={{ flex: 1 }}>
-                        <ScrollView style={{ backgroundColor: 'white' }}>
+                        <ScrollView style={{ backgroundColor: ColorScheme.white }}>
                             <View style={editorWrapper}>
                                 <TextInput
                                     multiline
@@ -304,14 +332,14 @@ class ProblemSubmission extends Component<Props> {
                                 style={{ marginLeft: 15, marginBottom: 15 }}
                                 position="left"
                                 title="S"
-                                color="rgb(210, 64, 59)"
+                                color={ColorScheme.hardRed}
                             />
                             <FloatingButton
                                 style={{ marginRight: 15, marginBottom: 15 }}
                                 position="right"
                                 loading={uploading}
                                 title="R"
-                                color="rgb(115, 175, 79)"
+                                color={ColorScheme.easyGreen}
                                 onPress={this.runIt}
                             />
                         </View>

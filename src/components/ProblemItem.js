@@ -4,6 +4,8 @@ import { Badge, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 
+import { ColorScheme } from '../utils/Config';
+
 const styles = {
     itemStyle: {
         flexDirection: 'row',
@@ -20,25 +22,25 @@ const styles = {
     },
     topBorder: {
         borderTopWidth: 0.5,
-        borderTopColor: 'rgb(219, 219, 219)',
+        borderTopColor: ColorScheme.separateLineGray,
     },
     bottomBorder: {
         borderBottomWidth: 0.5,
-        bottomBottomColor: 'rgb(239, 239, 239)',
+        bottomBottomColor: ColorScheme.separateLineGray,
     },
     titleStyle: {
         fontSize: 18,
         fontWeight: '500',
-        color: 'rgb(73, 78, 82)',
+        color: ColorScheme.textDarkGray,
     },
     easyGreen: {
-        backgroundColor: 'rgb(116,181, 102)',
+        backgroundColor: ColorScheme.easyGreen,
     },
     mediumYellow: {
-        backgroundColor: 'rgb(231, 175, 95)',
+        backgroundColor: ColorScheme.mediumYellow,
     },
     hardRed: {
-        backgroundColor: 'rgb(202, 92, 84)',
+        backgroundColor: ColorScheme.hardRed,
     },
     tagIcon: {
         justifyContent: 'center',
@@ -46,13 +48,11 @@ const styles = {
         marginRight: 5,
     },
     tagText: {
-        color: 'gray',
+        color: ColorScheme.textGray,
     },
     tagTextWrapper: {
-        // flex: 1,
-        // maxWidth: '90%',
         marginTop: 5,
-        backgroundColor: '#f7f9fa',
+        backgroundColor: ColorScheme.lightGrayBackground,
         padding: 5,
         borderRadius: 5,
     },
@@ -91,7 +91,7 @@ export default ({ problem, index, from }: ProblemItemProps) => {
     }
     const listItem = [
         itemStyle,
-        index === 0 ? {} : topBorder, isPaidOnly ? { backgroundColor: '#eaeaea' } : {},
+        index === 0 ? {} : topBorder, isPaidOnly ? { backgroundColor: ColorScheme.separateLineGray } : {},
     ];
 
     const tags = arr => {
@@ -105,7 +105,7 @@ export default ({ problem, index, from }: ProblemItemProps) => {
     const check = resolved => {
         if (resolved) {
             return (
-                <Icon size={36} type="evilicon" name="check" color="rgb(116,181, 102)" />
+                <Icon size={36} type="evilicon" name="check" color={ColorScheme.easyGreen} />
             );
         }
 
@@ -115,7 +115,7 @@ export default ({ problem, index, from }: ProblemItemProps) => {
     const lock = paidOnly => {
         if (paidOnly) {
             return (
-                <Icon size={36} type="evilicon" name="lock" color="gray" />
+                <Icon size={36} type="evilicon" name="lock" color={ColorScheme.lightGray} />
             );
         }
 
@@ -125,7 +125,6 @@ export default ({ problem, index, from }: ProblemItemProps) => {
     const goToDetails = () => {
         if (!isPaidOnly) {
             if (from && from === 'SearchTab') {
-                debugger;
                 Actions.taggedProblemDetails({ titleSlug, from });
             } else {
                 Actions.problemDetails({ titleSlug });
@@ -182,7 +181,7 @@ export default ({ problem, index, from }: ProblemItemProps) => {
                     <Text numberOfLines={1} style={idTextStyle}>{`${questionId}`}</Text>
                 </View> */}
                 <View style={{ flex: 3, marginLeft: 10 }}>
-                    <Text style={{ color: 'gray' }}>{`#${questionId}`}</Text>
+                    <Text style={{ color: ColorScheme.textGray }}>{`#${questionId}`}</Text>
                     <Text
                         style={titleStyle}
                         numberOfLines={1}
@@ -190,12 +189,12 @@ export default ({ problem, index, from }: ProblemItemProps) => {
                         {`${title}`}
                     </Text>
                     <Badge containerStyle={[{ width: 70, marginTop: 5 }, difficultyColor]}>
-                        <Text style={{ fontSize: 11, color: 'white' }}>{difficulty}</Text>
+                        <Text style={{ fontSize: 11, color: ColorScheme.white }}>{difficulty}</Text>
                     </Badge>
                     {renderTags()}
                     <View style={{ flexDirection: 'row' }}>
                         <Icon type="simple-line-icon" name="like" size={17} color="gray" containerStyle={{ marginTop: 4, marginRight: 5 }} />
-                        <Text style={{ marginTop: 5, color: 'gray' }}>{likes}</Text>
+                        <Text style={{ marginTop: 5, color: ColorScheme.textGray }}>{likes}</Text>
                     </View>
                 </View>
             </View>

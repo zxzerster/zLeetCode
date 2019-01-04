@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
     View, TouchableOpacity, Text,
-    Linking, Keyboard, InputAccessoryView, NativeModules,
+    Linking, Keyboard, InputAccessoryView, Animated,
     Alert, Button as NativeButton, KeyboardAvoidingView,
 } from 'react-native';
 import {
@@ -12,8 +12,12 @@ import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import { leetcodeLogin } from '../actions';
 import { URLs } from '../network';
+import { ColorScheme } from '../utils/Config';
 
 import LeetcodeIcon from './common/LeetcodeIcon';
+
+const ORIGINAL_TOP = 0;
+const KEYBOARD_SHOW_TOP = -50;
 
 const styles = {
     root: {
@@ -40,16 +44,12 @@ const styles = {
         marginLeft: 15,
     },
     forgotText: {
-        color: '#BEBEBE',
+        color: ColorScheme.lightGray,
     },
     submit: {
         backgroundColor: 'rgb(0, 122, 255)',
         borderRadius: 5,
         height: 48,
-    },
-    submitDisabled: {
-        backgroundColor: '#888888',
-        opacity: 0.6,
     },
     inputAccessory: {
         flex: 1,
@@ -72,19 +72,51 @@ class Login extends Component<LoginProps> {
         Linking.openURL(URLs.forgot);
     }
 
-    static dimissKeyboard() {
-        Keyboard.dismiss();
-    }
-
     constructor(props) {
         super(props);
         this.state = {
             username: '',
             password: '',
             loading: false,
+            disabled: true,
         };
         this.pwdRef = React.createRef();
         this.nameRef = React.createRef();
+
+        this.top = new Animated.Value(ORIGINAL_TOP);
+    }
+
+    componentDidMount() {
+        const willShowListener = event => {
+            Animated.timing(
+                this.top,
+                {
+                    toValue: KEYBOARD_SHOW_TOP,
+                    duration: event.duration,
+                }
+            ).start();
+        };
+        const willHideListener = event => {
+            Animated.timing(
+                this.top,
+                {
+                    toValue: ORIGINAL_TOP,
+                    duration: event.duration,
+                }
+            ).start();
+        };
+
+        this.didShow = Keyboard.addListener('keyboardWillShow', willShowListener);
+        this.willHide = Keyboard.addListener('keyboardWillHide', willHideListener);
+    }
+
+    componentWillUnmount() {
+        this.didShow.remove();
+        this.willHide.remove();
+    }
+
+    dimissKeyboard = () => {
+        Keyboard.dismiss();
     }
 
     login() {
@@ -118,10 +150,10 @@ class Login extends Component<LoginProps> {
         const {
             root, iconContainer, inputContainer,
             submitContainer, forgot, forgotText,
-            submit, submitDisabled, inputAccessory,
+            submit, inputAccessory,
         } = styles;
         const {
-            username, password, loading,
+            username, password, loading, disabled,
         } = this.state;
         const leftIcon = loading ? {} : { name: 'arrow-upward', size: 23 };
         const title = loading ? '' : 'Sign in';
@@ -131,11 +163,13 @@ class Login extends Component<LoginProps> {
 
             <KeyboardAvoidingView style={root} behavior="padding">
                 <View style={iconContainer}>
-                    <LeetcodeIcon />
+                    <Animated.View style={{ top: this.top }}>
+                        <LeetcodeIcon />
+                    </Animated.View>
                 </View>
                 <View style={inputContainer}>
                     <View style={{ flexDirection: 'row', marginBottom: 30 }}>
-                        <Icon containerStyle={{ alignSelf: 'center', marginLeft: 10, marginTop: 5 }} type="evilicon" name="user" color="#bababa" size={36} />
+                        <Icon containerStyle={{ alignSelf: 'center', marginLeft: 10, marginTop: 5 }} type="evilicon" name="user" color={ColorScheme.lightGray} size={36} />
                         <FormInput
                             ref={this.nameRef}
                             inputAccessoryViewID={id}
@@ -150,7 +184,7 @@ class Login extends Component<LoginProps> {
                         />
                     </View>
                     <View style={{ flexDirection: 'row' }}>
-                        <Icon containerStyle={{ marginLeft: 10 }} type="evilicon" name="lock" color="#bababa" size={36} />
+                        <Icon containerStyle={{ marginLeft: 10 }} type="evilicon" name="lock" color={ColorScheme.lightGray} size={36} />
                         <FormInput
                             ref={this.pwdRef}
                             inputAccessoryViewID={id}
@@ -165,14 +199,13 @@ class Login extends Component<LoginProps> {
                     </View>
                     <InputAccessoryView nativeID={id}>
                         <View style={inputAccessory}>
-                            <NativeButton onPress={Login.dimissKeyboard} title="Ok" />
+                            <NativeButton onPress={this.dimissKeyboard} title="Ok" />
                         </View>
                     </InputAccessoryView>
                     <View style={submitContainer}>
                         <Button
                             leftIcon={leftIcon}
                             buttonStyle={submit}
-                            disabledStyle={submitDisabled}
                             loading={loading}
                             title={title}
                             onPress={() => this.login()}

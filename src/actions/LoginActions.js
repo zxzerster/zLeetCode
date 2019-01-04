@@ -67,6 +67,9 @@ export const leetcodeLogin = (username, password, completionHandler, errorHandle
         })
         .then(resp => {
             if (resp) {
+                if (resp.status !== 200) {
+                    return resp.json();
+                }
                 // Extract csrftoken & LEETCODE_SESSION
                 const t = getCookieValue(resp.headers.map, 'csrftoken');
                 const s = getCookieValue(resp.headers.map, 'LEETCODE_SESSION');

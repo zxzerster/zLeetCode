@@ -12,33 +12,35 @@ import FloatingButton from './common/FloatingButton';
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 import { leetcodeProblemDetail } from '../actions';
 
+import { ColorScheme } from '../utils/Config';
+
 const HTMLStyles = {
     p: {
         paddingHorizontal: 15,
         marginBottom: -35,
         marginTop: 15,
         fontSize: 16,
-        color: 'rgb(89, 89, 89)',
+        color: ColorScheme.textDarkGray,
         lineHeight: 21,
     },
     ul: {
         paddingHorizontal: 15,
     },
     strong: {
-        color: 'rgb(38, 50, 56)',
+        color: ColorScheme.textDarkerGray,
         fontWeight: '600',
     },
     pre: {
-        color: 'rgb(38, 50, 56)',
+        color: ColorScheme.textDarkerGray,
         lineHeight: 21,
     },
 };
 
 const styles = {
     HTMLText: {
-        borderWidth: 1,
-        borderColor: '#f7f9fa',
-        backgroundColor: '#f7f9fa',
+        borderWidth: 0,
+        borderColor: ColorScheme.lightGrayBackground,
+        backgroundColor: ColorScheme.lightGrayBackground,
         margin: 15,
         borderRadius: 5,
         padding: 8,
@@ -53,7 +55,7 @@ const styles = {
         flex: 17,
         fontSize: 22,
         fontWeight: '700',
-        color: 'rgb(73, 78, 82)',
+        color: ColorScheme.textDarkGray,
         paddingTop: 15,
         paddingRight: 15,
         paddingLeft: 15,
@@ -66,13 +68,13 @@ const styles = {
         paddingRight: 15,
     },
     easyGreen: {
-        backgroundColor: 'rgb(116,181, 102)',
+        backgroundColor: ColorScheme.easyGreen,
     },
     mediumYellow: {
-        backgroundColor: 'rgb(231, 175, 95)',
+        backgroundColor: ColorScheme.mediumYellow,
     },
     hardRed: {
-        backgroundColor: 'rgb(202, 92, 84)',
+        backgroundColor: ColorScheme.hardRed,
     },
 };
 
@@ -177,7 +179,7 @@ class ProblemDetails extends Component<Props> {
     renderSimilars = similars => {
         return _.map(similars, similar => {
             return (
-                <Badge key={similar.title} containerStyle={{ marginHorizontal: 2, backgroundColor: 'lightgray' }}>
+                <Badge key={similar.title} containerStyle={{ marginHorizontal: 2, backgroundColor: ColorScheme.lightGray }}>
                     <Text style={{ color: 'white', fontSize: 10 }}>{similar.title}</Text>
                 </Badge>
             );
@@ -188,17 +190,17 @@ class ProblemDetails extends Component<Props> {
         if (statsObj) {
             return (
                 <View style={{ flexDirection: 'row', margin: 4 }}>
-                    <Text style={{ marginHorizontal: 8, color: 'rgb(89, 89, 89)' }}>
+                    <Text style={{ marginHorizontal: 8, color: ColorScheme.textGray }}>
                         Subs:
-                        <Text style={{ color: 'rgb(73, 78, 82)', marginLeft: 4 }}>  {`${statsObj.totalSubmission}`}</Text>
+                        <Text style={{ color: ColorScheme.textDarkGray, marginLeft: 4 }}>  {`${statsObj.totalSubmission}`}</Text>
                     </Text>
-                    <Text style={{ marginHorizontal: 8, color: 'rgb(89, 89, 89)' }}>
+                    <Text style={{ marginHorizontal: 8, color: ColorScheme.textGray }}>
                         Total:
-                        <Text style={{ color: 'rgb(73, 78, 82)', marginLeft: 4 }}>  {`${statsObj.totalAccepted}`}</Text>
+                        <Text style={{ color: ColorScheme.textDarkGray, marginLeft: 4 }}>  {`${statsObj.totalAccepted}`}</Text>
                     </Text>
-                    <Text style={{ marginHorizontal: 8, color: 'rgb(89, 89, 89)' }}>
+                    <Text style={{ marginHorizontal: 8, color: ColorScheme.textGray }}>
                         Rate:
-                        <Text style={{ color: 'rgb(73, 78, 82)', marginLeft: 4 }}>  {`${statsObj.acRate}`}</Text>
+                        <Text style={{ color: ColorScheme.textDarkGray, marginLeft: 4 }}>  {`${statsObj.acRate}`}</Text>
                     </Text>
                 </View>
             );
@@ -240,22 +242,22 @@ class ProblemDetails extends Component<Props> {
         return (
             <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadProblemDetails}>
                 {() => (
-                    <View style={{ flex: 1, backgroundColor: 'white' }}>
+                    <View style={{ flex: 1, backgroundColor: ColorScheme.white }}>
                         <View style={titleWrapper}>
                             <View style={{ flexDirection: 'row' }}>
                                 <Text style={titleStyle}>{`#${questionId} ${title}`}</Text>
                                 <View style={titleIcon}>
                                     <Badge containerStyle={[{ width: 70, marginTop: 5 }, difficultyColor]}>
-                                        <Text style={{ fontSize: 11, color: 'white' }}>{detail.difficulty}</Text>
+                                        <Text style={{ fontSize: 11, color: ColorScheme.white }}>{detail.difficulty}</Text>
                                     </Badge>
                                     <View style={{ flexDirection: 'row' }}>
                                         <View style={{ flexDirection: 'row', marginRight: 8 }}>
-                                            <Icon type="simple-line-icon" name="like" size={14} color="gray" containerStyle={{ marginTop: 4, marginRight: 5 }} />
-                                            <Text style={{ fontSize: 12, marginTop: 5, color: 'gray' }}>{likes}</Text>
+                                            <Icon type="simple-line-icon" name="like" size={14} color={ColorScheme.lightGray} containerStyle={{ marginTop: 4, marginRight: 5 }} />
+                                            <Text style={{ fontSize: 12, marginTop: 5, color: ColorScheme.textGray }}>{likes}</Text>
                                         </View>
                                         <View style={{ flexDirection: 'row' }}>
-                                            <Icon type="simple-line-icon" name="dislike" size={14} color="gray" containerStyle={{ marginTop: 4, marginRight: 5 }} />
-                                            <Text style={{ fontSize: 12, marginTop: 5, color: 'gray' }}>{dislikes}</Text>
+                                            <Icon type="simple-line-icon" name="dislike" size={14} color={ColorScheme.lightGray} containerStyle={{ marginTop: 4, marginRight: 5 }} />
+                                            <Text style={{ fontSize: 12, marginTop: 5, color: ColorScheme.textGray }}>{dislikes}</Text>
                                         </View>
                                     </View>
                                 </View>
