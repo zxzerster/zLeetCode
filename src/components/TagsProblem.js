@@ -48,6 +48,7 @@ class TagsProblem extends Component<Props> {
         this.state = {
             loading: false,
             error: null,
+            refreshing: false,
         };
     }
 
@@ -71,13 +72,13 @@ class TagsProblem extends Component<Props> {
     refresh = () => {
         const { allTags } = this.props;
         const completionHandler = () => {
-            this.setState({ loading: false, error: null });
+            this.setState({ refreshing: false, error: null });
         };
         const errorHandler = error => {
-            this.setState({ loading: false, error });
+            this.setState({ refreshing: false, error });
         };
 
-        this.setState({ loading: true });
+        this.setState({ refresh: true });
         allTags(completionHandler.bind(this), errorHandler.bind(this));
     }
 
@@ -127,7 +128,7 @@ class TagsProblem extends Component<Props> {
     };
 
     render() {
-        const { loading, error } = this.state;
+        const { loading, error, refreshing } = this.state;
         const { companies, topics } = this.props;
 
         return (
@@ -146,7 +147,7 @@ class TagsProblem extends Component<Props> {
                     // for now, disable search function for a while
                     // ListHeaderComponent={this.searchBar}
                     onRefresh={this.refresh}
-                    refreshing={loading}
+                    refreshing={refreshing}
                 />
                 </View>
             )}

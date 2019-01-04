@@ -165,7 +165,7 @@ export default ({ problem, index, from }: ProblemItemProps) => {
         if (topicTags.length > 0) {
             return (
                 <View style={{ flexDirection: 'row' }}>
-                    <Icon size={16} type="font-awesome" name="tags" color="gray" containerStyle={tagIcon} />
+                    <Icon size={16} type="font-awesome" name="tags" color={ColorScheme.lightGray} containerStyle={tagIcon} />
                     <View style={tagTextWrapper}><Text numberOfLines={100} style={tagText}>{tags(topicTags)}</Text></View>
                 </View>
             );
