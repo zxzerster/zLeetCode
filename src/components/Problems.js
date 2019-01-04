@@ -1,15 +1,23 @@
 import React, { Component } from 'react';
 import {
-    View, FlatList, InteractionManager, NativeModules,
+    View, FlatList, NativeModules, Text, TouchableOpacity,
 } from 'react-native';
 import { SearchBar } from 'react-native-elements';
+import Popover from 'react-native-popover-view';
 import _ from 'lodash';
 import { connect } from 'react-redux';
+import { Actions } from 'react-native-router-flux';
 
 import withLeetcodeWrapper from './common/withLeetcodeWrapper';
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 import ProblemItem from './ProblemItem';
+import ProblemRighttButton from './common/ProblemRightButton';
 import { leetcodeProblems } from '../actions';
+
+
+const EASY = 'Easy';
+const MEDIUM = 'Medium';
+const HARD = 'Hard';
 
 const styles = {
     container: {
@@ -31,6 +39,8 @@ type ProblemsProps = {
     },
     tagIds: Array<string>,
     from?: string,
+
+    navigation: Object,
 };
 
 class Problems extends Component<ProblemsProps> {
@@ -47,6 +57,7 @@ class Problems extends Component<ProblemsProps> {
             refreshing: false,
             searchKeyword: '',
             displayedQuestions: [],
+            showFilter: false,
         };
 
         this.searchRef = React.createRef();
@@ -54,13 +65,23 @@ class Problems extends Component<ProblemsProps> {
     }
 
     componentDidMount() {
-        this.loadProblems();
+        const { navigation, from } = this.props;
 
-        // this.backgroundWorker.doInNativeWithAction(0x100, {
-        //     keyworkd: 'Two Sum',
-        //     data: [{ title: 'a', id: 1 }, { title: 'b', id: 2 }],
-        // });
+        if (from && from === 'SearchTab') {
+            const { title } = this.props;
+
+            navigation.setParams({ title });
+        } else {
+            navigation.setParams({ title: 'Problems', rightTitle: 'filter', onRight: () => { this.setState({ showFilter: true }); } });
+        }
+        this.loadProblems();
     }
+
+    rightButton = () => {
+        return (
+            <ProblemRighttButton />
+        );
+    };
 
     refreshProblems = () => {
         const { problems } = this.props;
@@ -81,24 +102,28 @@ class Problems extends Component<ProblemsProps> {
     }
 
     loadProblems = () => {
-        const { problems, allQuestions, from } = this.props;
+        const {
+            problems, allQuestions, from, tagIds,
+        } = this.props;
         const completionHandler = () => {
-            const { tagIds } = this.props;
-
-            if (from === 'SearchTab') {
-                this.setState({ loading: false, error: null });
+            if (from && from === 'SearchTab') {
                 this.doLocalTagSearch(tagIds);
+            } else {
+                this.setState({ loading: false, error: null });
             }
         };
         const errorHandler = error => {
             this.setState({ loading: false, error });
         };
 
-        if (from && from === 'SearchTab') {
-            this.setState({ loading: true });
-            problems(completionHandler.bind(this), errorHandler.bind(this));
+        if (allQuestions && allQuestions.length > 0) {
+            if (from && from === 'SearchTab') {
+                this.doLocalTagSearch(tagIds);
+            } else {
+                this.setState({ displayedQuestions: allQuestions });
+            }
         } else {
-            this.setState({ displayedQuestions: allQuestions });
+            problems(completionHandler.bind(this), errorHandler.bind(this));
         }
     }
 
@@ -122,6 +147,31 @@ class Problems extends Component<ProblemsProps> {
             />
         );
     }
+
+    filterByDifficulty = difficulty => {
+        const { allQuestions } = this.props;
+        const searchData = _.map(allQuestions, question => {
+            return { difficulty: question.difficulty, questionId: question.questionId };
+        });
+
+        this.backgroundWorker.doInNativeWithAction(0x101, {
+            difficulty,
+            data: searchData,
+        })
+        .then(resp => {
+            const ids = _.map(resp, item => {
+                return item.questionId;
+            });
+            const filtered = _.filter(allQuestions, item => {
+                return ids.includes(item.questionId);
+            });
+
+            this.setState({ displayedQuestions: filtered, showFilter: false });
+        })
+        .catch(error => {
+            this.setState({ showFilter: false });
+        });
+    };
 
     doLocalKeywordSearch = () => {
         const { searchKeyword } = this.state;
@@ -161,12 +211,27 @@ class Problems extends Component<ProblemsProps> {
         if (!ids || ids.length < 1) {
             this.setState({ displayedQuestions: allQuestions });
         } else {
-            InteractionManager.runAfterInteractions(() => {
-                const searched = _.filter(allQuestions, ({ questionId }) => {
-                    return ids.includes(parseInt(questionId, 10));
+            const searchData = _.map(allQuestions, question => {
+                return { questionId: question.questionId };
+            });
+
+            this.backgroundWorker.doInNativeWithAction(0x102, {
+                tags: ids,
+                data: searchData,
+            })
+            .then(resp => {
+                const result = _.map(resp, item => {
+                    return item.questionId;
+                });
+                const filtered = _.filter(allQuestions, item => {
+                    return result.includes(item.questionId);
                 });
 
-                this.setState({ displayedQuestions: searched });
+                this.setState({ displayedQuestions: filtered });
+            })
+            .catch(error => {
+                // Should be no errors here. let try to show all questions for now
+                // For now, just log errors and do nothing.
             });
         }
     }
@@ -181,11 +246,18 @@ class Problems extends Component<ProblemsProps> {
         const { container } = styles;
         const { from } = this.props;
         const {
-            loading, error, refreshing, displayedQuestions,
+            loading, error, refreshing, displayedQuestions, showFilter,
         } = this.state;
         const r = from ? null : refreshing;
         const ra = from ? null : this.refreshProblems;
         const searchBar = from ? null : this.searchBar;
+        const all = () => {
+            const { allQuestions } = this.props;
+            const ref = this.searchRef;
+
+            ref.current.input.clear();
+            this.setState({ showFilter: false, displayedQuestions: allQuestions });
+        };
 
         return (
             <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadProblems}>
@@ -200,6 +272,33 @@ class Problems extends Component<ProblemsProps> {
                             onRefresh={ra}
                             ListHeaderComponent={searchBar}
                         />
+                        <Popover
+                            isVisible={showFilter}
+                            popoverStyle={{ width: '25%', height: 300 }}
+                        >
+                            <View style={{ flex: 1, backgroundColor: 'red' }}>
+                                <Text>Filter</Text>
+                                <View style={{ backgroundColor: 'yellow' }}>
+                                    <TouchableOpacity onPress={all}>
+                                        <Text>All</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => { this.filterByDifficulty(EASY); }}>
+                                        <Text>Easy</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => { this.filterByDifficulty(MEDIUM); }}>
+                                        <Text>Medium</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => { this.filterByDifficulty(HARD); }}>
+                                        <Text>Hard</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={{ flex: 1, backgroundClor: 'blue' }}>
+                                    <TouchableOpacity style={{ backgroundColor: 'green' }} onPress={() => { this.setState({ showFilter: false }); }}>
+                                        <Text>Cancel</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Popover>
                     </View>
                 )}
             </LoadingErrorWrapper>

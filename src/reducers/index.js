@@ -38,6 +38,7 @@ const problemsPersistConfig = {
 const profilePersistConfig = {
     key: 'profile',
     storage,
+    stateReconciler: autoMergeLevel2,
 };
 
 const progressPersistConfig = {

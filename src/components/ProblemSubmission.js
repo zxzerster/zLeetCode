@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import {
-    View, Text, TouchableOpacity, ScrollView,
-    Alert, ActivityIndicator, TextInput, Button,
-    Keyboard, InputAccessoryView,
+    View, Text, ScrollView,
+    Alert, ActivityIndicator, TextInput,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
@@ -12,22 +11,6 @@ import { leetcodeCodeDefinition, leetcodeRunCode, leetcodeSubmitCode } from '../
 import FloatingButton from './common/FloatingButton';
 
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
-
-// Temparay test code
-// const emptyCode = '';
-// const wrongCode = 'abc';
-// const correctCode = 'class Solution(object):\n    def twoSum(self, nums, target):\n        \"\"\"\n        :type nums: List[int]\n        :type target: int\n        :rtype: List[int]\n        \"\"\"\n        \n        indices = []\n        length = len(nums)\n        for i in range(0, length):\n            del indices[:]\n            remaining = target - nums[i]\n            indices.append(i)\n            for j in range(i + 1, length):\n                if nums[j] == remaining:\n                    indices.append(j)\n                    return indices\n\n        return indices\n        ';
-
-// const codeInput = (questionId, judgeType) => {
-//     return {
-//         question_id: questionId,
-//         judge_type: judgeType,
-//         data_input: '[2, 7, 11, 15]\n9',
-//         lang: 'python',
-//         typed_code: correctCode,
-//     };
-// };
-// Temparay test code
 
 const styles = {
     loadingErrorContainer: {
@@ -65,26 +48,6 @@ const styles = {
         flex: 1,
         margin: 8,
     },
-    // paramsWrapper: {
-    //     backgroundColor: 'white',
-    //     height: 180,
-    // },
-    // paramsTitle: {
-    //     marginTop: 8,
-    //     fontSize: 18,
-    //     fontWeight: '500',
-    //     color: 'gray',
-    //     marginHorizontal: 8,
-    // },
-    // paramsInput: {
-    //     backgroundColor: 'white',
-    //     flex: 1,
-    //     margin: 8,
-    //     borderRadius: 5,
-    //     shadowColor: 'black',
-    //     shadowOpacity: 0.2,
-    //     shadowOffset: { width: 0, height: 1 },
-    // },
     inputAccessory: {
         flex: 1,
         backgroundColor: 'rgb(213, 213, 213)',

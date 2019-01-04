@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Scene, Stack } from 'react-native-router-flux';
+import { Router, Modal, Tabs, Tab, Scene, Stack } from 'react-native-router-flux';
 
 import Loading from './src/components/Loading';
 import Login from './src/components/Login';
@@ -26,40 +26,40 @@ const LeetCodeRoutes = () => {
             headerBackTitleStyle={{ color: 'white' }}
             tintColor="white"
         >
-            <Scene key="rootScene" hideNavBar modal>
-                <Scene key="loadingWrapper" initial>
+            <Modal key="rootScene" hideNavBar>
+                <Stack key="loadingWrapper" initial>
                     <Scene key="loading" component={Loading} hideNavBar />
                     <Scene key="login" component={Login} title="Login" hideNavBar />
-                </Scene>
-                <Scene
+                </Stack>
+                <Tabs
                     key="main"
-                    tabs
                     showLabel={false}
                     activeTintColor="rgba(236, 162, 64, 128)"
                     inactiveTintColor="gray"
                 >
                     <Stack key="problemsWrapper" icon={ProblemTabIcon}>
-                        <Scene key="problems" title="Problems" initial component={Problems} renderRightButton={ProblemRighttButton} onRight={() => {}} />
-                        <Scene key="problemDetails" component={ProblemDetails} title="Details" />
-                        <Scene key="problemSubmission" component={ProblemSubmission} title="Submission" />
-                        <Scene key="codelangselector" component={CodeLangSelector} title="Select Languate" />
+                        <Scene key="problems" initial component={Problems} />
+                        <Scene key="problemDetails" component={ProblemDetails} title="Details" hideTabBar />
+                        <Scene key="problemSubmission" component={ProblemSubmission} title="Submission" hideTabBar />
+                        <Scene key="codelangselector" component={CodeLangSelector} title="Select Languate" hideTabBar />
                     </Stack>
                     <Stack icon={SearchTabIcon}>
-                        <Scene key="searchProblem" component={TagsProblem} title="Search" />
-                        <Scene key="taggedProblems" component={Problems} />
-                        <Scene key="taggedProblemDetails" component={ProblemDetails} title="Details" />
-                        <Scene key="taggedProblemSubmission" component={ProblemSubmission} title="Submission" />
-                        <Scene key="taggedCodelangselector" component={CodeLangSelector} title="Select Languate" />
+                        <Scene key="searchProblem" component={TagsProblem} title="Tags" />
+                        <Scene key="taggedProblems" component={Problems} hideTabBar />
+                        <Scene key="taggedProblemDetails" component={ProblemDetails} title="Details" hideTabBar />
+                        <Scene key="taggedProblemSubmission" component={ProblemSubmission} title="Submission" hideTabBar />
+                        <Scene key="taggedCodelangselector" component={CodeLangSelector} title="Select Languate" hideTabBar />
                     </Stack>
-                    <Stack icon={FavoriteTabIcon}>
+                    {/* <Stack icon={FavoriteTabIcon}>
                         <Scene key="favoriteProblems" component={FavoriteProblems} title="Search" />
-                    </Stack>
+                    </Stack> */}
                     <Stack key="profileWrapper" title="Profile" icon={ProfileTabIcon}>
                         <Scene key="profile" component={Profile} initial />
-                        <Scene key="submissions" component={Submissions} title="Recent Submissions" />
+                        <Scene key="submissions" component={Submissions} title="Recent Submissions" hideTabBar />
+                        <Scene key="favorite" component={FavoriteProblems} title="Favorite" hideTabBar />
                     </Stack>
-                </Scene>
-            </Scene>
+                </Tabs>
+            </Modal>
         </Router>
     );
 };

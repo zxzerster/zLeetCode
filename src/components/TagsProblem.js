@@ -143,7 +143,8 @@ class TagsProblem extends Component<Props> {
                     keyExtractor={item => item.slug}
                     renderSectionHeader={this.renderSectionHeader}
                     renderItem={this.renderTagItem}
-                    ListHeaderComponent={this.searchBar}
+                    // for now, disable search function for a while
+                    // ListHeaderComponent={this.searchBar}
                     onRefresh={this.refresh}
                     refreshing={loading}
                 />

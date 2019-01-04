@@ -11,14 +11,12 @@ const styles = {
     ListItem: {
         flex: 1,
         height: 35,
-        justifyContent:
-        'center',
-        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: 10,
     },
     ListItemText: {
-        textDecorationLine: 'underline',
         fontSize: 16,
-        color: 'rgb(6, 69, 173)',
+        color: 'gray',
     },
     ListHeader: {
         height: 30,

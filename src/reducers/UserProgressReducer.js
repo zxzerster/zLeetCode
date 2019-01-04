@@ -25,6 +25,6 @@ export default (state = INITIAL_STATE, action) => {
         case LEETCODE_USER_PROGRESS_FAILED:
             return { ...INITIAL_STATE };
         default:
-            return { ...INITIAL_STATE };
+            return state;
     }
 };

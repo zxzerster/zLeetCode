@@ -3,7 +3,7 @@ import {
     View, Image, Text, ScrollView, TouchableOpacity,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { Badge, Divider, Button } from 'react-native-elements';
+import { Badge, Divider, Button, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 
 import LeetcodeIcon from './common/LeetcodeIcon';
@@ -95,8 +95,9 @@ const profileStyles = {
 
 const settingStyles = {
     item: {
+        flexDirection: 'row',
         height: 45,
-        justifyContent: 'center',
+        alignItems: 'center',
         borderBottomColor: '#c0c0c0',
         borderBottomWidth: 1,
         paddingLeft: 8,
@@ -216,21 +217,22 @@ const renderProfile = ({
     );
 };
 
-const renderSettingItems = ({ submissionHandler, helperHandler, logoutHandler }) => {
+const renderSettingItems = ({ submissionHandler, favoriteHandler, helperHandler, logoutHandler }) => {
     const { item, text, topBoder } = settingStyles;
 
-    const renderItem = (index, title, handler) => {
+    const renderItem = (index, title, handler, iconRenderer) => {
         if (index === 0) {
             return (
                 <View style={[item, topBoder]}>
-                    <TouchableOpacity onPress={handler}>
+                    {iconRenderer()}
+                    <TouchableOpacity style={{ marginLeft: 10 }} onPress={handler}>
                         <Text style={text}>{title}</Text>
                     </TouchableOpacity>
                 </View>
             );
         }
 
-        if (index === 2) {
+        if (index === 3) {
             return (
                 <View style={[item, { borderBottomWidth: 0 }]}>
                     <Text style={text}>{title}</Text>
@@ -241,7 +243,8 @@ const renderSettingItems = ({ submissionHandler, helperHandler, logoutHandler })
 
         return (
             <View style={item}>
-                <TouchableOpacity onPress={handler}>
+                {iconRenderer()}
+                <TouchableOpacity style={{ marginLeft: 10 }} onPress={handler}>
                     <Text style={text}>{title}</Text>
                 </TouchableOpacity>
             </View>
@@ -250,9 +253,10 @@ const renderSettingItems = ({ submissionHandler, helperHandler, logoutHandler })
 
     return (
         <View>
-            {renderItem(0, 'Your Submissions', submissionHandler)}
-            {renderItem(1, 'Help', helperHandler)}
-            {renderItem(2, versionString)}
+            {renderItem(0, 'Your Submissions', submissionHandler, () => <Icon color="gray" type="ionicon" name="ios-list-box" />)}
+            {renderItem(1, 'Your Favorites', favoriteHandler, () => <Icon color="gray" type="ionicon" name="ios-heart" />)}
+            {renderItem(2, 'Help', helperHandler, () => <Icon color="gray" type="ionicon" name="ios-help-circle" />)}
+            {renderItem(3, versionString)}
         </View>
     );
 };
@@ -326,7 +330,11 @@ class Profile extends Component<Props> {
 
     allSubmissions = () => {
         Actions.submissions();
-    }
+    };
+
+    favorites = () => {
+        Actions.favorite();
+    };
 
     renderLogout() {
         const { button, buttonDisabled, containerView } = logoutStyles;
@@ -367,6 +375,7 @@ class Profile extends Component<Props> {
                             submissionHandler: this.allSubmissions,
                             helperHandler: this.helpHandler,
                             logoutHandler: this.logout,
+                            favoriteHandler: this.favorites,
                         })}
                         {this.renderLogout()}
                     </ScrollView>

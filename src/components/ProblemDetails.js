@@ -215,7 +215,7 @@ class ProblemDetails extends Component<Props> {
         const { loading, error } = this.state;
         const { detail } = this.props;
         const {
-            title, questionId, difficulty, likes, dislikes, titleSlug, similarQuestions, stats, judgeType, sampleTestCase
+            title, questionId, difficulty, likes, dislikes, titleSlug, similarQuestions, stats, judgeType, sampleTestCase,
         } = detail;
         let similars = null;
         let statsObj = null;

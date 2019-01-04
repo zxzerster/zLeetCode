@@ -125,6 +125,7 @@ export default ({ problem, index, from }: ProblemItemProps) => {
     const goToDetails = () => {
         if (!isPaidOnly) {
             if (from && from === 'SearchTab') {
+                debugger;
                 Actions.taggedProblemDetails({ titleSlug, from });
             } else {
                 Actions.problemDetails({ titleSlug });
