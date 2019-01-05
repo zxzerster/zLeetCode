@@ -6,6 +6,7 @@ import { ListItem } from 'react-native-elements';
 
 import { connect } from 'react-redux';
 import { leetcodeSubmissions } from '../actions';
+import { ColorScheme } from '../utils/Config';
 
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 
@@ -13,6 +14,33 @@ const styles = {
     container: {
         flex: 1,
         backgroundColor: 'white',
+    },
+    itemContainer: {
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderBottomColor: ColorScheme.separateLineGray
+    },
+    itemLeft: {
+        flex: 2,
+        justifyContent: 'center',
+    },
+    itemRight: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    questionTitle: {
+        marginLeft: 12,
+        marginRight: 8,
+        marginBottom: 5,
+        marginTop: 10,
+        fontSize: 17,
+        color: ColorScheme.textDarkGray,
+    },
+    questionTime: {
+        marginLeft: 12,
+        marginBottom: 10,
+        fontSize: 12,
+        color: ColorScheme.textGray,
     },
 };
 
@@ -66,16 +94,21 @@ class Submissions extends Component<Props> {
     }
 
     renderSubmissionItem = ({ item }) => {
-        const colorStyle = item.statusDisplay === 'Accepted' ? 'green' : 'red';
+        const colorStyle = item.statusDisplay === 'Accepted' ? ColorScheme.easyGreen : ColorScheme.hardRed;
+        const {
+            itemContainer, itemLeft, itemRight, questionTitle, questionTime,
+        } = styles;
 
         return (
-            <ListItem
-                title={item.title}
-                subtitle={item.time}
-                rightTitle={item.statusDisplay}
-                rightTitleStyle={{ color: colorStyle }}
-                hideChevron
-            />
+            <View style={itemContainer}>
+                <View style={itemLeft}>
+                    <Text style={questionTitle}>{item.title}</Text>
+                    <Text style={questionTime}>{item.time}</Text>
+                </View>
+                <View style={itemRight}>
+                    <Text style={{ color: colorStyle }}>{item.statusDisplay}</Text>
+                </View>
+            </View>
         );
     }
 
