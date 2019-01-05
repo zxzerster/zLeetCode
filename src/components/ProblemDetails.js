@@ -179,8 +179,8 @@ class ProblemDetails extends Component<Props> {
     renderSimilars = similars => {
         return _.map(similars, similar => {
             return (
-                <Badge key={similar.title} containerStyle={{ marginHorizontal: 2, backgroundColor: ColorScheme.lightGray }}>
-                    <Text style={{ color: 'white', fontSize: 10 }}>{similar.title}</Text>
+                <Badge key={similar.title} containerStyle={{ marginHorizontal: 2, backgroundColor: ColorScheme.lightGrayBackground }}>
+                    <Text style={{ color: ColorScheme.textGray, fontSize: 10 }}>{similar.title}</Text>
                 </Badge>
             );
         });

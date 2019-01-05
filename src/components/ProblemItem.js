@@ -91,7 +91,7 @@ export default ({ problem, index, from }: ProblemItemProps) => {
     }
     const listItem = [
         itemStyle,
-        index === 0 ? {} : topBorder, isPaidOnly ? { backgroundColor: ColorScheme.separateLineGray } : {},
+        index === 0 ? {} : topBorder, isPaidOnly ? { backgroundColor: ColorScheme.lightGrayBackground } : {},
     ];
 
     const tags = arr => {
@@ -164,7 +164,7 @@ export default ({ problem, index, from }: ProblemItemProps) => {
     const renderTags = () => {
         if (topicTags.length > 0) {
             return (
-                <View style={{ flexDirection: 'row' }}>
+                <View style={{ flexDirection: 'row', marginRight: 8 }}>
                     <Icon size={16} type="font-awesome" name="tags" color={ColorScheme.lightGray} containerStyle={tagIcon} />
                     <View style={tagTextWrapper}><Text numberOfLines={100} style={tagText}>{tags(topicTags)}</Text></View>
                 </View>
@@ -193,7 +193,7 @@ export default ({ problem, index, from }: ProblemItemProps) => {
                     </Badge>
                     {renderTags()}
                     <View style={{ flexDirection: 'row' }}>
-                        <Icon type="simple-line-icon" name="like" size={17} color="gray" containerStyle={{ marginTop: 4, marginRight: 5 }} />
+                        <Icon type="simple-line-icon" name="like" size={17} color={ColorScheme.lightGray} containerStyle={{ marginTop: 4, marginRight: 5 }} />
                         <Text style={{ marginTop: 5, color: ColorScheme.textGray }}>{likes}</Text>
                     </View>
                 </View>
