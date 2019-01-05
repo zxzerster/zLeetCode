@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity, Text, Alert } from 'react-native';
 import { Badge, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
@@ -123,12 +123,15 @@ export default ({ problem, index, from }: ProblemItemProps) => {
     };
 
     const goToDetails = () => {
+        debugger;
         if (!isPaidOnly) {
             if (from && from === 'SearchTab') {
                 Actions.taggedProblemDetails({ titleSlug, from });
             } else {
                 Actions.problemDetails({ titleSlug });
             }
+        } else {
+            Alert.alert('LeetCode', 'Premimus user only.');
         }
     };
 
@@ -175,7 +178,7 @@ export default ({ problem, index, from }: ProblemItemProps) => {
     };
 
     return (
-        <TouchableOpacity disabled={isPaidOnly} style={listItem} key={questionId} onPress={() => { goToDetails(); }}>
+        <TouchableOpacity style={listItem} key={questionId} onPress={() => { goToDetails(); }}>
             <View style={leftPart}>
                 {/* <View style={[listId]}>
                     <Text numberOfLines={1} style={idTextStyle}>{`${questionId}`}</Text>

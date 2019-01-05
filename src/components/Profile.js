@@ -304,6 +304,8 @@ type Props = {
         solvedTotal: number,
         unsolved:number,
     },
+
+    navigation: Object,
 };
 
 class Profile extends Component<Props> {
@@ -316,7 +318,9 @@ class Profile extends Component<Props> {
     }
 
     componentDidMount() {
-        const { profile, progress } = this.props;
+        const { profile, progress, navigation } = this.props;
+
+        navigation.setParams({ rightTitle: 'Refresh', onRight: () => { progress(); profile(); } });
 
         progress();
         profile();
