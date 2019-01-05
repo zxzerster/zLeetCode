@@ -18,7 +18,7 @@ const styles = {
     itemContainer: {
         flexDirection: 'row',
         borderBottomWidth: 1,
-        borderBottomColor: ColorScheme.separateLineGray
+        borderBottomColor: ColorScheme.separateLineGray,
     },
     itemLeft: {
         flex: 2,

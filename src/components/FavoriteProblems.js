@@ -7,26 +7,30 @@ import { connect } from 'react-redux';
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 import { leetcodeFavoritesLists } from '../actions';
 
+import { ColorScheme } from '../utils/Config';
+
 const styles = {
     ListItem: {
         flex: 1,
         height: 35,
         justifyContent: 'center',
-        marginLeft: 10,
+        borderTopWidth: 1,
+        borderTopColor: ColorScheme.separateLineGray,
     },
     ListItemText: {
         fontSize: 16,
-        color: 'gray',
+        color: ColorScheme.textDarkGray,
+        marginLeft: 12,
     },
     ListHeader: {
         height: 30,
-        backgroundColor: '#f7f9fa',
+        backgroundColor: ColorScheme.lightGrayBackground,
         justifyContent: 'center',
     },
     ListHeaderText: {
         marginLeft: 10,
         fontWeight: '600',
-        color: 'gray',
+        color: ColorScheme.textGray,
     },
 };
 
@@ -71,9 +75,10 @@ class FavoriteProblems extends Component<Props> {
 
     renderFavoriteItem = ({ item, index, section }) => {
         const { ListItem, ListItemText } = styles;
+        const itemStyle = index === 0 ? [ListItem, { borderTopWidth: 0 }] : ListItem;
 
         return (
-            <TouchableOpacity style={ListItem}>
+            <TouchableOpacity style={itemStyle} disabled>
                 <Text style={ListItemText}>{item.title}</Text>
             </TouchableOpacity>
         );

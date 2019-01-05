@@ -59,7 +59,8 @@ export const leetcodeLogin = (username, password, completionHandler, errorHandle
                     login: username,
                     password,
                 }, true, {
-                    Cookie: `csrftoken=${token};`,
+                    Cookie: `;csrftoken=${token};`,
+                    'X-CSRFTOKEN': token,
                 });
             }
 
@@ -68,7 +69,11 @@ export const leetcodeLogin = (username, password, completionHandler, errorHandle
         .then(resp => {
             if (resp) {
                 if (resp.status !== 200) {
-                    return resp.json();
+                    try {
+                        return resp.json();
+                    } catch (error) {
+                        Promise.reject(Error('Unknown error'));
+                    }
                 }
                 // Extract csrftoken & LEETCODE_SESSION
                 const t = getCookieValue(resp.headers.map, 'csrftoken');
@@ -120,7 +125,7 @@ export const leetcodeLogin = (username, password, completionHandler, errorHandle
         })
         .catch(error => {
             dispatch({ type: LEETCODE_LOGIN_FAILED, error });
-            errorHandler(`error: ${error}`);
+            errorHandler(`${error}`);
         });
     };
 };
@@ -147,7 +152,7 @@ export const leetcodeLogout = (completionHandler, errorHandler) => {
         .catch(error => {
             dispatch({ type: LEETCODE_LOGOUT_FAILED, error });
             if (errorHandler) {
-                errorHandler(`error: ${error}`);
+                errorHandler(`${error}`);
             }
         });
     };

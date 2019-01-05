@@ -9,6 +9,8 @@ import { connect } from 'react-redux';
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 import { leetcodeAllTags } from '../actions';
 
+import { ColorScheme } from '../utils/Config';
+
 const styles = {
     ListItem: {
         flex: 1,
@@ -24,13 +26,13 @@ const styles = {
     },
     ListHeader: {
         height: 30,
-        backgroundColor: '#f7f9fa',
+        backgroundColor: ColorScheme.lightGrayBackground,
         justifyContent: 'center',
     },
     ListHeaderText: {
         marginLeft: 10,
         fontWeight: '600',
-        color: 'gray',
+        color: ColorScheme.textGray,
     },
 };
 
