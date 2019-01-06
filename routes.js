@@ -26,16 +26,19 @@ const LeetCodeRoutes = () => {
             headerBackTitleStyle={{ color: 'white' }}
             tintColor="white"
         >
-            <Modal key="rootScene" hideNavBar>
-                <Stack key="loadingWrapper" initial>
-                    <Scene key="loading" component={Loading} hideNavBar />
-                    <Scene key="login" component={Login} title="Login" hideNavBar />
-                </Stack>
+            <Scene key="root">
+                <Modal key="rootScene" gesturesEnabled={false} hideNavBar>
+                    <Stack key="loadingWrapper" initial>
+                        <Scene key="loading" component={Loading} hideNavBar />
+                        <Scene key="login" component={Login} title="Login" hideNavBar />
+                    </Stack>
+                </Modal>
                 <Tabs
                     key="main"
                     showLabel={false}
                     activeTintColor="rgba(236, 162, 64, 128)"
                     inactiveTintColor="gray"
+                    hideNavBar
                 >
                     <Stack key="problemsWrapper" icon={ProblemTabIcon}>
                         <Scene key="problems" initial component={Problems} />
@@ -59,7 +62,7 @@ const LeetCodeRoutes = () => {
                         <Scene key="favorite" component={FavoriteProblems} title="Favorite" hideTabBar />
                     </Stack>
                 </Tabs>
-            </Modal>
+            </Scene>
         </Router>
     );
 };
