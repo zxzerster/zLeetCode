@@ -20,41 +20,10 @@ const styles = {
         alignItems: 'center',
         backgroundColor: ColorScheme.white,
     },
-    // errorString: {
-    //     fontSize: 24,
-    //     fontWeight: '500',
-    //     color: 'gray',
-    //     marginTop: 20,
-    // },
-    // reloadButton: {
-    //     borderWidth: 1,
-    //     borderColor: 'gray',
-    //     borderRadius: 5,
-    //     width: '35%',
-    //     height: 35,
-    //     alignItems: 'center',
-    //     justifyContent: 'center',
-    //     marginTop: 15,
-    // },
-    // reloadButtonTitle: {
-    //     fontSize: 18,
-    //     color: 'gray',
-    // },
-    // ButtonTitle: {
-    //     color: '#eeeeee',
-    //     fontWeight: '600',
-    //     fontSize: 20,
-    // },
     editorWrapper: {
         flex: 1,
         margin: 8,
     },
-    // inputAccessory: {
-    //     flex: 1,
-    //     backgroundColor: 'rgb(213, 213, 213)',
-    //     alignItems: 'flex-end',
-    //     justifyContent: 'center',
-    // },
 };
 
 type Props = {

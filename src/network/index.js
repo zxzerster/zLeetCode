@@ -52,7 +52,7 @@ export const leetcodeGetFetch = (url, csrftoken, LEETCODE_SESSION, headers = nul
     if (csrftoken && LEETCODE_SESSION) {
         getHeaders = {
             ...commons,
-            Cookie: `csrftoken=${csrftoken};LEETCODE_SESSION=${LEETCODE_SESSION}`,
+            Cookie: `;csrftoken=${csrftoken};LEETCODE_SESSION=${LEETCODE_SESSION}`,
             'X-CSRFToken': csrftoken,
         };
     }
@@ -75,7 +75,7 @@ export const leetcodeGetFetch = (url, csrftoken, LEETCODE_SESSION, headers = nul
 export const leetcodeGraphqlFetch = (csrftoken, LEETCODE_SESSION, query) => {
     const postHeaders = {
         ...commons,
-        Cookie: `csrftoken=${csrftoken};LEETCODE_SESSION=${LEETCODE_SESSION}`,
+        Cookie: `;csrftoken=${csrftoken};LEETCODE_SESSION=${LEETCODE_SESSION}`,
         'X-csrftoken': csrftoken,
         'Content-Type': 'application/json',
     };
@@ -96,7 +96,7 @@ export const leetcodePostFetch = (url, csrftoken, LEETCODE_SESSION, body, form =
     if (csrftoken && LEETCODE_SESSION) {
         postHeaders = {
             ...commons,
-            Cookie: `csrftoken=${csrftoken};LEETCODE_SESSION=${LEETCODE_SESSION}`,
+            Cookie: `;csrftoken=${csrftoken};LEETCODE_SESSION=${LEETCODE_SESSION}`,
             'X-CSRFToken': csrftoken,
         };
     }
