@@ -109,7 +109,9 @@ class Problems extends Component<ProblemsProps> {
             if (from && from === 'SearchTab') {
                 this.doLocalTagSearch(tagIds);
             } else {
-                this.setState({ loading: false, error: null });
+                const { allQuestions } = this.props;
+ 
+                this.setState({ displayedQuestions: allQuestions, loading: false, error: null });
             }
         };
         const errorHandler = error => {
@@ -123,6 +125,7 @@ class Problems extends Component<ProblemsProps> {
                 this.setState({ displayedQuestions: allQuestions });
             }
         } else {
+            this.setState({ loading: true });
             problems(completionHandler.bind(this), errorHandler.bind(this));
         }
     }
