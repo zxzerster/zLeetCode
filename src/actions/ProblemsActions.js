@@ -7,7 +7,6 @@ import {
     LEETCODE_SUBMIT_CODE, LEETCODE_SUBMIT_CODE_SUCCESS, LEETCODE_SUBMIT_CODE_FAILED, LEETCODE_SUBMISSIONS, LEETCODE_SUBMISSIONS_FAILED, LEETCODE_SUBMISSIONS_SUCCESS,
     LEETCODE_CODE_DEFINITION, LEETCODE_CODE_DEFINITION_SUCCESS, LEETCODE_CODE_DEFINITION_FAILED, LEETCODE_CODE_DEFINITION_SELECTED_INDEX,
     LEETCODE_ALL_TAGS, LEETCODE_ALL_TAGS_SUCCESS, LEETCODE_ALL_TAGS_FAILED,
-    LEETCODE_SET_FILTER_PROBLEMS_KEYWORD, LEETCODE_SET_FILTER_PROBLEMS_IDS,
 } from './types';
 import {
     URLs,
@@ -88,7 +87,7 @@ export const leetcodeProblems = (completionHandler, errorHandler) => {
         })
         .catch(error => {
             dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED, error });
-            errorHandler(`error: ${error}`);
+            errorHandler(`${error}`);
         });
     };
 };
@@ -114,7 +113,7 @@ export const leetcodeProblemDetail = (titleSlug, completionHandler, errorHandler
         })
         .catch(error => {
             dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED, error });
-            errorHandler(`error: ${error}`);
+            errorHandler(`${error}`);
         });
     };
 };
@@ -140,7 +139,7 @@ export const leetcodeCodeDefinition = (titleSlug, completionHandler, errorHandle
         })
         .catch(error => {
             dispatch({ type: LEETCODE_CODE_DEFINITION_FAILED, error });
-            errorHandler(`error: ${error}`);
+            errorHandler(`${error}`);
         });
     };
 };
@@ -164,7 +163,7 @@ export const leetcodeSubmissions = (offset = 0, key = '', completionHandler, err
         })
         .catch(error => {
             dispatch({ type: LEETCODE_SUBMISSIONS_FAILED, error });
-            errorHandler(`error: ${error}`);
+            errorHandler(`${error}`);
         });
     };
 };
@@ -199,7 +198,7 @@ export const leetcodeRunCode = (input, titleSlug, runCompletionHandler, runError
         })
         .catch(error => {
             dispatch({ type: LEETCODE_RUN_CODE_FAILED, error });
-            runErrorHandler(`error: ${error}`);
+            runErrorHandler(`${error}`);
         });
     };
 };
@@ -252,7 +251,7 @@ export const leetcodeAllTags = (completionHandler, errorHandler) => {
         })
         .catch(error => {
             dispatch({ type: LEETCODE_ALL_TAGS_FAILED, error });
-            errorHandler(`error: ${error}`);
+            errorHandler(`${error}`);
         });
     };
 };
@@ -276,7 +275,7 @@ export const leetcodeFavoritesLists = (completionHandler, errorHandler) => {
         })
         .catch(error => {
             dispatch({ type: LEETCODE_FAVORITES_PROBLEMS_FAILED, error });
-            errorHandler(`error: ${error}`);
+            errorHandler(`${error}`);
         });
     };
 };
