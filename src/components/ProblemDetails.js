@@ -16,15 +16,11 @@ import { ColorScheme } from '../utils/Config';
 
 const HTMLStyles = {
     p: {
-        paddingHorizontal: 15,
         marginBottom: -35,
         marginTop: 15,
         fontSize: 16,
         color: ColorScheme.textDarkGray,
         lineHeight: 21,
-    },
-    ul: {
-        paddingHorizontal: 15,
     },
     strong: {
         color: ColorScheme.textDarkerGray,
@@ -41,7 +37,6 @@ const styles = {
         borderWidth: 0,
         borderColor: ColorScheme.lightGrayBackground,
         backgroundColor: ColorScheme.lightGrayBackground,
-        margin: 15,
         borderRadius: 5,
         padding: 8,
     },
@@ -267,7 +262,7 @@ class ProblemDetails extends Component<Props> {
                             </ScrollView>
                             {this.renderStats(statsObj)}
                         </View>
-                        <ScrollView style={{ flex: 2 }}>
+                        <ScrollView style={{ flex: 2, marginHorizontal: 15 }}>
                             <HTMLView
                                 value={detail.content}
                                 renderNode={this.renderBlocks}
