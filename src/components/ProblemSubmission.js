@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {
-    View, Text, ScrollView,
-    Alert, ActivityIndicator, TextInput,
+    View, Text, ScrollView, TextInput,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
@@ -11,6 +10,7 @@ import { leetcodeCodeDefinition, leetcodeRunCode, leetcodeSubmitCode } from '../
 import FloatingButton from './common/FloatingButton';
 import { ColorScheme } from '../utils/Config';
 
+import SubmissionResultModal from './common/SubmissionResultModal';
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 
 const styles = {
@@ -93,6 +93,12 @@ class ProblemSubmission extends Component<Props> {
             error: null,
             uploading: false,
             code: '',
+            showResult: false,
+            input: '',
+            output: '',
+            expect: '',
+            errorText: '',
+            resultText: '',
         };
     }
 
@@ -189,10 +195,10 @@ class ProblemSubmission extends Component<Props> {
                 rc += 1;
                 if (rc === 2) {
                     const { result, expected } = this.props;
-                    const { title, content } = this.processRuncodeResult(result, expected);
+                    const { titleText, inputText, outputText, expectText, errorText } = this.processRuncodeResult(result, expected);
 
                     this.setState({ uploading: false });
-                    this.showRunResult(title, content);
+                    this.showRunResult(titleText, inputText, outputText, expectText, errorText);
                 }
             },
             error => {
@@ -203,10 +209,10 @@ class ProblemSubmission extends Component<Props> {
                 rc += 1;
                 if (rc === 2) {
                     const { result, expected } = this.props;
-                    const { title, content } = this.processRuncodeResult(result, expected);
+                    const { titleText, inputText, outputText, expectText, errorText } = this.processRuncodeResult(result, expected);
 
                     this.setState({ uploading: false });
-                    this.showRunResult(title, content);
+                    this.showRunResult(titleText, inputText, outputText, expectText, errorText);
                 }
             },
             error => {
@@ -217,30 +223,32 @@ class ProblemSubmission extends Component<Props> {
     processRuncodeResult = (result, expected) => {
         const { sampleTestCase } = this.props;
         const title = `${result.status_msg}`;
-        let content = '';
+        let input;
+        let output;
+        let expect;
+        let errorMsg;
 
         // Run success dones't mean run correctly, it means no compilation errors only.
         if (result.run_success) {
-            const input = `${sampleTestCase}`;
-            // debugger;
-            const outputContent = result.code_answer ? `${result.code_answer}` : 'null';
-            const expectedContent = expected.code_answer ? `${expected.code_answer}` : 'null';
-
-            content = `Your input: ${input}\nOutput: ${outputContent}\nExpected: ${expectedContent}`;
+            input = `${sampleTestCase}`;
+ 
+            output = result.code_answer ? `${result.code_answer}` : 'null';
+            expect = expected.code_answer ? `${expected.code_answer}` : 'null';
         } else {
-            const errorMsg = `${result.full_compile_error}`;
-
-            content = errorMsg;
+            errorMsg = `${result.full_compile_error}`;
         }
 
         return {
-            title,
-            content,
+            titleText: title,
+            inputText: input,
+            outputText: output,
+            expectText: expect,
+            errorText: errorMsg,
         };
     }
 
-    showRunResult = (title, content) => {
-        Alert.alert(title, content);
+    showRunResult = (title, input, output, expect, error) => {
+        this.setState({ showResult: true, titleText: title, input, output, expect, errorText: error });
     }
 
     renderActionButton(str) {
@@ -256,7 +264,7 @@ class ProblemSubmission extends Component<Props> {
 
     render() {
         const {
-            loading, error, uploading, code,
+            loading, error, uploading, code, showResult, titleText, input, output, expect, errorText,
         } = this.state;
         const {
             editorWrapper,
@@ -312,6 +320,15 @@ class ProblemSubmission extends Component<Props> {
                                 onPress={this.runIt}
                             />
                         </View>
+                        <SubmissionResultModal
+                            visible={showResult}
+                            title={titleText}
+                            input={input}
+                            output={output}
+                            expected={expect}
+                            error={errorText}
+                            pressHandler={() => this.setState({ showResult: false })}
+                        />
                     </View>
                 )}
             </LoadingErrorWrapper>
