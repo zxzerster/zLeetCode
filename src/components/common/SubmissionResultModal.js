@@ -42,7 +42,7 @@ const styles = {
     },
     resultItemWrapper: {
         flexDirection: 'row',
-        flex: 1,
+        // flex: 1,
     },
     resultItemTitle: {
         flex: 3,
@@ -52,15 +52,16 @@ const styles = {
         color: ColorScheme.textDarkerGray,
         fontWeight: '500',
         marginLeft: 10,
-        marginTop: 10,
+        marginTop: 15,
     },
     resultItemContent: {
         flex: 7,
+        justifyContent: '',
     },
     resultItemContentText: {
         color: ColorScheme.textDarkGray,
         marginLeft: 10,
-        marginTop: 10,
+        marginTop: 16,
         marginRight: 10,
     },
 };
