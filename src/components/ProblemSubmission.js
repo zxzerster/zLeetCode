@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    View, Text, ScrollView, TextInput,
+    View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
@@ -23,6 +23,29 @@ const styles = {
     editorWrapper: {
         flex: 1,
         margin: 8,
+    },
+    toolBarRootStyle: {
+        shadowColor: 'black',
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 1 },
+        flexDirection: 'row-reverse',
+        height: 55,
+        backgroundColor: 'rgb(250, 250, 250)',
+    },
+    toolBarActionStyle: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 80,
+        backgroundColor: ColorScheme.hardRed,
+    },
+    toolBarActionTextStyle: {
+        fontSize: 18,
+        color: ColorScheme.white,
+    },
+    toolBarLoading: {
+        width: 160,
+        backgroundColor: ColorScheme.lightGray,
+        justifyContent: 'center',
     },
 };
 
@@ -251,20 +274,49 @@ class ProblemSubmission extends Component<Props> {
         this.setState({ showResult: true, titleText: title, input, output, expect, errorText: error });
     }
 
-    renderActionButton(str) {
+    renderToolbar = () => {
         const { uploading } = this.state;
-        const { ButtonTitle } = styles;
+        const {
+            toolBarRootStyle, toolBarActionStyle, toolBarActionTextStyle, toolBarLoading,
+        } = styles;
+        const renderActions = () => {
+            return (
+                <View style={toolBarRootStyle}>
+                    <TouchableOpacity
+                        style={toolBarActionStyle}
+                        onPress={() => {}}
+                    >
+                        <Text style={toolBarActionTextStyle}>Submit</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[toolBarActionStyle, { backgroundColor: ColorScheme.easyGreen }]}
+                        onPress={this.runIt}
+                    >
+                        <Text style={toolBarActionTextStyle}>Run</Text>
+                    </TouchableOpacity>
+                </View>
+            );
+        };
+        const renderLoading = () => {
+            return (
+                <View style={toolBarRootStyle}>
+                    <View style={toolBarLoading}>
+                        <ActivityIndicator animating color="white" />
+                    </View>
+                </View>
+            );
+        };
 
         if (uploading) {
-            return <ActivityIndicator color="white" animating />;
+            return renderLoading();
         }
 
-        return <Text style={ButtonTitle}>{str}</Text>;
-    }
+        return renderActions();
+    };
 
     render() {
         const {
-            loading, error, uploading, code, showResult, titleText, input, output, expect, errorText,
+            loading, error, code, showResult, titleText, input, output, expect, errorText,
         } = this.state;
         const {
             editorWrapper,
@@ -304,7 +356,7 @@ class ProblemSubmission extends Component<Props> {
                                 </View>
                             </InputAccessoryView>
                         </View> */}
-                        <View style={{ flexDirection: 'row' }}>
+                        {/* <View style={{ flexDirection: 'row' }}>
                             <FloatingButton
                                 style={{ marginLeft: 15, marginBottom: 15 }}
                                 position="left"
@@ -319,7 +371,8 @@ class ProblemSubmission extends Component<Props> {
                                 color={ColorScheme.easyGreen}
                                 onPress={this.runIt}
                             />
-                        </View>
+                        </View> */}
+                        {this.renderToolbar()}
                         <SubmissionResultModal
                             visible={showResult}
                             title={titleText}
