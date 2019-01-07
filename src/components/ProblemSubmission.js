@@ -337,41 +337,6 @@ class ProblemSubmission extends Component<Props> {
                                 />
                             </View>
                         </ScrollView>
-                        {/* <View style={paramsWrapper}>
-                            <Text style={paramsTitle}>Input here</Text>
-                            <TextInput
-                                style={paramsInput}
-                                inputAccessoryViewID={id}
-                                returnKeyType="done"
-                                multiline
-                                clearButtonMode="while-editing"
-                                autoCorrect={false}
-                                autoCapitalize="none"
-                                value={params}
-                                onChangeText={text => this.setState({ params: text })}
-                            />
-                            <InputAccessoryView nativeID={id}>
-                                <View style={inputAccessory}>
-                                    <Button onPress={() => Keyboard.dismiss()} title="Ok" />
-                                </View>
-                            </InputAccessoryView>
-                        </View> */}
-                        {/* <View style={{ flexDirection: 'row' }}>
-                            <FloatingButton
-                                style={{ marginLeft: 15, marginBottom: 15 }}
-                                position="left"
-                                title="S"
-                                color={ColorScheme.hardRed}
-                            />
-                            <FloatingButton
-                                style={{ marginRight: 15, marginBottom: 15 }}
-                                position="right"
-                                loading={uploading}
-                                title="R"
-                                color={ColorScheme.easyGreen}
-                                onPress={this.runIt}
-                            />
-                        </View> */}
                         {this.renderToolbar()}
                         <SubmissionResultModal
                             visible={showResult}

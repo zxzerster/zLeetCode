@@ -302,14 +302,6 @@ class ProblemDetails extends Component<Props> {
                                 stylesheet={HTMLStyles}
                             />
                         </ScrollView>
-                        {/* <View style={{ shadowColor: 'black', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 1 }, flexDirection: 'row-reverse', height: 55, backgroundColor: 'rgb(250, 250, 250)' }}>
-                            <TouchableOpacity
-                                style={{ justifyContent: 'center', alignItems: 'center', width: 120, backgroundColor: ColorScheme.hardRed }}
-                                onPress={() => this.resolveQuestion(titleSlug, title, questionId, judgeType, sampleTestCase)}
-                            >
-                                <Text style={{ fontSize: 18, color: ColorScheme.white }}>Resolve</Text>
-                            </TouchableOpacity>
-                        </View> */}
                         {this.renderToolbar(titleSlug, title, questionId, judgeType, sampleTestCase)}
                     </View>
                 )}
