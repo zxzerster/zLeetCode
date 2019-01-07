@@ -332,7 +332,7 @@ class Profile extends Component<Props> {
         this.setState({ logoutLoading: true });
         logout(() => {
             this.setState({ logoutLoading: false });
-            Actions.popTo('login', { needVerify: false });
+            Actions.rootLogin();
         });
     }
 

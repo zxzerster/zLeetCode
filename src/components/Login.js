@@ -125,7 +125,7 @@ class Login extends Component<LoginProps> {
         const completionHandler = () => {
             this.setState({ loading: false });
             this.setState({ username: '', password: '' });
-            Actions.main();
+            Actions.reset('main');
         };
         const errorHandler = error => {
             this.setState({ loading: false, username: '', password: '' });

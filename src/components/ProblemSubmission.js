@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import {
-    View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator,
+    View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, SafeAreaView,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 
 import { connect } from 'react-redux';
 import { leetcodeCodeDefinition, leetcodeRunCode, leetcodeSubmitCode } from '../actions';
-import FloatingButton from './common/FloatingButton';
 import { ColorScheme } from '../utils/Config';
 
 import SubmissionResultModal from './common/SubmissionResultModal';
@@ -327,7 +326,7 @@ class ProblemSubmission extends Component<Props> {
         return (
             <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadCodeDefinition}>
                 {() => (
-                    <View style={{ flex: 1 }}>
+                    <SafeAreaView style={{ flex: 1 }}>
                         <ScrollView style={{ backgroundColor: ColorScheme.white }}>
                             <View style={editorWrapper}>
                                 <TextInput
@@ -347,7 +346,7 @@ class ProblemSubmission extends Component<Props> {
                             error={errorText}
                             pressHandler={() => this.setState({ showResult: false })}
                         />
-                    </View>
+                    </SafeAreaView>
                 )}
             </LoadingErrorWrapper>
         );

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    Router, Modal, Tabs, Tab, Scene, Stack,
+    Router, Modal, Tabs, Tab, ActionConst, Scene, Stack,
 } from 'react-native-router-flux';
 
 import Loading from './src/components/Loading';
@@ -26,37 +26,41 @@ const LeetCodeRoutes = () => {
             headerBackTitleStyle={{ color: 'white' }}
             tintColor="white"
         >
-            <Modal key="rootScene" hideNavBar>
-                <Stack key="loadingWrapper" initial>
-                    <Scene key="loading" component={Loading} hideNavBar />
+            <Scene hideNavBar>
+                <Modal key="rootLoading" gesturesEnabled={false} type={ActionConst.RESET} hideNavBar>
+                        <Scene key="loading" component={Loading} hideNavBar />
+                </Modal>
+                <Modal key="rootLogin" gesturesEnabled={false} type={ActionConst.RESET} hideNavBar>
                     <Scene key="login" component={Login} title="Login" hideNavBar />
-                </Stack>
-                <Tabs
+                </Modal>
+                <Scene
+                    tabs
                     key="main"
                     showLabel={false}
                     activeTintColor="rgba(236, 162, 64, 128)"
                     inactiveTintColor="gray"
+                    type={ActionConst.RESET}
                 >
-                    <Stack key="problemsWrapper" icon={ProblemTabIcon}>
-                        <Scene key="problems" initial component={Problems} />
+                    <Stack tab initial icon={ProblemTabIcon}>
+                        <Scene key="problems" initial component={Problems} title="Problems" />
                         <Scene key="problemDetails" component={ProblemDetails} title="Details" hideTabBar />
                         <Scene key="problemSubmission" component={ProblemSubmission} title="Submission" hideTabBar />
                         <Scene key="codelangselector" component={CodeLangSelector} title="Select Languate" hideTabBar />
                     </Stack>
-                    <Stack icon={SearchTabIcon}>
+                    <Scene tab icon={SearchTabIcon}>
                         <Scene key="searchProblem" component={TagsProblem} title="Tags" />
                         <Scene key="taggedProblems" component={Problems} hideTabBar />
                         <Scene key="taggedProblemDetails" component={ProblemDetails} title="Details" hideTabBar />
                         <Scene key="taggedProblemSubmission" component={ProblemSubmission} title="Submission" hideTabBar />
                         <Scene key="taggedCodelangselector" component={CodeLangSelector} title="Select Languate" hideTabBar />
-                    </Stack>
-                    <Stack key="profileWrapper" title="Profile" icon={ProfileTabIcon}>
+                    </Scene>
+                    <Scene tab icon={ProfileTabIcon}>
                         <Scene key="profile" component={Profile} initial />
                         <Scene key="submissions" component={Submissions} title="Recent Submissions" hideTabBar />
                         <Scene key="favorite" component={FavoriteProblems} title="Favorite" hideTabBar />
-                    </Stack>
-                </Tabs>
-            </Modal>
+                    </Scene>
+                </Scene>
+            </Scene>
         </Router>
     );
 };

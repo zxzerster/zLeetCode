@@ -36,13 +36,13 @@ class Loading extends Component<Props> {
         verify(
             signedIn => {
                 if (signedIn) {
-                    Actions.main();
+                    Actions.reset('main');
                 } else {
-                    Actions.login();
+                    Actions.rootLogin();
                 }
             },
             () => {
-                Actions.login();
+                Actions.rootLogin();
             }
         );
     }

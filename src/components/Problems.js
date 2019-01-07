@@ -6,7 +6,6 @@ import { SearchBar } from 'react-native-elements';
 import Popover from 'react-native-popover-view';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import { Actions } from 'react-native-router-flux';
 
 import withLeetcodeWrapper from './common/withLeetcodeWrapper';
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
@@ -72,7 +71,7 @@ class Problems extends Component<ProblemsProps> {
 
             navigation.setParams({ title });
         } else {
-            navigation.setParams({ title: 'Problems', rightTitle: 'Filter', onRight: () => { this.setState({ showFilter: true }); } });
+            navigation.setParams({ rightTitle: 'Filter', onRight: () => { this.setState({ showFilter: true }); } });
         }
         this.loadProblems();
     }

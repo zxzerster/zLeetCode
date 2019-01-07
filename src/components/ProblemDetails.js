@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    View, Text, ScrollView, TouchableOpacity,
+    View, Text, ScrollView, TouchableOpacity, SafeAreaView,
 } from 'react-native';
 import { Badge, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -269,7 +269,7 @@ class ProblemDetails extends Component<Props> {
         return (
             <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadProblemDetails}>
                 {() => (
-                    <View style={{ flex: 1, backgroundColor: ColorScheme.white }}>
+                    <SafeAreaView style={{ flex: 1, backgroundColor: ColorScheme.white }}>
                         <View style={titleWrapper}>
                             <View style={{ flexDirection: 'row' }}>
                                 <Text style={titleStyle}>{`#${questionId} ${title}`}</Text>
@@ -303,7 +303,7 @@ class ProblemDetails extends Component<Props> {
                             />
                         </ScrollView>
                         {this.renderToolbar(titleSlug, title, questionId, judgeType, sampleTestCase)}
-                    </View>
+                    </SafeAreaView>
                 )}
             </LoadingErrorWrapper>
         );
