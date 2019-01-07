@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 
 import LeetcodeIcon from './LeetcodeIcon';
+import { Actions } from 'react-native-router-flux';
 
 const styles = {
     loadingErrorContainer: {
@@ -17,6 +18,7 @@ const styles = {
         fontWeight: '500',
         color: 'gray',
         marginTop: 20,
+        marginHorizontal: 12,
     },
     reloadButton: {
         borderWidth: 1,
@@ -113,13 +115,25 @@ class LoadingErrorWrapper extends Component<Props> {
         }
 
         if (error) {
+            if (error === 'Error: Please re-login') {
+                return (
+                <View style={loadingErrorContainer}>
+                    <LeetcodeIcon />
+                    <Text style={errorString}>{error}</Text>
+                    <TouchableOpacity style={reloadButton} onPress={() => Actions.popTo('login', { needVerify: false })}>
+                        <Text style={reloadButtonTitle}>Re-Login</Text>
+                    </TouchableOpacity>
+                </View>
+                );
+            }
+
             return (
                 <View style={loadingErrorContainer}>
-                   <LeetcodeIcon />
-                   <Text style={errorString}>{error}</Text>
-                   <TouchableOpacity style={reloadButton} onPress={errorReload || (() => {})}>
-                       <Text style={reloadButtonTitle}>Reload it</Text>
-                   </TouchableOpacity>
+                <LeetcodeIcon />
+                <Text style={errorString}>{error}</Text>
+                <TouchableOpacity style={reloadButton} onPress={errorReload || (() => {})}>
+                    <Text style={reloadButtonTitle}>Reload it</Text>
+                </TouchableOpacity>
                 </View>
             );
         }

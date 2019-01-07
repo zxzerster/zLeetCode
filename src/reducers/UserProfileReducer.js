@@ -32,6 +32,10 @@ export default (state = INITIAL_STATE, action) => {
         case LEETCODE_USERPROFILE:
             return { ...state };
         case LEETCODE_USERPROFILE_SUCCESS:
+            if (!action.payload.user) {
+                return INITIAL_STATE;
+            }
+
             return {
                 ...state,
                 ...action.payload,

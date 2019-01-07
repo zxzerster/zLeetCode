@@ -179,22 +179,37 @@ export const leetcodeRunCode = (input, titleSlug, runCompletionHandler, runError
         leetcodePostFetch(URLs.runCode(titleSlug), csrftoken, LEETCODE_SESSION, JSON.stringify(input))
         .then(resp => {
             if (resp.status !== 200) {
-                const error = resp.status === 429 ? 'Sorry but you are sending requests too fast. Please try again later.' : 'Unknown errors.';
+                let error = '';
 
-                dispatch({ type: LEETCODE_RUN_CODE_FAILED, error });
-                runErrorHandler(error);
+                switch (resp.status) {
+                    case 429:
+                        error = 'Sorry but you are sending requests too fast. Please try again later.';
+                        dispatch({ type: LEETCODE_RUN_CODE_FAILED, error });
+                        runErrorHandler(error);
 
-                return;
+                        return null;
+                    case 499:
+                    case 403:
+                        return Promise.reject(Error('Please re-login'));
+                    default:
+                        error = 'Unknown errors.';
+                        dispatch({ type: LEETCODE_RUN_CODE_FAILED, error });
+                        runErrorHandler(error);
+
+                        return null;
+                }
             }
-            
+
             return resp.json();
         })
         .then(json => {
-            /* eslint camelcase: ["error", {ignoreDestructuring: true}] */
-            const { interpret_id, interpret_expected_id } = json;
+            if (json) {
+                /* eslint camelcase: ["error", {ignoreDestructuring: true}] */
+                const { interpret_id, interpret_expected_id } = json;
 
-            queryRuncodeResult(dispatch, interpret_id, handler1, error1);
-            queryExpectedResult(dispatch, interpret_expected_id, handler2, error2);
+                queryRuncodeResult(dispatch, interpret_id, handler1, error1);
+                queryExpectedResult(dispatch, interpret_expected_id, handler2, error2);
+            }
         })
         .catch(error => {
             dispatch({ type: LEETCODE_RUN_CODE_FAILED, error });
