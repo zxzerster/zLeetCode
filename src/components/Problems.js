@@ -27,6 +27,7 @@ const styles = {
 
 type ProblemsProps = {
     problems: (boolean => void, string => void) => void,
+    isPremiumUser: boolean,
     allQuestions: {
         title: string,
         titleSlug: string,
@@ -239,9 +240,9 @@ class Problems extends Component<ProblemsProps> {
     }
 
     renderItem = ({ item, index }) => {
-        const { from } = this.props;
+        const { from, isPremiumUser } = this.props;
 
-        return <ProblemItem problem={item} index={index} from={from} />;
+        return <ProblemItem isPremiumUser={isPremiumUser} problem={item} index={index} from={from} />;
     }
 
     render() {
@@ -309,9 +310,10 @@ class Problems extends Component<ProblemsProps> {
 }
 
 const mapStateToProps = state => {
-    const { problems } = state;
+    const { problems, profile } = state;
 
     return {
+        isPremiumUser: profile.user.isCurrentUserPremium,
         allQuestions: problems.allQuestions,
     };
 };

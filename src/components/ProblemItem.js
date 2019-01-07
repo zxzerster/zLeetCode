@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, Alert } from 'react-native';
+import { View, TouchableOpacity, Text, Alert, Linking } from 'react-native';
 import { Badge, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 
+import { URLs } from '../network';
 import { ColorScheme } from '../utils/Config';
 
 const styles = {
@@ -78,7 +79,7 @@ export default ({ problem, index, from }: ProblemItemProps) => {
         easyGreen, mediumYellow, hardRed, titleStyle, tagIcon, tagText, tagTextWrapper,
     } = styles;
     const {
-        questionId, titleSlug, title, difficulty, likes, status, isPaidOnly, topicTags,
+        questionId, titleSlug, title, difficulty, likes, status, isPaidOnly, topicTags, isPremiumUser,
     } = problem;
     let difficultyColor;
 
@@ -113,7 +114,7 @@ export default ({ problem, index, from }: ProblemItemProps) => {
     };
 
     const lock = paidOnly => {
-        if (paidOnly) {
+        if (paidOnly && !isPremiumUser) {
             return (
                 <Icon size={36} type="evilicon" name="lock" color={ColorScheme.lightGray} />
             );
@@ -129,8 +130,15 @@ export default ({ problem, index, from }: ProblemItemProps) => {
             } else {
                 Actions.problemDetails({ titleSlug });
             }
-        } else {
-            Alert.alert('LeetCode', 'Premimus user only.');
+        } else if (isPaidOnly && !isPremiumUser) {
+            Alert.alert('LeetCode', 'Premium user only.', [
+                {
+                    text: 'Subscribe', onPress: () => { Linking.openURL(URLs.premium); }
+                },
+                {
+                    text: 'Cencel',
+                },
+            ]);
         }
     };
 

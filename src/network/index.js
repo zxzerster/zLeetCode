@@ -9,6 +9,7 @@ export const URLs = {
     forgot: `${base}/accounts/password/reset/`,
     progress: `${base}/api/progress/all`,
     tags: `${base}/problems/api/tags`,
+    premium: `${base}/subscribe/`,
     runCode: titleSlug => `https://leetcode.com/problems/${titleSlug}/interpret_solution/`,
     runCodeRefer: titleSlug => `https://leetcode.com/problems/${titleSlug}`,
     runCodeResult: interpretId => `https://leetcode.com/submissions/detail/${interpretId}/check/`,

@@ -120,7 +120,7 @@ class LoadingErrorWrapper extends Component<Props> {
                 <View style={loadingErrorContainer}>
                     <LeetcodeIcon />
                     <Text style={errorString}>{error}</Text>
-                    <TouchableOpacity style={reloadButton} onPress={() => Actions.popTo('login', { needVerify: false })}>
+                    <TouchableOpacity style={reloadButton} onPress={() => Actions.rootLogin()}>
                         <Text style={reloadButtonTitle}>Re-Login</Text>
                     </TouchableOpacity>
                 </View>
