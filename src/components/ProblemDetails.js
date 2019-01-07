@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    View, Text, ScrollView,
+    View, Text, ScrollView, TouchableOpacity,
 } from 'react-native';
 import { Badge, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -8,7 +8,6 @@ import HTMLView from 'react-native-htmlview';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import FloatingButton from './common/FloatingButton';
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 import { leetcodeProblemDetail } from '../actions';
 
@@ -70,6 +69,24 @@ const styles = {
     },
     hardRed: {
         backgroundColor: ColorScheme.hardRed,
+    },
+    toolBarRootStyle: {
+        shadowColor: 'black',
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 1 },
+        flexDirection: 'row-reverse',
+        height: 55,
+        backgroundColor: 'rgb(250, 250, 250)',
+    },
+    toolBarActionStyle: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 120,
+        backgroundColor: ColorScheme.hardRed,
+    },
+    toolBarActionTextStyle: {
+        fontSize: 18,
+        color: ColorScheme.white,
     },
 };
 
@@ -204,6 +221,21 @@ class ProblemDetails extends Component<Props> {
         return null;
     }
 
+    renderToolbar = (titleSlug, title, questionId, judgeType, sampleTestCase) => {
+        const { toolBarRootStyle, toolBarActionStyle, toolBarActionTextStyle } = styles;
+
+        return (
+            <View style={toolBarRootStyle}>
+                <TouchableOpacity
+                    style={toolBarActionStyle}
+                    onPress={() => this.resolveQuestion(titleSlug, title, questionId, judgeType, sampleTestCase)}
+                >
+                    <Text style={toolBarActionTextStyle}>Resolve</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    };
+
     render() {
         const {
             titleWrapper, titleStyle, titleIcon,
@@ -262,19 +294,23 @@ class ProblemDetails extends Component<Props> {
                             </ScrollView>
                             {this.renderStats(statsObj)}
                         </View>
-                        <ScrollView style={{ flex: 2, marginHorizontal: 15 }}>
+                        <ScrollView style={{ flex: 2 }}>
                             <HTMLView
+                                style={{ marginHorizontal: 12 }}
                                 value={detail.content}
                                 renderNode={this.renderBlocks}
                                 stylesheet={HTMLStyles}
                             />
                         </ScrollView>
-                        <FloatingButton
-                            position="right"
-                            style={{ marginRight: 15, marginBottom: 15 }}
-                            title="+"
-                            onPress={() => this.resolveQuestion(titleSlug, title, questionId, judgeType, sampleTestCase)}
-                        />
+                        {/* <View style={{ shadowColor: 'black', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 1 }, flexDirection: 'row-reverse', height: 55, backgroundColor: 'rgb(250, 250, 250)' }}>
+                            <TouchableOpacity
+                                style={{ justifyContent: 'center', alignItems: 'center', width: 120, backgroundColor: ColorScheme.hardRed }}
+                                onPress={() => this.resolveQuestion(titleSlug, title, questionId, judgeType, sampleTestCase)}
+                            >
+                                <Text style={{ fontSize: 18, color: ColorScheme.white }}>Resolve</Text>
+                            </TouchableOpacity>
+                        </View> */}
+                        {this.renderToolbar(titleSlug, title, questionId, judgeType, sampleTestCase)}
                     </View>
                 )}
             </LoadingErrorWrapper>
