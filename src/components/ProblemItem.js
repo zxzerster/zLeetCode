@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, Alert, Linking } from 'react-native';
+import {
+    View, TouchableOpacity, Text, Alert, Linking,
+} from 'react-native';
 import { Badge, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
@@ -131,9 +133,9 @@ export default ({ problem, index, from }: ProblemItemProps) => {
                 Actions.problemDetails({ titleSlug });
             }
         } else if (isPaidOnly && !isPremiumUser) {
-            Alert.alert('LeetCode', 'Premium user only.', [
+            Alert.alert('LeetCode', 'Premium user only', [
                 {
-                    text: 'Subscribe', onPress: () => { Linking.openURL(URLs.premium); }
+                    text: 'Subscribe', onPress: () => { Linking.openURL(URLs.premium); },
                 },
                 {
                     text: 'Cencel',
