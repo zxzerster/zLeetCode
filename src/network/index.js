@@ -47,7 +47,7 @@ export const getCookieValue = (respHeaders, key) => {
     return value;
 };
 
-export const leetcodeGetFetch = (url, csrftoken, LEETCODE_SESSION, headers = null) => {
+export const leetcodeGetFetch = (csrftoken, LEETCODE_SESSION, url, headers = null) => {
     let getHeaders = { ...commons };
 
     if (csrftoken && LEETCODE_SESSION) {
@@ -88,7 +88,7 @@ export const leetcodeGraphqlFetch = (csrftoken, LEETCODE_SESSION, query) => {
     });
 };
 
-export const leetcodePostFetch = (url, csrftoken, LEETCODE_SESSION, body, form = false, headers = null) => {
+export const leetcodePostFetch = (csrftoken, LEETCODE_SESSION, url, body, form = false, headers = null) => {
     let postHeaders = {
         ...commons,
         'X-Requested-With': 'XMLHttpRequest',

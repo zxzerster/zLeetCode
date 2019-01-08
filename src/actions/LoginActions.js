@@ -48,13 +48,13 @@ export const leetcodeLogin = (username, password, completionHandler, errorHandle
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_LOGIN });
         // Check validation of saved csrftoken & LEETCODE_SESSION first
-        leetcodeGetFetch(URLs.login)
+        leetcodeGetFetch(csrftoken, LEETCODE_SESSION, URLs.login)
         .then(resp => {
             return getCookieValue(resp.headers.map, 'csrftoken');
         })
         .then(token => {
             if (token) {
-                return leetcodePostFetch(URLs.login, csrftoken, LEETCODE_SESSION, {
+                return leetcodePostFetch(csrftoken, LEETCODE_SESSION, URLs.login, {
                     csrfmiddlewaretoken: token,
                     login: username,
                     password,
@@ -133,7 +133,7 @@ export const leetcodeLogin = (username, password, completionHandler, errorHandle
 export const leetcodeLogout = (completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_LOGOUT });
-        leetcodeGetFetch(URLs.logout, csrftoken, LEETCODE_SESSION)
+        leetcodeGetFetch(csrftoken, LEETCODE_SESSION, URLs.logout)
         .then(resp => {
             if (resp.status !== 200) {
                 dispatch({ type: LEETCODE_LOGOUT_FAILED });

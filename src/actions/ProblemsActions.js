@@ -65,7 +65,7 @@ const leetcodeNetworkRequester = (
 };
 
 const queryResult = (dispatch, successType, failedType, id, completionHandler, errorHandler) => {
-    leetcodeGetFetch(URLs.runCodeResult(id))
+    leetcodeGetFetch(null, null, URLs.runCodeResult(id))
     .then(resp => {
         if (resp.status !== 200) {
             dispatch({ type: failedType });
@@ -111,29 +111,6 @@ const queryRuncodeResult = (dispatch, id, completionHandler, errorHandler) => {
 
 export const leetcodeProblems = (completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
-        // dispatch({ type: LEETCODE_ALL_PROBLEMS });
-        // leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, Problems)
-        // .then(resp => {
-        //     if (resp.status !== 200) {
-        //         dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED });
-        //         errorHandler(ERRs.ERR_NETWORK);
-
-        //         return;
-        //     }
-
-        //     resp.json().then(json => {
-        //         const { allQuestions } = json.data;
-
-        //         dispatch({ type: LEETCODE_ALL_PROBLEMS_SUCCESS, payload: allQuestions });
-        //         completionHandler(true);
-        //         // Keep it for simple test for error situation
-        //         // errorHandler('Opps, error!');
-        //     });
-        // })
-        // .catch(error => {
-        //     dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED, error });
-        //     errorHandler(`${error}`);
-        // });
         leetcodeNetworkRequester(
             leetcodeGraphqlFetch,
             { csrftoken, LEETCODE_SESSION },
@@ -146,11 +123,15 @@ export const leetcodeProblems = (completionHandler, errorHandler) => {
                     const { allQuestions } = json.data;
 
                     dispatch({ type: LEETCODE_ALL_PROBLEMS_SUCCESS, payload: allQuestions });
-                    completionHandler(true);
+                    if (completionHandler) {
+                        completionHandler(true);
+                    }
                 },
                 failCallback: error => {
                     dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED, error });
-                    errorHandler(error);
+                    if (errorHandler) {
+                        errorHandler(error);
+                    }
                 },
             },
         );
@@ -159,27 +140,6 @@ export const leetcodeProblems = (completionHandler, errorHandler) => {
 
 export const leetcodeProblemDetail = (titleSlug, completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
-        // dispatch({ type: LEETCODE_PROBLEM });
-        // leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, ProblemDetails(titleSlug))
-        // .then(resp => {
-        //     if (resp.status !== 200) {
-        //         dispatch({ type: LEETCODE_PROBLEM_FAILED });
-        //         errorHandler(ERRs.ERR_NETWORK);
-
-        //         return;
-        //     }
-
-        //     resp.json().then(json => {
-        //         dispatch({ type: LEETCODE_PROBLEM_SUCCESS, payload: json.data });
-        //         completionHandler(true);
-        //         // Keep it for simple test for error situation
-        //         // errorHandler('Opps, error!');
-        //     });
-        // })
-        // .catch(error => {
-        //     dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED, error });
-        //     errorHandler(`${error}`);
-        // });
         leetcodeNetworkRequester(
             leetcodeGraphqlFetch,
             { csrftoken, LEETCODE_SESSION },
@@ -190,13 +150,17 @@ export const leetcodeProblemDetail = (titleSlug, completionHandler, errorHandler
                 },
                 successCallback: json => {
                     const { question } = json.data;
-                    // debugger;
+
                     dispatch({ type: LEETCODE_PROBLEM_SUCCESS, payload: { question } });
-                    completionHandler(true);
+                    if (completionHandler) {
+                        completionHandler(true);
+                    }
                 },
                 failCallback: error => {
                     dispatch({ type: LEETCODE_PROBLEM_FAILED, error });
-                    errorHandler(error);
+                    if (errorHandler) {
+                        errorHandler(error);
+                    }
                 },
             },
         );
@@ -205,51 +169,59 @@ export const leetcodeProblemDetail = (titleSlug, completionHandler, errorHandler
 
 export const leetcodeCodeDefinition = (titleSlug, completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
-        dispatch({ type: LEETCODE_CODE_DEFINITION });
-        leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, CodeDefinition(titleSlug))
-        .then(resp => {
-            if (resp.status !== 200) {
-                dispatch({ type: LEETCODE_CODE_DEFINITION_FAILED });
-                errorHandler(ERRs.ERR_NETWORK);
+        leetcodeNetworkRequester(
+            leetcodeGraphqlFetch,
+            { csrftoken, LEETCODE_SESSION },
+            [CodeDefinition(titleSlug)],
+            {
+                callback: () => {
+                    dispatch({ type: LEETCODE_CODE_DEFINITION });
+                },
+                successCallback: json => {
+                    const { question: { codeSnippets } } = json.data;
 
-                return;
-            }
-
-            resp.json().then(json => {
-                dispatch({ type: LEETCODE_CODE_DEFINITION_SUCCESS, payload: json.data.question.codeSnippets });
-                completionHandler(true);
-                // Keep it for simple test for error situation
-                // errorHandler('Opps, error!');
-            });
-        })
-        .catch(error => {
-            dispatch({ type: LEETCODE_CODE_DEFINITION_FAILED, error });
-            errorHandler(`${error}`);
-        });
+                    dispatch({ type: LEETCODE_CODE_DEFINITION_SUCCESS, payload: codeSnippets });
+                    if (completionHandler) {
+                        completionHandler(true);
+                    }
+                },
+                failCallback: error => {
+                    dispatch({ type: LEETCODE_CODE_DEFINITION_FAILED, error });
+                    if (errorHandler) {
+                        errorHandler(error);
+                    }
+                },
+            },
+        );
     };
 };
 
 export const leetcodeSubmissions = (offset = 0, key = '', completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
-        dispatch({ type: LEETCODE_SUBMISSIONS });
-        leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, Submissions(offset, key))
-        .then(resp => {
-            if (resp.status !== 200) {
-                dispatch({ type: LEETCODE_SUBMISSIONS_FAILED });
-                errorHandler(ERRs.ERR_NETWORK);
+        leetcodeNetworkRequester(
+            leetcodeGraphqlFetch,
+            { csrftoken, LEETCODE_SESSION },
+            [Submissions(offset, key)],
+            {
+                callback: () => {
+                    dispatch({ type: LEETCODE_SUBMISSIONS });
+                },
+                successCallback: json => {
+                    const { submissionList } = json.data;
 
-                return;
-            }
-
-            resp.json().then(json => {
-                dispatch({ type: LEETCODE_SUBMISSIONS_SUCCESS, payload: json.data.submissionList });
-                completionHandler(true);
-            });
-        })
-        .catch(error => {
-            dispatch({ type: LEETCODE_SUBMISSIONS_FAILED, error });
-            errorHandler(`${error}`);
-        });
+                    dispatch({ type: LEETCODE_SUBMISSIONS_SUCCESS, payload: submissionList });
+                    if (completionHandler) {
+                        completionHandler(true);
+                    }
+                },
+                failCallback: error => {
+                    dispatch({ type: LEETCODE_SUBMISSIONS_FAILED, error });
+                    if (errorHandler) {
+                        errorHandler(error);
+                    }
+                },
+            },
+        );
     };
 };
 
@@ -261,7 +233,7 @@ export const leetcodeRunCode = (input, titleSlug, runCompletionHandler, runError
 
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_RUN_CODE });
-        leetcodePostFetch(URLs.runCode(titleSlug), csrftoken, LEETCODE_SESSION, JSON.stringify(input))
+        leetcodePostFetch(csrftoken, LEETCODE_SESSION, URLs.runCode(titleSlug), JSON.stringify(input))
         .then(resp => {
             if (resp.status !== 200) {
                 let error = '';
@@ -328,55 +300,82 @@ export const leetcodeSubmitCode = (input, titleSlug) => {
         .then(error => {
             dispatch({ type: LEETCODE_SUBMIT_CODE_FAILED, error });
         });
+        // leetcodeNetworkRequester(
+        //     leetcodePostFetch,
+        //     { csrftoken, LEETCODE_SESSION },
+        //     [URLs.submitCode(titleSlug), JSON.stringify(input)],
+        //     {
+        //         callback: () => {
+        //             dispatch({ type: LEETCODE_SUBMIT_CODE });
+        //         },
+        //         successCallback: json => {
+        //             dispatch({ type: LEETCODE_ALL_TAGS_SUCCESS, payload: json });
+        //             if (completionHandler) {
+        //                 completionHandler(true);
+        //             }
+        //         },
+        //         failCallback: error => {
+        //             dispatch({ type: LEETCODE_SUBMIT_CODE_FAILED, error });
+        //             if (errorHandler) {
+        //                 errorHandler(error);
+        //             }
+        //         },
+        //     },
+        // );
     };
 };
 
 export const leetcodeAllTags = (completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
-        dispatch({ type: LEETCODE_ALL_TAGS });
-        leetcodeGetFetch(URLs.tags, csrftoken, LEETCODE_SESSION)
-        .then(resp => {
-            if (resp.status !== 200) {
-                if (errorHandler) {
-                    errorHandler(ERRs.ERR_NETWORK);
-                }
-                dispatch({ type: LEETCODE_ALL_TAGS_FAILED, error: ERRs.ERR_NETWORK });
-            } else {
-                return resp.json();
-            }
-        })
-        .then(json => {
-            dispatch({ type: LEETCODE_ALL_TAGS_SUCCESS, payload: json });
-            completionHandler(true);
-        })
-        .catch(error => {
-            dispatch({ type: LEETCODE_ALL_TAGS_FAILED, error });
-            errorHandler(`${error}`);
-        });
+        leetcodeNetworkRequester(
+            leetcodeGetFetch,
+            { csrftoken, LEETCODE_SESSION },
+            [URLs.tags],
+            {
+                callback: () => {
+                    dispatch({ type: LEETCODE_ALL_TAGS });
+                },
+                successCallback: json => {
+                    dispatch({ type: LEETCODE_ALL_TAGS_SUCCESS, payload: json });
+                    if (completionHandler) {
+                        completionHandler(true);
+                    }
+                },
+                failCallback: error => {
+                    dispatch({ type: LEETCODE_ALL_TAGS_FAILED, error });
+                    if (errorHandler) {
+                        errorHandler(error);
+                    }
+                },
+            },
+        );
     };
 };
 
 export const leetcodeFavoritesLists = (completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
-        dispatch({ type: LEETCODE_FAVORITES_PROBLEMS });
-        leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, FavoritesLists)
-        .then(resp => {
-            if (resp.status !== 200) {
-                dispatch({ type: LEETCODE_FAVORITES_PROBLEMS_FAILED });
-                errorHandler(ERRs.ERR_NETWORK);
-
-                return;
-            }
-
-            resp.json().then(json => {
-                dispatch({ type: LEETCODE_FAVORITES_PROBLEMS_SUCCESS, payload: json.data });
-                completionHandler(true);
-            });
-        })
-        .catch(error => {
-            dispatch({ type: LEETCODE_FAVORITES_PROBLEMS_FAILED, error });
-            errorHandler(`${error}`);
-        });
+        leetcodeNetworkRequester(
+            leetcodeGraphqlFetch,
+            { csrftoken, LEETCODE_SESSION },
+            [FavoritesLists],
+            {
+                callback: () => {
+                    dispatch({ type: LEETCODE_FAVORITES_PROBLEMS });
+                },
+                successCallback: json => {
+                    dispatch({ type: LEETCODE_FAVORITES_PROBLEMS_SUCCESS, payload: json.data });
+                    if (completionHandler) {
+                        completionHandler(true);
+                    }
+                },
+                failCallback: error => {
+                    dispatch({ type: LEETCODE_FAVORITES_PROBLEMS_FAILED, error });
+                    if (errorHandler) {
+                        errorHandler(error);
+                    }
+                },
+            },
+        );
     };
 };
 

@@ -43,7 +43,7 @@ export const leetcodeUserProfile = (completionHandler, errorHandler) => {
 export const leetcodeUserProgress = (completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_USER_PROGRESS });
-        leetcodeGetFetch(URLs.progress, csrftoken, LEETCODE_SESSION)
+        leetcodeGetFetch(csrftoken, LEETCODE_SESSION, URLs.progress)
         .then(resp => {
             if (resp.status !== 200) {
                 dispatch({ type: LEETCODE_USER_PROGRESS_FAILED, error: ERRs.ERR_NETWORK });

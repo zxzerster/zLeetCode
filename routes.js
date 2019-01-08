@@ -55,7 +55,7 @@ const LeetCodeRoutes = () => {
                         <Scene key="taggedCodelangselector" component={CodeLangSelector} title="Select Languate" hideTabBar />
                     </Scene>
                     <Scene tab icon={ProfileTabIcon}>
-                        <Scene key="profile" component={Profile} initial />
+                        <Scene key="profile" component={Profile} title="Profile" initial />
                         <Scene key="submissions" component={Submissions} title="Recent Submissions" hideTabBar />
                         <Scene key="favorite" component={FavoriteProblems} title="Favorite" hideTabBar />
                     </Scene>
