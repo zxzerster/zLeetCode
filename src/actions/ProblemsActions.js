@@ -19,6 +19,51 @@ import {
     Problems, ProblemDetails, Submissions, CodeDefinition, FavoritesLists,
 } from '../network/query';
 
+const leetcodeNetworkRequester = (
+    requester, middlewrreParams, parameters, callbacks
+) => {
+    const {
+        csrftoken, LEETCODE_SESSION,
+    } = middlewrreParams;
+    const {
+        callback, successCallback, failCallback,
+    } = callbacks;
+
+    callback();
+    requester(csrftoken, LEETCODE_SESSION, ...parameters)
+    .then(resp => {
+        if (resp.status !== 200) {
+            let error = '';
+
+            switch (resp.status) {
+                case 429:
+                    error = 'Sorry but you are sending requests too fast. Please try again later.';
+                    failCallback(error);
+
+                    return null;
+                case 499:
+                case 403:
+                    return Promise.reject(Error('Please re-login'));
+                default:
+                    error = 'Unknown errors.';
+                    failCallback(error);
+
+                    return null;
+            }
+        }
+
+        return resp.json();
+    })
+    .then(json => {
+        if (json) {
+            successCallback(json);
+        }
+    })
+    .catch(error => {
+        failCallback(error);
+    });
+};
+
 const queryResult = (dispatch, successType, failedType, id, completionHandler, errorHandler) => {
     leetcodeGetFetch(URLs.runCodeResult(id))
     .then(resp => {
@@ -66,55 +111,95 @@ const queryRuncodeResult = (dispatch, id, completionHandler, errorHandler) => {
 
 export const leetcodeProblems = (completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
-        dispatch({ type: LEETCODE_ALL_PROBLEMS });
-        leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, Problems)
-        .then(resp => {
-            if (resp.status !== 200) {
-                dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED });
-                errorHandler(ERRs.ERR_NETWORK);
+        // dispatch({ type: LEETCODE_ALL_PROBLEMS });
+        // leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, Problems)
+        // .then(resp => {
+        //     if (resp.status !== 200) {
+        //         dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED });
+        //         errorHandler(ERRs.ERR_NETWORK);
 
-                return;
-            }
+        //         return;
+        //     }
 
-            resp.json().then(json => {
-                const { allQuestions } = json.data;
+        //     resp.json().then(json => {
+        //         const { allQuestions } = json.data;
 
-                dispatch({ type: LEETCODE_ALL_PROBLEMS_SUCCESS, payload: allQuestions });
-                completionHandler(true);
-                // Keep it for simple test for error situation
-                // errorHandler('Opps, error!');
-            });
-        })
-        .catch(error => {
-            dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED, error });
-            errorHandler(`${error}`);
-        });
+        //         dispatch({ type: LEETCODE_ALL_PROBLEMS_SUCCESS, payload: allQuestions });
+        //         completionHandler(true);
+        //         // Keep it for simple test for error situation
+        //         // errorHandler('Opps, error!');
+        //     });
+        // })
+        // .catch(error => {
+        //     dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED, error });
+        //     errorHandler(`${error}`);
+        // });
+        leetcodeNetworkRequester(
+            leetcodeGraphqlFetch,
+            { csrftoken, LEETCODE_SESSION },
+            [Problems],
+            {
+                callback: () => {
+                    dispatch({ type: LEETCODE_ALL_PROBLEMS });
+                },
+                successCallback: json => {
+                    const { allQuestions } = json.data;
+
+                    dispatch({ type: LEETCODE_ALL_PROBLEMS_SUCCESS, payload: allQuestions });
+                    completionHandler(true);
+                },
+                failCallback: error => {
+                    dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED, error });
+                    errorHandler(error);
+                },
+            },
+        );
     };
 };
 
 export const leetcodeProblemDetail = (titleSlug, completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
-        dispatch({ type: LEETCODE_PROBLEM });
-        leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, ProblemDetails(titleSlug))
-        .then(resp => {
-            if (resp.status !== 200) {
-                dispatch({ type: LEETCODE_PROBLEM_FAILED });
-                errorHandler(ERRs.ERR_NETWORK);
+        // dispatch({ type: LEETCODE_PROBLEM });
+        // leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, ProblemDetails(titleSlug))
+        // .then(resp => {
+        //     if (resp.status !== 200) {
+        //         dispatch({ type: LEETCODE_PROBLEM_FAILED });
+        //         errorHandler(ERRs.ERR_NETWORK);
 
-                return;
-            }
+        //         return;
+        //     }
 
-            resp.json().then(json => {
-                dispatch({ type: LEETCODE_PROBLEM_SUCCESS, payload: json.data });
-                completionHandler(true);
-                // Keep it for simple test for error situation
-                // errorHandler('Opps, error!');
-            });
-        })
-        .catch(error => {
-            dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED, error });
-            errorHandler(`${error}`);
-        });
+        //     resp.json().then(json => {
+        //         dispatch({ type: LEETCODE_PROBLEM_SUCCESS, payload: json.data });
+        //         completionHandler(true);
+        //         // Keep it for simple test for error situation
+        //         // errorHandler('Opps, error!');
+        //     });
+        // })
+        // .catch(error => {
+        //     dispatch({ type: LEETCODE_ALL_PROBLEMS_FAILED, error });
+        //     errorHandler(`${error}`);
+        // });
+        leetcodeNetworkRequester(
+            leetcodeGraphqlFetch,
+            { csrftoken, LEETCODE_SESSION },
+            [ProblemDetails(titleSlug)],
+            {
+                callback: () => {
+                    dispatch({ type: LEETCODE_PROBLEM });
+                },
+                successCallback: json => {
+                    const { question } = json.data;
+                    // debugger;
+                    dispatch({ type: LEETCODE_PROBLEM_SUCCESS, payload: { question } });
+                    completionHandler(true);
+                },
+                failCallback: error => {
+                    dispatch({ type: LEETCODE_PROBLEM_FAILED, error });
+                    errorHandler(error);
+                },
+            },
+        );
     };
 };
 
