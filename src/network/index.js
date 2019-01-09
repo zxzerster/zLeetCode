@@ -126,3 +126,48 @@ export const leetcodePostFetch = (csrftoken, LEETCODE_SESSION, url, body, form =
         body: bodyData,
     });
 };
+
+export const leetcodeNetworkRequester = (
+    requester, middlewrreParams, parameters, callbacks
+) => {
+    const {
+        csrftoken, LEETCODE_SESSION,
+    } = middlewrreParams;
+    const {
+        callback, successCallback, failCallback,
+    } = callbacks;
+
+    callback();
+    requester(csrftoken, LEETCODE_SESSION, ...parameters)
+    .then(resp => {
+        if (resp.status !== 200) {
+            let error = '';
+
+            switch (resp.status) {
+                case 429:
+                    error = 'Sorry but you are sending requests too fast. Please try again later.';
+                    failCallback(error);
+
+                    return null;
+                case 499:
+                case 403:
+                    return Promise.reject(Error('Please re-login'));
+                default:
+                    error = 'Unknown errors.';
+                    failCallback(error);
+
+                    return null;
+            }
+        }
+
+        return resp.json();
+    })
+    .then(json => {
+        if (json) {
+            successCallback(json);
+        }
+    })
+    .catch(error => {
+        failCallback(error);
+    });
+};
