@@ -15,14 +15,18 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="pZv-OB-f1O">
-                    <rect key="frame" x="230" y="325" width="20" height="20"/>
-                </activityIndicatorView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Z L C" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OHQ-eu-Kj4">
+                    <rect key="frame" x="20" y="206.66666666666666" width="440" height="66.999999999999972"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="56"/>
+                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstItem="pZv-OB-f1O" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Xt8-JF-hlW"/>
-                <constraint firstAttribute="bottom" secondItem="pZv-OB-f1O" secondAttribute="bottom" constant="135" id="bpC-2M-bdn"/>
+                <constraint firstItem="OHQ-eu-Kj4" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="6yX-Ws-lY7"/>
+                <constraint firstItem="OHQ-eu-Kj4" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" symbolic="YES" id="hd0-qy-dG4"/>
+                <constraint firstAttribute="trailing" secondItem="OHQ-eu-Kj4" secondAttribute="trailing" constant="20" symbolic="YES" id="lH9-HV-iFU"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
