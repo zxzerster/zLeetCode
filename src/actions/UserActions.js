@@ -5,6 +5,7 @@ import {
 import {
     URLs,
     ERRs,
+    leetcodeNetworkRequester,
     leetcodeGraphqlFetch,
     leetcodeGetFetch,
 } from '../network';
@@ -12,59 +13,54 @@ import { UserProfile } from '../network/query';
 
 export const leetcodeUserProfile = (completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
-        dispatch({ type: LEETCODE_USERPROFILE });
-        leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, UserProfile)
-        .then(resp => {
-            if (resp.status !== 200) {
-                dispatch({ type: LEETCODE_USERPROFILE_FAILED });
-                if (errorHandler) {
-                    errorHandler(ERRs.ERR_NETWORK);
-                }
-
-                return;
-            }
-
-            resp.json().then(json => {
-                dispatch({ type: LEETCODE_USERPROFILE_SUCCESS, payload: json.data });
-                if (completionHandler) {
-                    completionHandler(true);
-                }
-            });
-        })
-        .catch(error => {
-            dispatch({ type: LEETCODE_USERPROFILE_FAILED, error });
-            if (errorHandler) {
-                errorHandler(`error: ${error}`);
-            }
-        });
+        leetcodeNetworkRequester(
+            leetcodeGraphqlFetch,
+            { csrftoken, LEETCODE_SESSION },
+            [UserProfile],
+            {
+                callback: () => {
+                    dispatch({ type: LEETCODE_USERPROFILE });
+                },
+                successCallback: json => {
+                    dispatch({ type: LEETCODE_USERPROFILE_SUCCESS, payload: json.data });
+                    if (completionHandler) {
+                        completionHandler(true);
+                    }
+                },
+                failCallback: error => {
+                    dispatch({ type: LEETCODE_USERPROFILE_FAILED, error });
+                    if (errorHandler) {
+                        errorHandler(error);
+                    }
+                },
+            },
+        );
     };
 };
 
 export const leetcodeUserProgress = (completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
-        dispatch({ type: LEETCODE_USER_PROGRESS });
-        leetcodeGetFetch(csrftoken, LEETCODE_SESSION, URLs.progress)
-        .then(resp => {
-            if (resp.status !== 200) {
-                dispatch({ type: LEETCODE_USER_PROGRESS_FAILED, error: ERRs.ERR_NETWORK });
-                if (errorHandler) {
-                    errorHandler(ERRs.ERR_NETWORK);
-                }
-            } else {
-                return resp.json();
-            }
-        })
-        .then(json => {
-            dispatch({ type: LEETCODE_USER_PROGRESS_SUCCESS, payload: json });
-            if (completionHandler) {
-                completionHandler(true);
-            }
-        })
-        .catch(error => {
-            dispatch({ type: LEETCODE_USER_PROGRESS_FAILED, error });
-            if (errorHandler) {
-                errorHandler(`error: ${error}`);
-            }
-        });
+        leetcodeNetworkRequester(
+            leetcodeGetFetch,
+            { csrftoken, LEETCODE_SESSION },
+            [URLs.progress],
+            {
+                callback: () => {
+                    dispatch({ type: LEETCODE_USER_PROGRESS });
+                },
+                successCallback: json => {
+                    dispatch({ type: LEETCODE_USER_PROGRESS_SUCCESS, payload: json });
+                    if (completionHandler) {
+                        completionHandler(true);
+                    }
+                },
+                failCallback: error => {
+                    dispatch({ type: LEETCODE_USER_PROGRESS_FAILED, error });
+                    if (errorHandler) {
+                        errorHandler(error);
+                    }
+                },
+            },
+        );
     };
 };

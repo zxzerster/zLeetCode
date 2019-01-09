@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    View, Image, Text, ScrollView, TouchableOpacity,
+    View, Image, Text, ScrollView, TouchableOpacity, Alert,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import {
@@ -320,10 +320,22 @@ class Profile extends Component<Props> {
     componentDidMount() {
         const { profile, progress, navigation } = this.props;
 
-        navigation.setParams({ rightTitle: 'Refresh', onRight: () => { progress(); profile(); } });
+        navigation.setParams({ rightTitle: 'Refresh', onRight: () => { progress(() => {}, this.handleRelogin); profile(); } });
 
-        progress();
         profile();
+        progress(
+            () => {},
+            this.handleRelogin,
+        );
+    }
+
+    handleRelogin = error => {
+        if (error === 'Please re-login') {
+            Alert.alert('Credential invalid', 'Please re-login', [
+                { text: 'Login again', onPress: () => { Actions.rootLogin(); } },
+                { text: 'Cancel' },
+            ]);
+        }
     }
 
     logoutAction = () => {

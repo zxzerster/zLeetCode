@@ -151,7 +151,10 @@ export const leetcodeNetworkRequester = (
                     return null;
                 case 499:
                 case 403:
-                    return Promise.reject(Error('Please re-login'));
+                case 401:
+                    failCallback('Please re-login');
+
+                    return null;
                 default:
                     error = 'Unknown errors.';
                     failCallback(error);
