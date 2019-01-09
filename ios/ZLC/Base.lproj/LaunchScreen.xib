@@ -15,30 +15,18 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Leetcode" translatesAutoresizingMaskIntoConstraints="NO" id="4wQ-pL-aPg">
-                    <rect key="frame" x="172.66666666666666" y="172.66666666666666" width="134.99999999999997" height="134.99999999999997"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="135" id="h9x-y1-S20"/>
-                        <constraint firstAttribute="height" constant="135" id="muw-Pf-eSk"/>
-                    </constraints>
-                </imageView>
                 <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="pZv-OB-f1O">
-                    <rect key="frame" x="230" y="315.66666666666669" width="20" height="20"/>
+                    <rect key="frame" x="230" y="325" width="20" height="20"/>
                 </activityIndicatorView>
             </subviews>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstItem="pZv-OB-f1O" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="6ex-qs-wYt"/>
-                <constraint firstItem="4wQ-pL-aPg" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="BkA-ZH-NsY"/>
-                <constraint firstItem="4wQ-pL-aPg" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="IFN-ty-8Md"/>
-                <constraint firstItem="pZv-OB-f1O" firstAttribute="top" secondItem="4wQ-pL-aPg" secondAttribute="bottom" constant="8" symbolic="YES" id="iZF-ur-CE2"/>
+                <constraint firstItem="pZv-OB-f1O" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Xt8-JF-hlW"/>
+                <constraint firstAttribute="bottom" secondItem="pZv-OB-f1O" secondAttribute="bottom" constant="135" id="bpC-2M-bdn"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="548" y="455"/>
         </view>
     </objects>
-    <resources>
-        <image name="Leetcode" width="16" height="16"/>
-    </resources>
 </document>
