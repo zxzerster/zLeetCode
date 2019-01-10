@@ -67,11 +67,11 @@ const styles = {
 };
 
 export default ({
-    title, buttonTitle, pressHandler, error, input, output, expected, ...other
+    type, buttonTitle, pressHandler, title, error, submitFailed, input, output, expected, passed, time, ...other
 }) => {
     const {
         backgroundView, contentArea, titleArea, resultArea, buttonArea,
-        resultItemWrapper, resultItemTitle, resultItemTitleText, resultItemContent, resultItemContentText
+        resultItemWrapper, resultItemTitle, resultItemTitleText, resultItemContent, resultItemContentText,
     } = styles;
 
     const titleText = title || '';
@@ -89,30 +89,68 @@ export default ({
             </View>
         );
     };
-    const renderResult = (input, output, expected) => {
-        return (
-            <View style={resultArea}>
-                {renderItem('Input:', input)}
-                {renderItem('Output:', output)}
-                {renderItem('Expected:', expected)}
-            </View>
-        );
-    };
-    const renderError = err => {
-        return (
-            <View style={resultArea}>
-                <Text style={{ margin: 8, color: ColorScheme.hardRed }}>{err}</Text>
-            </View>
-        );
-    };
-
-    const renderContentArea = (error, input, output, expected) => {
-        if (error && error.length > 0) {
-            return renderError(error);
+    const renderResult = (type, input, output, expected) => {
+        if (type === 'run') {
+            return (
+                <View style={resultArea}>
+                    {renderItem('Input:', input)}
+                    {renderItem('Output:', output)}
+                    {renderItem('Expected:', expected)}
+                </View>
+            );
         }
 
-        return renderResult(input, output, expected);
-    }
+        if (type === 'submit') {
+            return (
+                <View style={resultArea}>
+                    <View>
+                        <Text style={resultItemTitleText}>{passed}</Text>
+                        <Text style={resultItemTitleText}>{time}</Text>
+                    </View>
+                </View>
+            );
+        }
+
+        return null;
+    };
+    const renderError = (type, err) => {
+        if (type === 'run') {
+            return (
+                <View style={resultArea}>
+                    <Text style={{ margin: 8, color: ColorScheme.hardRed }}>{err}</Text>
+                </View>
+            );
+        }
+
+        if (type === 'submit') {
+            if (error) {
+                return (
+                    <View style={resultArea}>
+                        <Text style={{ margin: 8, color: ColorScheme.hardRed }}>{err}</Text>
+                    </View>
+                );
+            }
+
+            return (
+                <View style={resultArea}>
+                    <Text style={resultItemContentText}>{passed}</Text>
+                    {renderItem('Input:', input)}
+                    {renderItem('Output:', output)}
+                    {renderItem('Expected:', expected)}
+                </View>
+            );
+        }
+
+        return null;
+    };
+
+    const renderContentArea = (type, submitFailed, error, input, output, expected) => {
+        if ((error && error.length > 0) || submitFailed) {
+            return renderError(type, error);
+        }
+
+        return renderResult(type, input, output, expected);
+    };
 
     return (
         <Modal
@@ -123,12 +161,7 @@ export default ({
             <View style={backgroundView}>
                 <View style={contentArea}>
                     <Text style={titleArea}>{titleText}</Text>
-                    {/* <View style={resultArea}>
-                        {renderItem('Input:', input)}
-                        {renderItem('Output:', output)}
-                        {renderItem('Expected:', expected)}
-                    </View> */}
-                    {renderContentArea(error, input, output, expected)}
+                    {renderContentArea(type, error, input, output, expected)}
                     <View style={buttonArea}>
                         <Button title={buttonTitltText} onPress={handler} />
                     </View>

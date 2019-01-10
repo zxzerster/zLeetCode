@@ -1,35 +1,39 @@
 import { LEETCODE_SUBMIT_CODE, LEETCODE_SUBMIT_CODE_SUCCESS, LEETCODE_SUBMIT_CODE_FAILED } from '../actions/types';
 
 const INITIAL_STATE = {
-    loading: false,
-    error: null,
     result: {
-        code_output: null,
-        compare_result: null,
-        display_runtime: null,
-        judge_type: null,
-        lang: null,
-        pretty_lang: null,
-        question_id: null,
-        run_success: null,
-        runtime_percentile: null,
-        state: null,
-        status_code: null,
-        status_msg: null,
-        status_runtime: null,
-        std_output: null,
-        submission_id: null,
+        status_code: -1,
+        code_output: '',
+        std_output: '',
+        compare_result: '',
+        memory: 0,
+        display_runtime: '',
+        question_id: '',
+        lang: '',
+        judge_type: '',
+        run_success: false,
+        compile_error: '',
+        full_compile_error: '',
         total_correct: null,
         total_testcase: null,
+        status_runtime: '',
+        runtime_percentile: null,
+        pretty_lang: '',
+        submission_id: '',
+        input_formatted: '',
+        input: '',
+        expected_output: '',
+        status_msg: '',
+        state: '',
     },
 };
 
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case LEETCODE_SUBMIT_CODE:
-            return { ...state, loading: true, error: null };
+            return { ...state };
         case LEETCODE_SUBMIT_CODE_SUCCESS:
-            return { loading: false, error: null, result: action.payload };
+            return { ...state, result: action.payload };
         case LEETCODE_SUBMIT_CODE_FAILED:
             return { ...INITIAL_STATE, loading: false, error: action.error };
         default:

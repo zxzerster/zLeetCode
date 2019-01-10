@@ -19,8 +19,8 @@ import {
     Problems, ProblemDetails, Submissions, CodeDefinition, FavoritesLists,
 } from '../network/query';
 
-const queryResult = (dispatch, successType, failedType, id, completionHandler, errorHandler) => {
-    leetcodeGetFetch(null, null, URLs.runCodeResult(id))
+const queryResult = (dispatch, successType, failedType, id, url, completionHandler, errorHandler) => {
+    leetcodeGetFetch(null, null, url)
     .then(resp => {
         if (resp.status !== 200) {
             dispatch({ type: failedType });
@@ -36,7 +36,7 @@ const queryResult = (dispatch, successType, failedType, id, completionHandler, e
             switch (state) {
                 case 'STARTED':
                 case 'PENDING':
-                    setTimeout(queryResult, 1000, dispatch, successType, failedType, id, completionHandler, errorHandler);
+                    setTimeout(queryResult, 1000, dispatch, successType, failedType, id, url, completionHandler, errorHandler);
                     break;
                 case 'SUCCESS':
                     dispatch({ type: successType, payload: json });
@@ -53,15 +53,15 @@ const queryResult = (dispatch, successType, failedType, id, completionHandler, e
 };
 
 const querySubmissionResult = (dispatch, submissionId, completionHandler, errorHandler) => {
-    queryResult(dispatch, LEETCODE_SUBMIT_CODE_SUCCESS, LEETCODE_SUBMIT_CODE_FAILED, submissionId, completionHandler, errorHandler);
+    queryResult(dispatch, LEETCODE_SUBMIT_CODE_SUCCESS, LEETCODE_SUBMIT_CODE_FAILED, submissionId, URLs.submitCodeResult(submissionId), completionHandler, errorHandler);
 };
 
 const queryExpectedResult = (dispatch, expectedId, completionHandler, errorHandler) => {
-    queryResult(dispatch, LEETCODE_EXPECTED_RESULT_SUCCESS, LEETCODE_EXPECTED_RESULT_FAILED, expectedId, completionHandler, errorHandler);
+    queryResult(dispatch, LEETCODE_EXPECTED_RESULT_SUCCESS, LEETCODE_EXPECTED_RESULT_FAILED, expectedId, URLs.runCodeExpectedResult(expectedId), completionHandler, errorHandler);
 };
 
 const queryRuncodeResult = (dispatch, id, completionHandler, errorHandler) => {
-    queryResult(dispatch, LEETCODE_RUN_CODE_SUCCESS, LEETCODE_RUN_CODE_FAILED, id, completionHandler, errorHandler);
+    queryResult(dispatch, LEETCODE_RUN_CODE_SUCCESS, LEETCODE_RUN_CODE_FAILED, id, URLs.runCodeResult(id), completionHandler, errorHandler);
 };
 
 export const leetcodeProblems = (completionHandler, errorHandler) => {
@@ -187,96 +187,56 @@ export const leetcodeRunCode = (input, titleSlug, runCompletionHandler, runError
     const error2 = expectedErrorHandler;
 
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
-        dispatch({ type: LEETCODE_RUN_CODE });
-        leetcodePostFetch(csrftoken, LEETCODE_SESSION, URLs.runCode(titleSlug), JSON.stringify(input))
-        .then(resp => {
-            if (resp.status !== 200) {
-                let error = '';
+        leetcodeNetworkRequester(
+            leetcodePostFetch,
+            { csrftoken, LEETCODE_SESSION },
+            [URLs.runCode(titleSlug), JSON.stringify(input)],
+            {
+                callback: () => {
+                    dispatch({ type: LEETCODE_RUN_CODE });
+                },
+                successCallback: json => {
+                    /* eslint camelcase: ["error", {ignoreDestructuring: true}] */
+                    const { interpret_id, interpret_expected_id } = json;
 
-                switch (resp.status) {
-                    case 429:
-                        error = 'Sorry but you are sending requests too fast. Please try again later.';
-                        dispatch({ type: LEETCODE_RUN_CODE_FAILED, error });
-                        runErrorHandler(error);
-
-                        return null;
-                    case 499:
-                    case 403:
-                        return Promise.reject(Error('Please re-login'));
-                    default:
-                        error = 'Unknown errors.';
-                        dispatch({ type: LEETCODE_RUN_CODE_FAILED, error });
-                        runErrorHandler(error);
-
-                        return null;
-                }
-            }
-
-            return resp.json();
-        })
-        .then(json => {
-            if (json) {
-                /* eslint camelcase: ["error", {ignoreDestructuring: true}] */
-                const { interpret_id, interpret_expected_id } = json;
-
-                queryRuncodeResult(dispatch, interpret_id, handler1, error1);
-                queryExpectedResult(dispatch, interpret_expected_id, handler2, error2);
-            }
-        })
-        .catch(error => {
-            dispatch({ type: LEETCODE_RUN_CODE_FAILED, error });
-            runErrorHandler(`${error}`);
-        });
+                    queryRuncodeResult(dispatch, interpret_id, handler1, error1);
+                    queryExpectedResult(dispatch, interpret_expected_id, handler2, error2);
+                },
+                failCallback: error => {
+                    dispatch({ type: LEETCODE_RUN_CODE_FAILED, error });
+                    if (runErrorHandler) {
+                        runErrorHandler(`${error}`);
+                    }
+                },
+            },
+        );
     };
 };
 
-export const leetcodeSubmitCode = (input, titleSlug) => {
+export const leetcodeSubmitCode = (input, titleSlug, submitCompletionHandler, submitErrorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
-        dispatch({ type: LEETCODE_SUBMIT_CODE });
-        leetcodePostFetch(URLs.submitCode(titleSlug), csrftoken, LEETCODE_SESSION, JSON.stringify(input))
-        .then(resp => {
-            if (resp.status !== 200) {
-                const error = resp.status === 429 ? 'Sorry but you are sending requests too fast. Please try again later.' : 'Unknown errors.';
+        leetcodeNetworkRequester(
+            leetcodePostFetch,
+            { csrftoken, LEETCODE_SESSION },
+            [URLs.submitCode(titleSlug), JSON.stringify(input)],
+            {
+                callback: () => {
+                    dispatch({ type: LEETCODE_SUBMIT_CODE });
+                },
+                successCallback: json => {
+                    /* eslint camelcase: ["error", {ignoreDestructuring: true}] */
+                    const { submission_id } = json;
 
-                dispatch({ type: LEETCODE_SUBMIT_CODE_FAILED, error });
-
-                return Promise.resolve();
-            }
-
-            resp.json().then(json => {
-                /* eslint camelcase: ["error", {ignoreDestructuring: true}] */
-                const { submission_id } = json;
-
-                querySubmissionResult(dispatch, submission_id);
-            });
-
-            return Promise.resolve();
-        })
-        .then(error => {
-            dispatch({ type: LEETCODE_SUBMIT_CODE_FAILED, error });
-        });
-        // leetcodeNetworkRequester(
-        //     leetcodePostFetch,
-        //     { csrftoken, LEETCODE_SESSION },
-        //     [URLs.submitCode(titleSlug), JSON.stringify(input)],
-        //     {
-        //         callback: () => {
-        //             dispatch({ type: LEETCODE_SUBMIT_CODE });
-        //         },
-        //         successCallback: json => {
-        //             dispatch({ type: LEETCODE_ALL_TAGS_SUCCESS, payload: json });
-        //             if (completionHandler) {
-        //                 completionHandler(true);
-        //             }
-        //         },
-        //         failCallback: error => {
-        //             dispatch({ type: LEETCODE_SUBMIT_CODE_FAILED, error });
-        //             if (errorHandler) {
-        //                 errorHandler(error);
-        //             }
-        //         },
-        //     },
-        // );
+                    querySubmissionResult(dispatch, submission_id, submitCompletionHandler, submitErrorHandler);
+                },
+                failCallback: error => {
+                    dispatch({ type: LEETCODE_SUBMIT_CODE_FAILED, error });
+                    if (submitErrorHandler) {
+                        submitErrorHandler(`${error}`);
+                    }
+                },
+            },
+        );
     };
 };
 
