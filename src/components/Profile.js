@@ -22,8 +22,9 @@ const profileStyles = {
     profileContainer: {
         flex: 1,
         flexDirection: 'row',
-        // backgroundColor: 'red',
         alignItems: 'center',
+        borderBottomWidth: 2,
+        borderBottomColor: 'rgba(0, 0, 0, 0.05)',
     },
     settingContainer: {
         flex: 3,
@@ -227,9 +228,9 @@ const renderSettingItems = ({ submissionHandler, favoriteHandler, helperHandler,
     const renderItem = (index, title, handler, iconRenderer) => {
         if (index === 0) {
             return (
-                <View style={[item, topBoder]}>
+                <View style={item}>
                     {iconRenderer()}
-                    <TouchableOpacity style={{ marginLeft: 10 }} onPress={handler}>
+                    <TouchableOpacity style={{ flex: 1, marginLeft: 10 }} onPress={handler}>
                         <Text style={text}>{title}</Text>
                     </TouchableOpacity>
                 </View>
@@ -238,7 +239,7 @@ const renderSettingItems = ({ submissionHandler, favoriteHandler, helperHandler,
 
         if (index === 3) {
             return (
-                <View style={[item, { borderBottomWidth: 0 }]}>
+                <View style={[item, { borderBottomWidth: 0, flex: 1 }]}>
                     <Text style={[text, { color: ColorScheme.textGray }]}>{title}</Text>
                 </View>
             );
@@ -248,7 +249,7 @@ const renderSettingItems = ({ submissionHandler, favoriteHandler, helperHandler,
         return (
             <View style={item}>
                 {iconRenderer()}
-                <TouchableOpacity style={{ marginLeft: 10 }} onPress={handler}>
+                <TouchableOpacity style={{ flex: 1, marginLeft: 10 }} onPress={handler}>
                     <Text style={text}>{title}</Text>
                 </TouchableOpacity>
             </View>

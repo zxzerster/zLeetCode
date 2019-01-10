@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import {
-    View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, SafeAreaView,
+    View, Text, ScrollView, TextInput, TouchableOpacity,
+    ActivityIndicator, SafeAreaView, InputAccessoryView,
+    Keyboard, Button,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
@@ -44,6 +46,12 @@ const styles = {
     toolBarLoading: {
         width: 160,
         backgroundColor: ColorScheme.lightGray,
+        justifyContent: 'center',
+    },
+    inputAccessory: {
+        flex: 1,
+        backgroundColor: 'rgb(213, 213, 213)',
+        alignItems: 'flex-end',
         justifyContent: 'center',
     },
 };
@@ -213,6 +221,10 @@ class ProblemSubmission extends Component<Props> {
         const { navigation } = this.props;
 
         navigation.setParams({ rightTitle });
+    }
+
+    dimissKeyboard = () => {
+        Keyboard.dismiss();
     }
 
     updateRightTitle() {
@@ -486,8 +498,9 @@ class ProblemSubmission extends Component<Props> {
             loading, error, code, showResult, type, runResult, submitResult,
         } = this.state;
         const {
-            editorWrapper,
+            editorWrapper, inputAccessory,
         } = styles;
+        const id = 'submission_input_accessory_id';
         // const { snippets, selectedIndex } = this.props;
         // const id = 'login_input_accessory_id';
 
@@ -507,11 +520,17 @@ class ProblemSubmission extends Component<Props> {
                         <ScrollView style={{ backgroundColor: ColorScheme.white }}>
                             <View style={editorWrapper}>
                                 <TextInput
+                                    inputAccessoryViewID={id}
                                     multiline
                                     onChangeText={text => { this.setState({ code: text }); }}
                                     value={code}
                                 />
                             </View>
+                            <InputAccessoryView nativeID={id}>
+                                <View style={inputAccessory}>
+                                    <Button onPress={this.dimissKeyboard} title="Ok" />
+                                </View>
+                            </InputAccessoryView>
                         </ScrollView>
                         {this.renderToolbar()}
                         <SubmissionResultModal
