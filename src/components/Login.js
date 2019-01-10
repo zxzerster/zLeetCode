@@ -69,10 +69,6 @@ class Login extends Component<LoginProps> {
         error: '',
     };
 
-    static forgotPassword() {
-        Linking.openURL(URLs.forgot);
-    }
-
     constructor(props) {
         super(props);
         this.state = {
@@ -114,6 +110,14 @@ class Login extends Component<LoginProps> {
     componentWillUnmount() {
         this.didShow.remove();
         this.willHide.remove();
+    }
+
+    forgotPassword = () => {
+        Linking.openURL(URLs.forgot);
+    }
+
+    signup = () => {
+        Linking.openURL(URLs.login);
     }
 
     dimissKeyboard = () => {
@@ -229,9 +233,14 @@ class Login extends Component<LoginProps> {
                             title={title}
                             onPress={() => this.login()}
                         />
-                        <TouchableOpacity disabled={loading} style={forgot} onPress={() => Login.forgotPassword()}>
-                            <Text style={forgotText}>Forgot Password?</Text>
-                        </TouchableOpacity>
+                        <View style={{ flex: 1, flexDirection: 'row' }}>
+                            <TouchableOpacity disabled={loading} style={[forgot, { flex: 1 }]} onPress={() => this.forgotPassword()}>
+                                <Text style={forgotText}>Forgot Password?</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity disabled={loading} style={[forgot, { flex: 1, alignItems: 'flex-end', marginLeft: 0, marginRight: 15 }]} onPress={() => this.signup()}>
+                                <Text style={forgotText}>Sign up on Web</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </KeyboardAvoidingView>
