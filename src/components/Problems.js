@@ -72,7 +72,7 @@ class Problems extends Component<ProblemsProps> {
 
             navigation.setParams({ title });
         } else {
-            navigation.setParams({ rightTitle: 'Filter', onRight: () => { this.setState({ showFilter: true }); } });
+            navigation.setParams({ /* rightTitle: 'Filter', onRight: () => { this.setState({ showFilter: true }); } */ });
         }
         this.loadProblems();
     }
