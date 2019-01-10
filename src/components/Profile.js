@@ -356,6 +356,10 @@ class Profile extends Component<Props> {
         Actions.favorite();
     };
 
+    helpHandler = () => {
+        Actions.help();
+    }
+
     renderLogout() {
         const { button, buttonDisabled, containerView } = logoutStyles;
         const { logoutLoading } = this.state;

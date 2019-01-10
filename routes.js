@@ -13,6 +13,7 @@ import ProblemSubmission from './src/components/ProblemSubmission';
 import CodeLangSelector from './src/components/CodeLangSelector';
 import TagsProblem from './src/components/TagsProblem';
 import FavoriteProblems from './src/components/FavoriteProblems';
+import Help from './src/components/Help';
 
 import ProblemTabIcon from './src/components/common/ProblemTabIcon';
 import ProfileTabIcon from './src/components/common/ProfileTabIcon';
@@ -58,6 +59,7 @@ const LeetCodeRoutes = () => {
                         <Scene key="profile" component={Profile} title="Profile" initial />
                         <Scene key="submissions" component={Submissions} title="Recent Submissions" hideTabBar />
                         <Scene key="favorite" component={FavoriteProblems} title="Favorite" hideTabBar />
+                        <Scene key="help" component={Help} title="Help" hideTabBar />
                     </Scene>
                 </Scene>
             </Scene>
