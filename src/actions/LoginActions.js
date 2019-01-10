@@ -48,7 +48,7 @@ export const leetcodeLogin = (username, password, completionHandler, errorHandle
     return ({ csrftoken, LEETCODE_SESSION }) => dispatch => {
         dispatch({ type: LEETCODE_LOGIN });
         // Check validation of saved csrftoken & LEETCODE_SESSION first
-        leetcodeGetFetch(csrftoken, LEETCODE_SESSION, URLs.login)
+        leetcodeGetFetch(null, null, URLs.login)
         .then(resp => {
             return getCookieValue(resp.headers.map, 'csrftoken');
         })
@@ -79,10 +79,7 @@ export const leetcodeLogin = (username, password, completionHandler, errorHandle
                 const t = getCookieValue(resp.headers.map, 'csrftoken');
                 const s = getCookieValue(resp.headers.map, 'LEETCODE_SESSION');
 
-                // if (t && s) {
-                // Looks like "first" time you login, there's no session field
-                // So once we got csrftoken, then we consider login succesfully
-                if (t) {
+                if (t && s) {
                     const payload = {
                         csrftoken: t,
                         LEETCODE_SESSION: s,
@@ -90,6 +87,12 @@ export const leetcodeLogin = (username, password, completionHandler, errorHandle
 
                     dispatch({ type: LEETCODE_LOGIN_SUCCESS, payload });
                     completionHandler();
+
+                    return null;
+                }
+
+                if (!s) {
+                    errorHandler('Try Again');
 
                     return null;
                 }

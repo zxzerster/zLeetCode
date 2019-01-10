@@ -10,7 +10,7 @@ import {
 import { Actions } from 'react-native-router-flux';
 
 import { connect } from 'react-redux';
-import { leetcodeLogin } from '../actions';
+import { leetcodeLogin, leetcodeLogout } from '../actions';
 import { URLs } from '../network';
 import { ColorScheme } from '../utils/Config';
 
@@ -60,7 +60,8 @@ const styles = {
 };
 
 type LoginProps = {
-    login: (string, string, boolean => void, string => void) => void
+    login: (string, string, boolean => void, string => void) => void,
+    logout: (boolean => void, string => void) => void,
 };
 
 class Login extends Component<LoginProps> {
@@ -121,15 +122,27 @@ class Login extends Component<LoginProps> {
 
     login() {
         const { username, password } = this.state;
-        const { login } = this.props;
+        const { login, logout } = this.props;
+        const self = this;
         const completionHandler = () => {
             this.setState({ loading: false });
             this.setState({ username: '', password: '' });
             Actions.reset('main');
         };
         const errorHandler = error => {
-            this.setState({ loading: false, username: '', password: '' });
-            Alert.alert('Login failed', error, [{ text: 'OK' }]);
+            if (error === 'Try Again') {
+                logout(() => {
+                    login(
+                        username,
+                        password,
+                        completionHandler.bind(self),
+                        errorHandler.bind(self)
+                    );
+                });
+            } else {
+                this.setState({ loading: false, username: '', password: '' });
+                Alert.alert('Login failed', error, [{ text: 'OK' }]);
+            }
         };
 
         this.nameRef.current.input.focus();
@@ -230,6 +243,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         login: (...args) => dispatch(leetcodeLogin(...args)),
+        logout: (...args) => dispatch(leetcodeLogout(...args)),
     };
 };
 
