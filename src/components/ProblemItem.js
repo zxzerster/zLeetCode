@@ -22,6 +22,7 @@ const styles = {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'flex-end',
+        marginRight: 12,
     },
     topBorder: {
         borderTopWidth: 0.5,
@@ -105,10 +106,16 @@ export default ({ problem, index, from }: ProblemItemProps) => {
         return t;
     };
 
-    const check = resolved => {
-        if (resolved) {
+    const check = st => {
+        if (st === 'ac') {
             return (
-                <Icon size={36} type="evilicon" name="check" color={ColorScheme.easyGreen} />
+                <Icon size={32} type="ionicon" name="ios-checkmark-circle-outline" color={ColorScheme.easyGreen} />
+            );
+        }
+
+        if (st === 'notac') {
+            return (
+                <Icon size={32} type="ionicon" name="ios-timer" color={ColorScheme.textGray} />
             );
         }
 
@@ -118,7 +125,7 @@ export default ({ problem, index, from }: ProblemItemProps) => {
     const lock = paidOnly => {
         if (paidOnly && !isPremiumUser) {
             return (
-                <Icon size={36} type="evilicon" name="lock" color={ColorScheme.lightGray} />
+                <Icon size={32} type="evilicon" name="lock" color={ColorScheme.lightGray} />
             );
         }
 
