@@ -498,7 +498,7 @@ class ProblemSubmission extends Component<Props> {
         const errorText = type === 'run' ? runResult.errorText : submitResult.errorText;
         const passed = type === 'run' ? null : submitResult.passed;
         const time = type === 'run' ? null : submitResult.time;
-        const submitFailed = type === 'run' ? false :submitResult.submitFailed;
+        const submitFailed = type === 'run' ? false : submitResult.submitFailed;
 
         return (
             <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadCodeDefinition}>

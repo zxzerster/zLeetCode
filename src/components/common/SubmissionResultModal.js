@@ -161,7 +161,7 @@ export default ({
             <View style={backgroundView}>
                 <View style={contentArea}>
                     <Text style={titleArea}>{titleText}</Text>
-                    {renderContentArea(type, error, input, output, expected)}
+                    {renderContentArea(type, submitFailed, error, input, output, expected)}
                     <View style={buttonArea}>
                         <Button title={buttonTitltText} onPress={handler} />
                     </View>
