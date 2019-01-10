@@ -130,6 +130,12 @@ class Login extends Component<LoginProps> {
             Actions.reset('main');
         };
         const errorHandler = error => {
+            // This is very tricky, because Fetch seems couldn't catch 302,
+            // So if server returns 302 which means you've already logged in,
+            // We can't extract the SESSION_ID which is included in the 302 response.
+            // So for now, if we met the situation which only returns csrftoken but no SESSION_ID
+            // We log out first then try log in again which should get both csrftoken and SESSION_ID.
+            // But ideally, we should be able capture 302 reponse.
             if (error === 'Try Again') {
                 logout(() => {
                     login(
