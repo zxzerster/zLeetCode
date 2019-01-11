@@ -1,5 +1,5 @@
 import {
-    LEETCODE_ALL_PROBLEMS, LEETCODE_ALL_PROBLEMS_SUCCESS, LEETCODE_ALL_PROBLEMS_FAILED,
+    LEETCODE_ALL_PROBLEMS, LEETCODE_ALL_PROBLEMS_SUCCESS, LEETCODE_ALL_PROBLEMS_FAILED, LEETCODE_CLEAN_ALL_PROBLEMS,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -18,6 +18,8 @@ export default (state = INITIAL_STATE, action) => {
                 ...state,
                 allQuestions: action.payload,
             };
+        case LEETCODE_CLEAN_ALL_PROBLEMS:
+            return { ...INITIAL_STATE };
         default:
             return state;
     }

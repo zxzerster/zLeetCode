@@ -83,6 +83,7 @@ export const leetcodeLogin = (username, password, completionHandler, errorHandle
                     const payload = {
                         csrftoken: t,
                         LEETCODE_SESSION: s,
+                        username,
                     };
 
                     dispatch({ type: LEETCODE_LOGIN_SUCCESS, payload });

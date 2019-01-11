@@ -8,9 +8,11 @@ import {
     FormInput, Button, Icon,
 } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
-
 import { connect } from 'react-redux';
-import { leetcodeLogin, leetcodeLogout } from '../actions';
+
+import {
+    leetcodeLogin, leetcodeLogout, leetcodeCleanAllProblems, leetcodeCleanUserProfile, leetcodeCleanUserProgress,
+} from '../actions';
 import { URLs } from '../network';
 import { ColorScheme } from '../utils/Config';
 
@@ -62,6 +64,10 @@ const styles = {
 type LoginProps = {
     login: (string, string, boolean => void, string => void) => void,
     logout: (boolean => void, string => void) => void,
+    cleanProblems: (void) => object,
+    cleanProgress: (void) => object,
+    cleanProfile: (void) => object,
+    username: string,
 };
 
 class Login extends Component<LoginProps> {
@@ -126,7 +132,9 @@ class Login extends Component<LoginProps> {
 
     login() {
         const { username, password } = this.state;
-        const { login, logout } = this.props;
+        const {
+            login, logout, cleanProblems, cleanProfile, cleanProgress,
+        } = this.props;
         const self = this;
         const completionHandler = () => {
             this.setState({ loading: false });
@@ -154,6 +162,12 @@ class Login extends Component<LoginProps> {
                 Alert.alert('Login failed', error, [{ text: 'OK' }]);
             }
         };
+
+        if (username !== this.props.username) {
+            cleanProblems();
+            cleanProfile();
+            cleanProgress();
+        }
 
         this.nameRef.current.input.focus();
         this.setState({ loading: true });
@@ -250,15 +264,18 @@ class Login extends Component<LoginProps> {
 }
 
 const mapStateToProps = state => {
-    const { session } = state;
+    const { session: { username } } = state;
 
-    return session;
+    return { username };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         login: (...args) => dispatch(leetcodeLogin(...args)),
         logout: (...args) => dispatch(leetcodeLogout(...args)),
+        cleanProblems: (...args) => dispatch(leetcodeCleanAllProblems(...args)),
+        cleanProgress: (...args) => dispatch(leetcodeCleanUserProgress(...args)),
+        cleanProfile: (...args) => dispatch(leetcodeCleanUserProfile(...args)),
     };
 };
 

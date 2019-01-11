@@ -25,7 +25,7 @@ const rootPersistConfig = {
 const sessionPersistConfig = {
     key: 'session',
     storage,
-    whitelist: ['csrftoken', 'LEETCODE_SESSION'],
+    whitelist: ['csrftoken', 'LEETCODE_SESSION', 'username'],
     blacklist: ['error'],
 };
 

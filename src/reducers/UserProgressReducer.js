@@ -1,4 +1,6 @@
-import { LEETCODE_USER_PROGRESS, LEETCODE_USER_PROGRESS_SUCCESS, LEETCODE_USER_PROGRESS_FAILED } from '../actions/types';
+import {
+    LEETCODE_USER_PROGRESS, LEETCODE_USER_PROGRESS_SUCCESS, LEETCODE_USER_PROGRESS_FAILED, LEETCODE_CLEAN_USER_PROGRESS,
+} from '../actions/types';
 
 const INITIAL_STATE = {
     XP: 0,
@@ -23,6 +25,8 @@ export default (state = INITIAL_STATE, action) => {
         case LEETCODE_USER_PROGRESS_SUCCESS:
             return { ...state, ...action.payload };
         case LEETCODE_USER_PROGRESS_FAILED:
+            return { ...INITIAL_STATE };
+        case LEETCODE_CLEAN_USER_PROGRESS:
             return { ...INITIAL_STATE };
         default:
             return state;

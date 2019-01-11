@@ -1,4 +1,6 @@
-import { LEETCODE_USERPROFILE, LEETCODE_USERPROFILE_SUCCESS, LEETCODE_USERPROFILE_FAILED } from '../actions/types';
+import {
+    LEETCODE_USERPROFILE, LEETCODE_USERPROFILE_SUCCESS, LEETCODE_USERPROFILE_FAILED, LEETCODE_CLEAN_USERPROFILE,
+} from '../actions/types';
 
 const INITIAL_STATE = {
     // Data
@@ -41,6 +43,8 @@ export default (state = INITIAL_STATE, action) => {
                 ...action.payload,
             };
         case LEETCODE_USERPROFILE_FAILED:
+            return { ...INITIAL_STATE };
+        case LEETCODE_CLEAN_USERPROFILE:
             return { ...INITIAL_STATE };
         default:
             return state;

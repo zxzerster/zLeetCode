@@ -7,6 +7,7 @@ const INITIAL_STATE = {
     // Data
     LEETCODE_SESSION: '',
     csrftoken: '',
+    username: '',
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -25,7 +26,7 @@ export default (state = INITIAL_STATE, action) => {
         case LEETCODE_LOGOUT_SUCCESS:
         case LEETCODE_LOGOUT_FAILED:
             // Please note that theoratically it's impossible that failed to logout.
-            return { ...INITIAL_STATE };
+            return { ...state, ...{ LEETCODE_SESSION: '', csrftoken: '' } };
         default:
             return state;
     }
