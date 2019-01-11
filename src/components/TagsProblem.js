@@ -124,7 +124,7 @@ class TagsProblem extends Component<Props> {
 
         return (
             <TouchableOpacity style={ListItem} onPress={onPress}>
-                <Text style={ListItemText}>{item.name}</Text>
+                <Text style={ListItemText}>{item.name}<Text style={{ fontSize: 10, color: ColorScheme.textGray}}>{` (${item.questions.length})`}</Text></Text>
             </TouchableOpacity>
         );
     };
