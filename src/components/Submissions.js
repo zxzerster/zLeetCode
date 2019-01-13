@@ -115,8 +115,8 @@ class Submissions extends Component<Props> {
         const { container } = styles;
 
         return (
-            <View style={[container, { justifyContent: 'center', alignItems: 'center' }]}>
-                <Text>You submitted nothing!!!</Text>
+            <View style={[container, { marginTop: 20, justifyContent: 'center', alignItems: 'center' }]}>
+                <Text style={{ color: ColorScheme.textDarkGray, fontSize: 18, fontWeight: '400' }}>Empty Submissions</Text>
             </View>
         );
     }
