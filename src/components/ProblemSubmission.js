@@ -4,6 +4,7 @@ import {
     ActivityIndicator, SafeAreaView, InputAccessoryView,
     Keyboard, Button,
 } from 'react-native';
+import { Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 
@@ -12,6 +13,7 @@ import { leetcodeCodeDefinition, leetcodeRunCode, leetcodeSubmitCode } from '../
 import { ColorScheme } from '../utils/Config';
 
 import SubmissionResultModal from './common/SubmissionResultModal';
+import InputModal from './common/InputModal';
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 
 const styles = {
@@ -29,7 +31,7 @@ const styles = {
         shadowColor: 'black',
         shadowOpacity: 0.1,
         shadowOffset: { width: 0, height: 1 },
-        flexDirection: 'row-reverse',
+        flexDirection: 'row',
         height: 55,
         backgroundColor: 'rgb(250, 250, 250)',
     },
@@ -168,6 +170,7 @@ class ProblemSubmission extends Component<Props> {
 
     constructor(props) {
         super(props);
+        const { sampleTestCase } = this.props;
 
         this.state = {
             loading: false,
@@ -194,6 +197,8 @@ class ProblemSubmission extends Component<Props> {
                 time: '',
                 submitFailed: false,
             },
+            inputParam: sampleTestCase,
+            showInputModal: false,
         };
     }
 
@@ -285,6 +290,14 @@ class ProblemSubmission extends Component<Props> {
         };
     };
 
+    handleInputOk = () => {
+        this.setState({ showInputModal: false });
+    }
+
+    customizeInput = () => {
+        this.setState({ showInputModal: true });
+    }
+
     submitIt = () => {
         const {
             submitCode, titleSlug, questionId,
@@ -356,12 +369,12 @@ class ProblemSubmission extends Component<Props> {
 
     runIt = () => {
         const {
-            runCode, titleSlug, questionId, judgeType, sampleTestCase,
+            runCode, titleSlug, questionId, judgeType,
         } = this.props;
         const { snippets, selectedIndex } = this.props;
         const lang = snippets[selectedIndex].langSlug;
-        const { code } = this.state;
-        const input = this.codeInput(code, sampleTestCase, questionId, judgeType, lang);
+        const { code, inputParam } = this.state;
+        const input = this.codeInput(code, inputParam, questionId, judgeType, lang);
         let rc = 0;
 
         this.setState({ uploading: true });
@@ -397,7 +410,8 @@ class ProblemSubmission extends Component<Props> {
     }
 
     processRuncodeResult = (result, expected) => {
-        const { sampleTestCase } = this.props;
+        // const { sampleTestCase } = this.props;
+        const { inputParam } = this.state;
         const title = `${result.status_msg}`;
         let input;
         let output;
@@ -406,7 +420,7 @@ class ProblemSubmission extends Component<Props> {
 
         // Run success dones't mean run correctly, it means no compilation errors only.
         if (result.run_success) {
-            input = `${sampleTestCase}`;
+            input = `${inputParam}`;
             output = result.code_answer ? `${result.code_answer}` : 'null';
             expect = expected.code_answer ? `${expected.code_answer}` : 'null';
         } else {
@@ -461,24 +475,29 @@ class ProblemSubmission extends Component<Props> {
         const renderActions = () => {
             return (
                 <View style={toolBarRootStyle}>
-                    <TouchableOpacity
-                        style={toolBarActionStyle}
-                        onPress={this.submitIt}
-                    >
-                        <Text style={toolBarActionTextStyle}>Submit</Text>
-                    </TouchableOpacity>
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                        <TouchableOpacity style={{ marginLeft: 25 }} onPress={this.customizeInput}>
+                            <Icon size={32} type="ionicon" name="md-code-working" color={ColorScheme.textDarkerGray} />
+                        </TouchableOpacity>
+                    </View>
                     <TouchableOpacity
                         style={[toolBarActionStyle, { backgroundColor: ColorScheme.easyGreen }]}
                         onPress={this.runIt}
                     >
                         <Text style={toolBarActionTextStyle}>Run</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity
+                        style={toolBarActionStyle}
+                        onPress={this.submitIt}
+                    >
+                        <Text style={toolBarActionTextStyle}>Submit</Text>
+                    </TouchableOpacity>
                 </View>
             );
         };
         const renderLoading = () => {
             return (
-                <View style={toolBarRootStyle}>
+                <View style={[toolBarRootStyle, { flexDirection: 'row-reverse' }]}>
                     <View style={toolBarLoading}>
                         <ActivityIndicator animating color="white" />
                     </View>
@@ -495,7 +514,7 @@ class ProblemSubmission extends Component<Props> {
 
     render() {
         const {
-            loading, error, code, showResult, type, runResult, submitResult,
+            loading, error, code, showResult, type, runResult, submitResult, inputParam, showInputModal, inputModalValue,
         } = this.state;
         const {
             editorWrapper, inputAccessory,
@@ -545,6 +564,15 @@ class ProblemSubmission extends Component<Props> {
                             time={time}
                             submitFailed={submitFailed}
                             pressHandler={() => this.setState({ showResult: false })}
+                        />
+                        <InputModal
+                            visible={showInputModal}
+                            title="Customize input"
+                            inputParam={inputParam}
+                            cancel={() => this.setState({ showInputModal: false })}
+                            ok={this.handleInputOk}
+                            value={inputParam}
+                            onChangeText={text => this.setState({ inputParam: text })}
                         />
                     </SafeAreaView>
                 )}

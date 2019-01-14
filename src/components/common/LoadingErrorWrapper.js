@@ -69,7 +69,7 @@ class LoadingErrorWrapper extends Component<Props> {
             this.animatedLoading();
         } else if (prevProps && !loading) {
             // When loading finished, stop animating
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+            // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
         }
     }
 
