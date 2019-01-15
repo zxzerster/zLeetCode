@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import {
-    View, Text, TouchableOpacity, LayoutAnimation, Animated,
+    View, Text, TouchableOpacity, Animated,
 } from 'react-native';
+import { Actions } from 'react-native-router-flux';
 
 import LeetcodeIcon from './LeetcodeIcon';
-import { Actions } from 'react-native-router-flux';
+import { ColorScheme } from '../../utils/Config';
+
 
 const styles = {
     loadingErrorContainer: {
@@ -14,15 +16,15 @@ const styles = {
         backgroundColor: 'white',
     },
     errorString: {
-        fontSize: 24,
-        fontWeight: '500',
-        color: 'gray',
+        fontSize: 18,
+        fontWeight: '300',
+        color: ColorScheme.textGray,
         marginTop: 20,
         marginHorizontal: 12,
     },
     reloadButton: {
         borderWidth: 1,
-        borderColor: 'gray',
+        borderColor: ColorScheme.lightGray,
         borderRadius: 5,
         // padding: 10,
         width: '35%',
@@ -33,7 +35,7 @@ const styles = {
     },
     reloadButtonTitle: {
         fontSize: 18,
-        color: 'gray',
+        color: ColorScheme.textGray,
     },
 };
 
@@ -115,7 +117,7 @@ class LoadingErrorWrapper extends Component<Props> {
         }
 
         if (error) {
-            if (error === 'Error: Please re-login') {
+            if (error === 'Please re-login') {
                 return (
                 <View style={loadingErrorContainer}>
                     <LeetcodeIcon />

@@ -424,7 +424,13 @@ class ProblemSubmission extends Component<Props> {
             output = result.code_answer ? `${result.code_answer}` : 'null';
             expect = expected.code_answer ? `${expected.code_answer}` : 'null';
         } else {
-            errorMsg = `${result.full_compile_error}`;
+            if (result.full_compile_error) {
+                errorMsg = `${result.full_compile_error}`;
+            } else if (result.full_runtime_error) {
+                errorMsg = `${result.full_runtime_error}`;
+            } else {
+                errorMsg = 'Unknown errors';
+            }
         }
 
         return {
@@ -476,8 +482,8 @@ class ProblemSubmission extends Component<Props> {
             return (
                 <View style={toolBarRootStyle}>
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                        <TouchableOpacity style={{ marginLeft: 25 }} onPress={this.customizeInput}>
-                            <Icon size={32} type="ionicon" name="md-code-working" color={ColorScheme.textDarkerGray} />
+                        <TouchableOpacity style={{ height: 55, width: 80, justifyContent: 'center', alignItems: 'center' }} onPress={this.customizeInput}>
+                            <Icon size={32} type="ionicon" name="md-code-working" color={ColorScheme.lightGray} />
                         </TouchableOpacity>
                     </View>
                     <TouchableOpacity
@@ -569,7 +575,6 @@ class ProblemSubmission extends Component<Props> {
                             visible={showInputModal}
                             title="Customize input"
                             inputParam={inputParam}
-                            cancel={() => this.setState({ showInputModal: false })}
                             ok={this.handleInputOk}
                             value={inputParam}
                             onChangeText={text => this.setState({ inputParam: text })}

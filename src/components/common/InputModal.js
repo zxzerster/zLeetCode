@@ -32,7 +32,7 @@ const styles = {
         alignItems: 'center',
         borderTopColor: ColorScheme.separateLineGray,
         borderTopWidth: 1,
-        marginVertical: 12,
+        marginVertical: 8,
     },
     textInput: {
         flex: 1,
@@ -74,7 +74,6 @@ class InputModal extends Component {
                         />
                     </View>
                     <View style={buttonArea}>
-                        <Button title="Cancel" onPress={cancelHandler} />
                         <Button title="OK" onPress={okHandler} />
                     </View>
                 </View>
