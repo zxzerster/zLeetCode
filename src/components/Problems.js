@@ -39,7 +39,7 @@ type ProblemsProps = {
     },
     tagIds: Array<string>,
     from?: string,
-
+    title: string,
     navigation: Object,
 };
 
