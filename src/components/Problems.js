@@ -324,4 +324,5 @@ const mapDispatchToProps = dispatch => {
     };
  };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withLeetcodeWrapper(Problems));
+export default connect(mapStateToProps, mapDispatchToProps)(Problems);
+// export default connect(mapStateToProps, mapDispatchToProps)(withLeetcodeWrapper(Problems));

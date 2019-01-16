@@ -21,6 +21,7 @@ export const URLs = {
 export const ERRs = {
     ERR_NETWORK: 'Network errors',
     ERR_SESSION: 'Session expired',
+    ERR_RELOGIN: 'Re-Login',
 };
 
 const commons = {
@@ -152,7 +153,7 @@ export const leetcodeNetworkRequester = (
                 case 499:
                 case 403:
                 case 401:
-                    failCallback('Please re-login');
+                    failCallback(ERRs.ERR_RELOGIN);
 
                     return null;
                 default:

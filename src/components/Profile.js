@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 
 import LeetcodeIcon from './common/LeetcodeIcon';
 import { leetcodeUserProfile, leetcodeUserProgress, leetcodeLogout } from '../actions';
+import { ERRs } from '../network';
 import { ColorScheme } from '../utils/Config';
 
 import { versionString } from '../../ZLC-Config';
@@ -331,7 +332,7 @@ class Profile extends Component<Props> {
     }
 
     handleRelogin = error => {
-        if (error === 'Please re-login') {
+        if (error === ERRs.ERR_RELOGIN) {
             Alert.alert('Credential invalid', 'Please re-login', [
                 { text: 'Login again', onPress: () => { Actions.rootLogin(); } },
                 { text: 'Cancel' },

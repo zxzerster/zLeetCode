@@ -6,7 +6,7 @@ import { Actions } from 'react-native-router-flux';
 
 import LeetcodeIcon from './LeetcodeIcon';
 import { ColorScheme } from '../../utils/Config';
-
+import { ERRs } from '../../network';
 
 const styles = {
     loadingErrorContainer: {
@@ -117,7 +117,7 @@ class LoadingErrorWrapper extends Component<Props> {
         }
 
         if (error) {
-            if (error === 'Please re-login') {
+            if (error === ERRs.ERR_RELOGIN) {
                 return (
                 <View style={loadingErrorContainer}>
                     <LeetcodeIcon />
