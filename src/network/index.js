@@ -26,8 +26,8 @@ export const ERRs = {
     ERR_TIMEOUT: 'Request times out',
 };
 
-// Default timeout is 1.5 minutes.
-const DEFAULT_TIME_OUT = 1000 * 60 * 1.5;
+// Default timeout is 2 minutes
+const DEFAULT_TIME_OUT = 1000 * 60 * 2;
 
 const commons = {
     Origin: base,
@@ -65,7 +65,7 @@ export const getCookieValue = (respHeaders, key) => {
     let value = null;
     const cookies = respHeaders['set-cookie'].split(';');
 
-    _.forEach(cookies, (cookie, i) => {
+    _.forEach(cookies, cookie => {
         const pair = cookie.trim().split('=');
 
         if (pair.length === 2 && pair[0].indexOf(key) >= 0) {

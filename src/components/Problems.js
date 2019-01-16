@@ -44,6 +44,13 @@ type ProblemsProps = {
 };
 
 class Problems extends Component<ProblemsProps> {
+    // static onEnter() {
+    //     console.log('==========>>>   onEnter');
+    // }
+
+    // static onExit() {
+    //     console.log('==========>>>   onExit');
+    // }
     static defaultProps = {
         from: null,
     };
@@ -110,7 +117,7 @@ class Problems extends Component<ProblemsProps> {
                 this.doLocalTagSearch(tagIds);
             } else {
                 const { allQuestions } = this.props;
- 
+
                 this.setState({ displayedQuestions: allQuestions, loading: false, error: null });
             }
         };

@@ -311,6 +311,13 @@ type Props = {
 };
 
 class Profile extends Component<Props> {
+    // static onEnter() {
+    //     console.log('==========>>>   Profile onEnter');
+    // }
+
+    // static onExit() {
+    //     console.log('==========>>>   Profile onExit');
+    // }
     constructor(props) {
         super(props);
 

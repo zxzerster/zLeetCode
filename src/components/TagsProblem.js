@@ -44,6 +44,13 @@ type Props = {
 };
 
 class TagsProblem extends Component<Props> {
+    // static onEnter() {
+    //     console.log('==========>>>   TagProblems onEnter');
+    // }
+
+    // static onExit() {
+    //     console.log('==========>>>   TagsProblems onExit');
+    // }
     constructor(props) {
         super(props);
 
