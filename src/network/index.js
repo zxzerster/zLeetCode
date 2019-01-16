@@ -22,11 +22,41 @@ export const ERRs = {
     ERR_NETWORK: 'Network errors',
     ERR_SESSION: 'Session expired',
     ERR_RELOGIN: 'Re-Login',
+    ERR_CANCEL: 'Request cancelled',
+    ERR_TIMEOUT: 'Request times out',
 };
+
+// Default timeout is 1.5 minutes.
+const DEFAULT_TIME_OUT = 1000 * 60 * 1.5;
 
 const commons = {
     Origin: base,
     Referer: base,
+};
+
+const withTimeoutOrCancel = (fetch, timeout = DEFAULT_TIME_OUT) => {
+    let timeoutFn = null;
+    const timeoutPromise = new Promise((resolve, reject) => {
+        timeoutFn = () => {
+            reject(ERRs.ERR_TIMEOUT);
+        };
+    });
+
+    let cancelFn = null;
+    const cancelPromise = new Promise((resolve, reject) => {
+        cancelFn = () => {
+            reject(ERRs.ERR_CANCEL);
+        };
+    });
+
+    const p = Promise.race([fetch, timeoutPromise, cancelPromise]);
+
+    p.cancel = cancelFn;
+    setTimeout(() => {
+        timeoutFn();
+    }, timeout);
+
+    return p;
 };
 
 export const getCookieValue = (respHeaders, key) => {
@@ -48,7 +78,7 @@ export const getCookieValue = (respHeaders, key) => {
     return value;
 };
 
-export const leetcodeGetFetch = (csrftoken, LEETCODE_SESSION, url, headers = null) => {
+export const leetcodeGetFetch = (csrftoken, LEETCODE_SESSION, url, headers = null, timeout = DEFAULT_TIME_OUT) => {
     let getHeaders = { ...commons };
 
     if (csrftoken && LEETCODE_SESSION) {
@@ -66,15 +96,15 @@ export const leetcodeGetFetch = (csrftoken, LEETCODE_SESSION, url, headers = nul
         };
     }
 
-    return fetch(url, {
+    return withTimeoutOrCancel(fetch(url, {
         method: 'get',
         credential: 'omit',
         redirect: 'manual',
         headers: getHeaders,
-    });
+    }), timeout);
 };
 
-export const leetcodeGraphqlFetch = (csrftoken, LEETCODE_SESSION, query) => {
+export const leetcodeGraphqlFetch = (csrftoken, LEETCODE_SESSION, query, timeout = DEFAULT_TIME_OUT) => {
     const postHeaders = {
         ...commons,
         Cookie: `;csrftoken=${csrftoken};LEETCODE_SESSION=${LEETCODE_SESSION}`,
@@ -82,14 +112,14 @@ export const leetcodeGraphqlFetch = (csrftoken, LEETCODE_SESSION, query) => {
         'Content-Type': 'application/json',
     };
 
-    return fetch('https://leetcode.com/graphql/', {
+    return withTimeoutOrCancel(fetch('https://leetcode.com/graphql/', {
         method: 'post',
         headers: postHeaders,
         body: JSON.stringify(query),
-    });
+    }), timeout);
 };
 
-export const leetcodePostFetch = (csrftoken, LEETCODE_SESSION, url, body, form = false, headers = null) => {
+export const leetcodePostFetch = (csrftoken, LEETCODE_SESSION, url, body, form = false, headers = null, timeout = DEFAULT_TIME_OUT) => {
     let postHeaders = {
         ...commons,
         'X-Requested-With': 'XMLHttpRequest',
@@ -119,17 +149,17 @@ export const leetcodePostFetch = (csrftoken, LEETCODE_SESSION, url, body, form =
         });
     }
 
-    return fetch(url, {
+    return withTimeoutOrCancel(fetch(url, {
         method: 'post',
         credentials: 'omit',
         redirect: 'manual',
         headers: postHeaders,
         body: bodyData,
-    });
+    }), timeout);
 };
 
 export const leetcodeNetworkRequester = (
-    requester, middlewrreParams, parameters, callbacks
+    requester, middlewrreParams, parameters, callbacks, timeout = DEFAULT_TIME_OUT,
 ) => {
     const {
         csrftoken, LEETCODE_SESSION,
@@ -139,7 +169,7 @@ export const leetcodeNetworkRequester = (
     } = callbacks;
 
     callback();
-    requester(csrftoken, LEETCODE_SESSION, ...parameters)
+    requester(csrftoken, LEETCODE_SESSION, ...parameters, timeout)
     .then(resp => {
         if (resp.status !== 200) {
             let error = '';
