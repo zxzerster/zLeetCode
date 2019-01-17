@@ -78,7 +78,7 @@ export const getCookieValue = (respHeaders, key) => {
     return value;
 };
 
-export const leetcodeGetFetch = (csrftoken, LEETCODE_SESSION, url, headers = null, timeout = DEFAULT_TIME_OUT) => {
+export const leetcodeGetFetch = (csrftoken, LEETCODE_SESSION, url, timeout = DEFAULT_TIME_OUT, headers = null) => {
     let getHeaders = { ...commons };
 
     if (csrftoken && LEETCODE_SESSION) {

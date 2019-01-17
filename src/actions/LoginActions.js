@@ -7,6 +7,7 @@ import {
     URLs,
     ERRs,
     getCookieValue,
+    leetcodeNetworkRequester,
     leetcodeGetFetch,
     leetcodePostFetch,
     leetcodeGraphqlFetch,
@@ -14,33 +15,26 @@ import {
 
 export const leetcodeVerfifySession = (completionHandler, errorHandler) => {
     return ({ csrftoken, LEETCODE_SESSION }) => () => {
-        leetcodeGraphqlFetch(csrftoken, LEETCODE_SESSION, UserStatus)
-        .then(resp => {
-            /** For some unknown reason, network call failed */
-            if (resp.status !== 200) {
-                errorHandler(ERRs.ERR_NETWORK`: ${resp.status}`);
+        leetcodeNetworkRequester(
+            leetcodeGraphqlFetch,
+            { csrftoken, LEETCODE_SESSION },
+            [UserStatus],
+            {
+                callback: () => { },
+                successCallback: json => {
+                    const { isSignedIn } = json.data.userStatus;
 
-                return;
-            }
-
-            resp.json().then(json => {
-                const { isSignedIn } = json.data.userStatus;
-
-                if (isSignedIn) {
-                    completionHandler(true);
-
-                    return;
-                }
-                completionHandler(false);
-            })
-            .catch(error => {
-                errorHandler(`error: ${error}`);
-            });
-        })
-        .catch(error => {
-            /** This error should never happned, we need investigate this kind of error if it happens */
-            errorHandler(`${error}`);
-        });
+                    if (isSignedIn) {
+                        completionHandler(true);
+                    } else {
+                        completionHandler(false);
+                    }
+                },
+                failCallback: error => {
+                    errorHandler(error);
+                },
+            },
+        );
     };
 };
 
@@ -58,7 +52,7 @@ export const leetcodeLogin = (username, password, completionHandler, errorHandle
                     csrfmiddlewaretoken: token,
                     login: username,
                     password,
-                }, true, {
+                }, 1000 * 60 * 2, true, {
                     Cookie: `;csrftoken=${token};`,
                     'X-CSRFTOKEN': token,
                 });
