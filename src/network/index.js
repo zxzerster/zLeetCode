@@ -119,7 +119,7 @@ export const leetcodeGraphqlFetch = (csrftoken, LEETCODE_SESSION, query, timeout
     }), timeout);
 };
 
-export const leetcodePostFetch = (csrftoken, LEETCODE_SESSION, url, body, form = false, headers = null, timeout = DEFAULT_TIME_OUT) => {
+export const leetcodePostFetch = (csrftoken, LEETCODE_SESSION, url, body, timeout = DEFAULT_TIME_OUT, form = false, headers = null) => {
     let postHeaders = {
         ...commons,
         'X-Requested-With': 'XMLHttpRequest',
