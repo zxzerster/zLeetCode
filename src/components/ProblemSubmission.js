@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     View, Text, ScrollView, TextInput, TouchableOpacity,
     ActivityIndicator, SafeAreaView, InputAccessoryView,
-    Keyboard, Button,
+    Keyboard, Button, Alert,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -473,6 +473,13 @@ class ProblemSubmission extends Component<Props> {
         });
     }
 
+    alertSubmit = () => {
+        Alert.alert('Submit', 'Do you want to submit it?', [
+            { text: 'Cancel', onPress: () => {} },
+            { text: 'Submit', onPress: this.submitIt },
+        ]);
+    };
+
     renderToolbar = () => {
         const { uploading } = this.state;
         const {
@@ -494,7 +501,7 @@ class ProblemSubmission extends Component<Props> {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={toolBarActionStyle}
-                        onPress={this.submitIt}
+                        onPress={this.alertSubmit}
                     >
                         <Text style={toolBarActionTextStyle}>Submit</Text>
                     </TouchableOpacity>
