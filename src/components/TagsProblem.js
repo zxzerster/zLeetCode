@@ -62,6 +62,10 @@ class TagsProblem extends Component<Props> {
     }
 
     componentDidMount() {
+        this.loadTags();
+    }
+
+    loadTags = () => {
         const { companies, topics } = this.props;
         const completionHandler = () => {
             this.setState({ loading: false, error: null });
@@ -141,7 +145,7 @@ class TagsProblem extends Component<Props> {
         const { companies, topics } = this.props;
 
         return (
-            <LoadingErrorWrapper loading={loading} error={error}>
+            <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadTags}>
             {() => (
                 <View style={{ flex: 1 }}>
                 <SectionList
