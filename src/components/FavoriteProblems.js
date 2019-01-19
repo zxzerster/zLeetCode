@@ -51,6 +51,10 @@ class FavoriteProblems extends Component<Props> {
     }
 
     componentDidMount() {
+        this.loadFavorites();
+    }
+
+    loadFavorites = () => {
         const { favorites } = this.props;
         const completionHandler = () => {
             this.setState({ loading: false, error: null });
@@ -89,7 +93,7 @@ class FavoriteProblems extends Component<Props> {
         const { publicFavorites, privateFavorites } = this.props;
 
         return (
-            <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadProblems}>
+            <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadFavorites}>
                 {() => (
                     <SectionList
                         style={{ backgroundColor: 'white' }}
