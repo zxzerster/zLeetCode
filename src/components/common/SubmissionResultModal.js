@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    View, Button, Text, Modal,
+    View, ScrollView, Button, Text, Modal,
 } from 'react-native';
 
 import { ColorScheme } from '../../utils/Config';
@@ -35,7 +35,7 @@ const styles = {
         justifyContent: 'center',
         borderTopColor: ColorScheme.separateLineGray,
         borderTopWidth: 1,
-        flex: 1,
+        height: 60,
     },
     itemArea: {
         marginHorizontal: 5,
@@ -92,22 +92,22 @@ export default ({
     const renderResult = (type, input, output, expected) => {
         if (type === 'run') {
             return (
-                <View style={resultArea}>
+                <ScrollView style={resultArea}>
                     {renderItem('Input:', input)}
                     {renderItem('Output:', output)}
                     {renderItem('Expected:', expected)}
-                </View>
+                </ScrollView>
             );
         }
 
         if (type === 'submit') {
             return (
-                <View style={resultArea}>
+                <ScrollView style={resultArea}>
                     <View>
                         <Text style={resultItemTitleText}>{passed}</Text>
                         <Text style={resultItemTitleText}>{time}</Text>
                     </View>
-                </View>
+                </ScrollView>
             );
         }
 
@@ -116,28 +116,28 @@ export default ({
     const renderError = (type, err) => {
         if (type === 'run') {
             return (
-                <View style={resultArea}>
+                <ScrollView style={resultArea}>
                     <Text style={{ margin: 8, color: ColorScheme.hardRed }}>{err}</Text>
-                </View>
+                </ScrollView>
             );
         }
 
         if (type === 'submit') {
             if (error) {
                 return (
-                    <View style={resultArea}>
+                    <ScrollView style={resultArea}>
                         <Text style={{ margin: 8, color: ColorScheme.hardRed }}>{err}</Text>
-                    </View>
+                    </ScrollView>
                 );
             }
 
             return (
-                <View style={resultArea}>
+                <ScrollView style={resultArea}>
                     <Text style={resultItemContentText}>{passed}</Text>
                     {renderItem('Input:', input)}
                     {renderItem('Output:', output)}
                     {renderItem('Expected:', expected)}
-                </View>
+                </ScrollView>
             );
         }
 
