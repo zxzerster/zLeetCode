@@ -11,7 +11,7 @@ import withLeetcodeWrapper from './common/withLeetcodeWrapper';
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 import ProblemItem from './ProblemItem';
 import ProblemRighttButton from './common/ProblemRightButton';
-import { leetcodeProblems } from '../actions';
+import { leetcodeProblems, leetcodeCleanAllProblems } from '../actions';
 
 
 const EASY = 'Easy';
@@ -246,6 +246,13 @@ class Problems extends Component<ProblemsProps> {
         }
     }
 
+    errorLoading = () => {
+        const { cleanProblems } = this.props;
+
+        cleanProblems();
+        this.loadProblems();
+    }
+
     renderItem = ({ item, index }) => {
         const { from, isPremiumUser } = this.props;
 
@@ -270,7 +277,7 @@ class Problems extends Component<ProblemsProps> {
         };
 
         return (
-            <LoadingErrorWrapper loading={loading} error={error} errorReload={this.loadProblems}>
+            <LoadingErrorWrapper loading={loading} error={error} errorReload={this.errorLoading}>
                 {() => (
                     <View style={[container, { marginTop: 0 }]}>
                         <FlatList
@@ -328,6 +335,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         problems: (...args) => dispatch(leetcodeProblems(...args)),
+        cleanProblems: (...args) => dispatch(leetcodeCleanAllProblems(...args)),
     };
  };
 
