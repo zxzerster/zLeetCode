@@ -105,6 +105,11 @@ class LoadingErrorWrapper extends Component<Props> {
         const {
             loadingErrorContainer, errorString, reloadButton, reloadButtonTitle,
         } = styles;
+        let errMsg = error;
+
+        if (typeof error !== 'string') {
+            errMsg = 'Opps, errors.';
+        }
 
         if (loading) {
             return (
@@ -117,11 +122,11 @@ class LoadingErrorWrapper extends Component<Props> {
         }
 
         if (error) {
-            if (error === ERRs.ERR_RELOGIN) {
+            if (errMsg === ERRs.ERR_RELOGIN) {
                 return (
                 <View style={loadingErrorContainer}>
                     <LeetcodeIcon />
-                    <Text style={errorString}>{error}</Text>
+                    <Text style={errorString}>{errMsg}</Text>
                     <TouchableOpacity style={reloadButton} onPress={() => Actions.rootLogin()}>
                         <Text style={reloadButtonTitle}>Re-Login</Text>
                     </TouchableOpacity>
@@ -132,7 +137,7 @@ class LoadingErrorWrapper extends Component<Props> {
             return (
                 <View style={loadingErrorContainer}>
                 <LeetcodeIcon />
-                <Text style={errorString}>{error}</Text>
+                <Text style={errorString}>{errMsg}</Text>
                 <TouchableOpacity style={reloadButton} onPress={errorReload || (() => {})}>
                     <Text style={reloadButtonTitle}>Reload it</Text>
                 </TouchableOpacity>

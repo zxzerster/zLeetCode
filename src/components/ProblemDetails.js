@@ -126,7 +126,7 @@ class ProblemDetails extends Component<Props> {
     }
 
     componentDidMount() {
-        this.loadProblemDetails.apply(this);
+        this.loadProblemDetails();
     }
 
     resolveQuestion = (titleSlug, title, questionId, judgeType, sampleTestCase) => {
@@ -143,7 +143,7 @@ class ProblemDetails extends Component<Props> {
         }
     }
 
-    loadProblemDetails() {
+    loadProblemDetails = () => {
         const { problemDetails, titleSlug } = this.props;
         const completionHandler = () => {
             this.setState({ loading: false, error: null });
