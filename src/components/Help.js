@@ -13,7 +13,7 @@ export default () => {
                     <Text style={{ fontSize: 18, fontWeight: '500', color: ColorScheme.textDarkerGray }}>Need Re-Login sometimes?</Text>
                 </View>
                 <View>
-                    <Text style={{ fontSize: 14, color: ColorScheme.textGray }}>This is because leetcode only allow user stay logged in on one device. If you logged in on somewhere else, then your credential is invalid, a re-login is needed.</Text>
+                    <Text style={{ fontSize: 14, color: ColorScheme.textGray }}>This is because leetcode only allow user stay logged in on one device. If you logged in somewhere else, then your credential is invalid, a re-login is needed.</Text>
                 </View>
             </View>
             <View style={{ marginHorizontal: 8, marginVertical: 12 }}>
