@@ -1,2 +1,2 @@
-export const version = 0.8;
+export const version = '1.0';
 export const versionString = `version: ${version}`;

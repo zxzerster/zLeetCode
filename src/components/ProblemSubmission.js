@@ -554,6 +554,8 @@ class ProblemSubmission extends Component<Props> {
                                 <TextInput
                                     inputAccessoryViewID={id}
                                     multiline
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
                                     onChangeText={text => { this.setState({ code: text }); }}
                                     value={code}
                                 />

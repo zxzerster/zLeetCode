@@ -241,7 +241,7 @@ const renderSettingItems = ({ submissionHandler, favoriteHandler, helperHandler,
         if (index === 3) {
             return (
                 <View style={[item, { borderBottomWidth: 0, flex: 1 }]}>
-                    <Text style={[text, { color: ColorScheme.textGray }]}>{title}</Text>
+                    <Text style={[text, { color: ColorScheme.textGray, fontSize: 14, fontWeight: '300' }]}>{title}</Text>
                 </View>
             );
         }
