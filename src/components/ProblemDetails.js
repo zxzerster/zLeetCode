@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    View, Text, ScrollView, TouchableOpacity, SafeAreaView,
+    View, Text, Image, ScrollView, TouchableOpacity, SafeAreaView,
 } from 'react-native';
 import { Badge, Icon } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -177,6 +177,13 @@ class ProblemDetails extends Component<Props> {
                     <View>
                         {defaultRenderer(node.children, parent)}
                     </View>
+                );
+            }
+
+            if (node.name === 'img') {
+                // debugger;
+                return (
+                    <Image source={{ uri: node.attribs.src }} style={{ width: 150, height: 150, resizeMode: 'contain' }} />
                 );
             }
         }
