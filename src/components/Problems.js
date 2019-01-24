@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import {
-    View, FlatList, NativeModules, Text, TouchableOpacity,
+    View, Button, ScrollView, FlatList, NativeModules, Text, TouchableOpacity,
 } from 'react-native';
 import { SearchBar } from 'react-native-elements';
-import Popover from 'react-native-popover-view';
+import Popover, { Rect } from 'react-native-popover-view';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
@@ -12,6 +12,7 @@ import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 import ProblemItem from './ProblemItem';
 import ProblemRighttButton from './common/ProblemRightButton';
 import { leetcodeProblems, leetcodeCleanAllProblems } from '../actions';
+import { ColorScheme } from '../utils/Config';
 
 
 const EASY = 'Easy';
@@ -22,6 +23,38 @@ const styles = {
     container: {
         flex: 1,
         backgroundColor: 'white',
+    },
+    filterButton: {
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderTopColor: ColorScheme.separateLineGray,
+        borderTopWidth: 1,
+    },
+    filterTitle: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderBottomColor: ColorScheme.separateLineGray,
+        borderBottomWidth: 1,
+    },
+    filterTitleText: {
+        padding: 8,
+        fontSize: 20,
+        fontWeight: '500',
+        color: ColorScheme.textDarkerGray,
+    },
+    filterItem: {
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        // borderBottomColor: ColorScheme.separateLineGray,
+        // borderBottomWidth: 1,
+    },
+    filterItemText: {
+        paddingLeft: 8,
+        fontSize: 16,
+        fontWeight: '300',
+        color: ColorScheme.textDarkGray
     },
 };
 
@@ -79,7 +112,7 @@ class Problems extends Component<ProblemsProps> {
 
             navigation.setParams({ title });
         } else {
-            navigation.setParams({ /* rightTitle: 'Filter', onRight: () => { this.setState({ showFilter: true }); } */ });
+            navigation.setParams({ rightTitle: 'Filter', onRight: () => { this.setState({ showFilter: true }); } });
         }
         this.loadProblems();
     }
@@ -260,7 +293,9 @@ class Problems extends Component<ProblemsProps> {
     }
 
     render() {
-        const { container } = styles;
+        const {
+            container, filterButton, filterTitle, filterTitleText, filterItem, filterItemText,
+        } = styles;
         const { from } = this.props;
         const {
             loading, error, refreshing, displayedQuestions, showFilter,
@@ -291,28 +326,30 @@ class Problems extends Component<ProblemsProps> {
                         />
                         <Popover
                             isVisible={showFilter}
-                            popoverStyle={{ width: '25%', height: 300 }}
+                            popoverStyle={{ width: 200, height: 250, borderRadius: 8 }}
+                            // fromRect={Rect(400, 60, 10, 10)}
+                            // showInModal={false}
                         >
-                            <View style={{ flex: 1, backgroundColor: 'red' }}>
-                                <Text>Filter</Text>
-                                <View style={{ backgroundColor: 'yellow' }}>
-                                    <TouchableOpacity onPress={all}>
-                                        <Text>All</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => { this.filterByDifficulty(EASY); }}>
-                                        <Text>Easy</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => { this.filterByDifficulty(MEDIUM); }}>
-                                        <Text>Medium</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => { this.filterByDifficulty(HARD); }}>
-                                        <Text>Hard</Text>
-                                    </TouchableOpacity>
+                            <View style={{ flex: 1, borderRadius: 8 }}>
+                                <View style={filterTitle}>
+                                    <Text style={filterTitleText}>Filter</Text>
                                 </View>
-                                <View style={{ flex: 1, backgroundClor: 'blue' }}>
-                                    <TouchableOpacity style={{ backgroundColor: 'green' }} onPress={() => { this.setState({ showFilter: false }); }}>
-                                        <Text>Cancel</Text>
+                                <ScrollView style={{ flex: 1 }}>
+                                    <TouchableOpacity style={filterItem} onPress={all}>
+                                        <Text style={filterItemText}>All</Text>
                                     </TouchableOpacity>
+                                    <TouchableOpacity style={filterItem} onPress={() => { this.filterByDifficulty(EASY); }}>
+                                        <Text style={filterItemText}>Easy</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={filterItem} onPress={() => { this.filterByDifficulty(MEDIUM); }}>
+                                        <Text style={filterItemText}>Medium</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={filterItem} onPress={() => { this.filterByDifficulty(HARD); }}>
+                                        <Text style={filterItemText}>Hard</Text>
+                                    </TouchableOpacity>
+                                </ScrollView>
+                                <View style={filterButton}>
+                                    <Button title="Cancel" onPress={() => { this.setState({ showFilter: false }); }} />
                                 </View>
                             </View>
                         </Popover>
