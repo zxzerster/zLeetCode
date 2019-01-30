@@ -3,8 +3,10 @@ import { TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 export default props => {
+    const { onPress } = props;
+
     return (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onPress}>
             <Icon containerStyle={{ marginRight: 16 }} type="ionicon" name="ios-options" color="white" />
         </TouchableOpacity>
     );

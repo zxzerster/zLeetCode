@@ -13,6 +13,7 @@ import ProblemItem from './ProblemItem';
 import ProblemRighttButton from './common/ProblemRightButton';
 import { leetcodeProblems, leetcodeCleanAllProblems } from '../actions';
 import { ColorScheme } from '../utils/Config';
+import { Actions } from 'react-native-router-flux';
 
 
 const EASY = 'Easy';
@@ -112,9 +113,15 @@ class Problems extends Component<ProblemsProps> {
 
             navigation.setParams({ title });
         } else {
-            navigation.setParams({ rightTitle: 'Filter', onRight: () => { this.setState({ showFilter: true }); } });
+            navigation.setParams({ onPress: this.onRight });
+            // navigation.setParams({ renderRightButton: this.rightButton() });
+            // Actions.refresh({ renderRightButton: this.rightButton(), onRight: () => {} });
         }
         this.loadProblems();
+    }
+
+    onRight = () => {
+
     }
 
     rightButton = () => {

@@ -18,6 +18,7 @@ import Help from './src/components/Help';
 import ProblemTabIcon from './src/components/common/ProblemTabIcon';
 import ProfileTabIcon from './src/components/common/ProfileTabIcon';
 import SearchTabIcon from './src/components/common/TagsTabIcon';
+import ProblemRightButton from './src/components/common/ProblemRightButton';
 
 const LeetCodeRoutes = () => {
     return (
@@ -43,7 +44,7 @@ const LeetCodeRoutes = () => {
                     type={ActionConst.RESET}
                 >
                     <Stack tab initial icon={ProblemTabIcon}>
-                        <Scene key="problems" initial component={Problems} title="Problems" />
+                        <Scene key="problems" initial component={Problems} title="Problems" renderRightButton={ProblemRightButton} />
                         <Scene key="problemDetails" component={ProblemDetails} title="Details" hideTabBar />
                         <Scene key="problemSubmission" component={ProblemSubmission} title="Submission" hideTabBar />
                         <Scene key="codelangselector" component={CodeLangSelector} title="Select Languate" hideTabBar />
