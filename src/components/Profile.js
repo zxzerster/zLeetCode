@@ -330,7 +330,7 @@ class Profile extends Component<Props> {
     componentDidMount() {
         const { profile, progress, navigation } = this.props;
 
-        navigation.setParams({ rightTitle: 'Refresh', onRight: () => { progress(() => {}, this.handleRelogin); profile(); } });
+        navigation.setParams({ onPress: () => { progress(() => {}, this.handleRelogin); profile(); } });
 
         profile();
         progress(
