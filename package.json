@@ -10,6 +10,7 @@
     "lodash": "^4.17.11",
     "react": "16.6.0-alpha.8af6728",
     "react-native": "0.57.3",
+    "react-native-cookies": "^3.3.0",
     "react-native-elements": "^0.19.1",
     "react-native-floating-action": "^1.13.0",
     "react-native-htmlview": "^0.13.0",

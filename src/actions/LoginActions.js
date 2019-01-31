@@ -1,5 +1,6 @@
 import {
     LEETCODE_LOGIN, LEETCODE_LOGIN_SUCCESS, LEETCODE_LOGIN_FAILED,
+    LEETCODE_SOCIAL_LOGIN,
     LEETCODE_LOGOUT, LEETCODE_LOGOUT_SUCCESS, LEETCODE_LOGOUT_FAILED,
 } from './types';
 import { UserStatus } from '../network/query';
@@ -35,6 +36,13 @@ export const leetcodeVerfifySession = (completionHandler, errorHandler) => {
                 },
             },
         );
+    };
+};
+
+export const leetcodeSocialLogin = (csrftoken, LEETCODE_SESSION) => {
+    return {
+        type: LEETCODE_SOCIAL_LOGIN,
+        payload: { csrftoken, LEETCODE_SESSION },
     };
 };
 
@@ -143,7 +151,7 @@ export const leetcodeLogout = (completionHandler, errorHandler) => {
             }
 
             dispatch({ type: LEETCODE_LOGOUT_SUCCESS });
-            if (completionHandler) { 
+            if (completionHandler) {
                 completionHandler(true);
             }
         })

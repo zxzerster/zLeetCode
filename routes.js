@@ -5,6 +5,7 @@ import {
 
 import Loading from './src/components/Loading';
 import Login from './src/components/Login';
+import SocialLogin from './src/components/SocialLogin';
 import Problems from './src/components/Problems';
 import Profile from './src/components/Profile';
 import Submissions from './src/components/Submissions';
@@ -34,6 +35,9 @@ const LeetCodeRoutes = () => {
                 </Modal>
                 <Modal key="rootLogin" gesturesEnabled={false} type={ActionConst.RESET} hideNavBar>
                     <Scene key="login" component={Login} title="Login" hideNavBar />
+                </Modal>
+                <Modal key="socialLogin" gesturesEnabled={false} type={ActionConst.RESET} hideNavBar>
+                    <Scene key="social" component={SocialLogin} hideNavBar />
                 </Modal>
                 <Scene
                     tabs

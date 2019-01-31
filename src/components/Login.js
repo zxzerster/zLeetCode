@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     View, TouchableOpacity, Text,
     Linking, Keyboard, InputAccessoryView, Animated,
-    Alert, Button as NativeButton, KeyboardAvoidingView,
+    Alert, Button as NativeButton, KeyboardAvoidingView, WebView,
 } from 'react-native';
 import {
     FormInput, Button, Icon,
@@ -10,8 +10,9 @@ import {
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 
+import LoginModal from './common/LoginModal';
 import {
-    leetcodeLogin, leetcodeLogout, leetcodeCleanAllProblems, leetcodeCleanUserProfile, leetcodeCleanUserProgress,
+    leetcodeLogin, leetcodeSocialLogin, leetcodeLogout, leetcodeCleanAllProblems, leetcodeCleanUserProfile, leetcodeCleanUserProgress,
 } from '../actions';
 import { URLs } from '../network';
 import { ColorScheme } from '../utils/Config';
@@ -82,6 +83,8 @@ class Login extends Component<LoginProps> {
             password: '',
             loading: false,
             disabled: true,
+            showLoginModal: false,
+            socialLoginUrl: '',
         };
         this.pwdRef = React.createRef();
         this.nameRef = React.createRef();
@@ -116,14 +119,6 @@ class Login extends Component<LoginProps> {
     componentWillUnmount() {
         this.didShow.remove();
         this.willHide.remove();
-    }
-
-    forgotPassword = () => {
-        Linking.openURL(URLs.forgot);
-    }
-
-    signup = () => {
-        Linking.openURL(URLs.login);
     }
 
     dimissKeyboard = () => {
@@ -183,6 +178,25 @@ class Login extends Component<LoginProps> {
         this.pwdRef.current.input.focus();
     }
 
+    onSocialLoginSuccess = (csrftoken, LEETCODE_SESSION) => {
+        console.log('==========???   Social Login Success!!!!');
+        const { socialLogin } = this.props;
+
+        socialLogin(csrftoken, LEETCODE_SESSION);
+        this.setState({ showLoginModal: false });
+        setTimeout(() => {
+            Actions.reset('main');
+        }, 1000);
+    };
+
+    signup = () => {
+        Linking.openURL(URLs.signup);
+    }
+
+    forgotPassword = () => {
+        Linking.openURL(URLs.forgot);
+    }
+
     render() {
         const {
             root, iconContainer, inputContainer,
@@ -190,7 +204,7 @@ class Login extends Component<LoginProps> {
             submit, inputAccessory,
         } = styles;
         const {
-            username, password, loading, disabled,
+            username, password, loading, disabled, showLoginModal, socialLoginUrl,
         } = this.state;
         const leftIcon = loading ? {} : { name: 'arrow-upward', size: 23 };
         const title = loading ? '' : 'Sign in';
@@ -247,6 +261,13 @@ class Login extends Component<LoginProps> {
                             title={title}
                             onPress={() => this.login()}
                         />
+                        {/* <Button
+                            leftIcon={leftIcon}
+                            buttonStyle={submit}
+                            loading={loading}
+                            title="google login"
+                            onPress={() => this.setState({ showLoginModal: true })}
+                        /> */}
                         <View style={{ flex: 1, flexDirection: 'row' }}>
                             <TouchableOpacity disabled={loading} style={[forgot, { flex: 1 }]} onPress={() => this.forgotPassword()}>
                                 <Text style={forgotText}>Forgot Password?</Text>
@@ -255,8 +276,28 @@ class Login extends Component<LoginProps> {
                                 <Text style={forgotText}>Sign up on Web</Text>
                             </TouchableOpacity>
                         </View>
+                        <View style={{ flex: 4, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginHorizontal: 25 }}>
+                            <TouchableOpacity onPress={() => this.setState({ socialLoginUrl: 'https://leetcode.com/accounts/github/login', showLoginModal: true })}>
+                                <Icon type="ionicon" name="logo-github" color={ColorScheme.textGray} size={36} />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({ socialLoginUrl: 'https://leetcode.com/accounts/google/login', showLoginModal: true })}>
+                                <Icon type="ionicon" name="logo-google" color={ColorScheme.textGray} size={36} />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({ socialLoginUrl: 'https://leetcode.com/accounts/linkedin/login', showLoginModal: true })}>
+                                <Icon type="ionicon" name="logo-linkedin" color={ColorScheme.textGray} size={36} />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({ socialLoginUrl: 'https://leetcode.com/accounts/facebook/login', showLoginModal: true })}>
+                                <Icon type="ionicon" name="logo-facebook" color={ColorScheme.textGray} size={36} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
+                <LoginModal
+                    visible={showLoginModal}
+                    onClose={() => this.setState({ showLoginModal: false })}
+                    onSocialLoginSuccess={this.onSocialLoginSuccess}
+                    socialLoginUrl={socialLoginUrl}
+                />
             </KeyboardAvoidingView>
 
         );
@@ -273,6 +314,7 @@ const mapDispatchToProps = dispatch => {
     return {
         login: (...args) => dispatch(leetcodeLogin(...args)),
         logout: (...args) => dispatch(leetcodeLogout(...args)),
+        socialLogin: (...args) => dispatch(leetcodeSocialLogin(...args)),
         cleanProblems: (...args) => dispatch(leetcodeCleanAllProblems(...args)),
         cleanProgress: (...args) => dispatch(leetcodeCleanUserProgress(...args)),
         cleanProfile: (...args) => dispatch(leetcodeCleanUserProfile(...args)),

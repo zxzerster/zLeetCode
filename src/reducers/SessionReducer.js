@@ -1,5 +1,6 @@
 import {
     LEETCODE_LOGIN, LEETCODE_LOGIN_SUCCESS, LEETCODE_LOGIN_FAILED,
+    LEETCODE_SOCIAL_LOGIN,
     LEETCODE_LOGOUT, LEETCODE_LOGOUT_SUCCESS, LEETCODE_LOGOUT_FAILED,
 } from '../actions/types';
 
@@ -23,6 +24,11 @@ export default (state = INITIAL_STATE, action) => {
             };
         case LEETCODE_LOGIN_FAILED:
             return { ...INITIAL_STATE };
+        case LEETCODE_SOCIAL_LOGIN: {
+            const { csrftoken, LEETCODE_SESSION } = action.payload;
+
+            return { ...state, csrftoken, LEETCODE_SESSION };
+        }
         case LEETCODE_LOGOUT_SUCCESS:
         case LEETCODE_LOGOUT_FAILED:
             // Please note that theoratically it's impossible that failed to logout.
