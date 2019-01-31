@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import {
     View, TouchableOpacity, Text,
     Linking, Keyboard, InputAccessoryView, Animated,
-    Alert, Button as NativeButton, KeyboardAvoidingView, WebView,
+    Alert, Button as NativeButton, KeyboardAvoidingView, NativeModules,
 } from 'react-native';
 import {
     FormInput, Button, Icon,
 } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
+import UserAgent from 'react-native-user-agent';
 
 import LoginModal from './common/LoginModal';
 import {
@@ -85,6 +86,7 @@ class Login extends Component<LoginProps> {
             disabled: true,
             showLoginModal: false,
             socialLoginUrl: '',
+            agentString: UserAgent.getUserAgent(),
         };
         this.pwdRef = React.createRef();
         this.nameRef = React.createRef();
@@ -179,7 +181,6 @@ class Login extends Component<LoginProps> {
     }
 
     onSocialLoginSuccess = (csrftoken, LEETCODE_SESSION) => {
-        console.log('==========???   Social Login Success!!!!');
         const { socialLogin } = this.props;
 
         socialLogin(csrftoken, LEETCODE_SESSION);
@@ -197,6 +198,21 @@ class Login extends Component<LoginProps> {
         Linking.openURL(URLs.forgot);
     }
 
+    googleAccountLogin = () => {
+        const uesrAgentHandler = NativeModules.UserAgentHandler;
+
+        uesrAgentHandler.setUserAgentForGoogleOnly();
+        this.setState({ socialLoginUrl: 'https://leetcode.com/accounts/google/login', showLoginModal: true });
+    }
+
+    otherSocialAccoutLogin = url => {
+        const { agentString } = this.state;
+        const uesrAgentHandler = NativeModules.UserAgentHandler;
+
+        uesrAgentHandler.setDefaultUserAgent(agentString);
+        this.setState({ socialLoginUrl: url, showLoginModal: true });
+    }
+
     render() {
         const {
             root, iconContainer, inputContainer,
@@ -204,7 +220,7 @@ class Login extends Component<LoginProps> {
             submit, inputAccessory,
         } = styles;
         const {
-            username, password, loading, disabled, showLoginModal, socialLoginUrl,
+            username, password, loading, agentString, showLoginModal, socialLoginUrl,
         } = this.state;
         const leftIcon = loading ? {} : { name: 'arrow-upward', size: 23 };
         const title = loading ? '' : 'Sign in';
@@ -277,16 +293,16 @@ class Login extends Component<LoginProps> {
                             </TouchableOpacity>
                         </View>
                         <View style={{ flex: 4, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginHorizontal: 25 }}>
-                            <TouchableOpacity onPress={() => this.setState({ socialLoginUrl: 'https://leetcode.com/accounts/github/login', showLoginModal: true })}>
+                            <TouchableOpacity onPress={() => this.otherSocialAccoutLogin('https://leetcode.com/accounts/github/login')}>
                                 <Icon type="ionicon" name="logo-github" color={ColorScheme.textGray} size={36} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({ socialLoginUrl: 'https://leetcode.com/accounts/google/login', showLoginModal: true })}>
+                            <TouchableOpacity onPress={this.googleAccountLogin}>
                                 <Icon type="ionicon" name="logo-google" color={ColorScheme.textGray} size={36} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({ socialLoginUrl: 'https://leetcode.com/accounts/linkedin/login', showLoginModal: true })}>
+                            <TouchableOpacity onPress={() => this.otherSocialAccoutLogin('https://leetcode.com/accounts/linkedin/login')}>
                                 <Icon type="ionicon" name="logo-linkedin" color={ColorScheme.textGray} size={36} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({ socialLoginUrl: 'https://leetcode.com/accounts/facebook/login', showLoginModal: true })}>
+                            <TouchableOpacity onPress={() => this.otherSocialAccoutLogin('https://leetcode.com/accounts/facebook/login')}>
                                 <Icon type="ionicon" name="logo-facebook" color={ColorScheme.textGray} size={36} />
                             </TouchableOpacity>
                         </View>

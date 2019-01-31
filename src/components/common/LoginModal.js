@@ -6,7 +6,6 @@ import { Icon } from 'react-native-elements';
 import CookieManager from 'react-native-cookies';
 
 import LeetcodeIcon from './LeetcodeIcon';
-import { ColorScheme } from '../../utils/Config';
 
 const styles = {
     backgroundView: {
@@ -40,10 +39,10 @@ class LoginModal extends Component {
         };
         this.webViewRef = React.createRef();
         this.fade = new Animated.Value(0.2);
-        CookieManager.clearAll()
-        .then(() => {
-            this.setState({ start: true });
-        });
+        // CookieManager.clearAll()
+        // .then(() => {
+        //     this.setState({ start: true });
+        // });
     }
 
     componentDidMount() {
@@ -136,13 +135,11 @@ class LoginModal extends Component {
                             <WebView
                                 ref={this.webViewRef}
                                 source={{ uri: socialLoginUrl }}
-                                userAgent="Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
                                 onLoadStart={arg => this.onLoadStart(arg)}
                                 renderLoading={this.renderLoading}
                                 startInLoadingState
                             />
                         </View>
-                        <Icon style={{ postion: 'absolute' }} type="ionicons" name="ios-close-circle-outline" />
                     </KeyboardAvoidingView>
                 </Modal>
             );

@@ -7,6 +7,7 @@ import {
     Badge, Divider, Button, Icon,
 } from 'react-native-elements';
 import { connect } from 'react-redux';
+import CookieManager from 'react-native-cookies';
 
 import LeetcodeIcon from './common/LeetcodeIcon';
 import { leetcodeUserProfile, leetcodeUserProgress, leetcodeLogout } from '../actions';
@@ -351,9 +352,18 @@ class Profile extends Component<Props> {
         const { logout } = this.props;
 
         this.setState({ logoutLoading: true });
-        logout(() => {
-            this.setState({ logoutLoading: false });
-            Actions.rootLogin();
+        CookieManager.clearAll()
+        .then(() => {
+            logout(() => {
+                this.setState({ logoutLoading: false });
+                Actions.rootLogin();
+            });
+        })
+        .catch(() => {
+            logout(() => {
+                this.setState({ logoutLoading: false });
+                Actions.rootLogin();
+            });
         });
     }
 
