@@ -2,19 +2,16 @@ import React, { Component } from 'react';
 import {
     View, Button, ScrollView, FlatList, NativeModules, Text, TouchableOpacity,
 } from 'react-native';
-import { SearchBar } from 'react-native-elements';
-import Popover, { Rect } from 'react-native-popover-view';
+import { SearchBar, Icon } from 'react-native-elements';
+import Popover from 'react-native-popover-view';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
-import withLeetcodeWrapper from './common/withLeetcodeWrapper';
 import LoadingErrorWrapper from './common/LoadingErrorWrapper';
 import ProblemItem from './ProblemItem';
 import ProblemRighttButton from './common/ProblemRightButton';
 import { leetcodeProblems, leetcodeCleanAllProblems } from '../actions';
 import { ColorScheme } from '../utils/Config';
-import { Actions } from 'react-native-router-flux';
-
 
 const EASY = 'Easy';
 const MEDIUM = 'Medium';
@@ -29,8 +26,6 @@ const styles = {
         height: 40,
         justifyContent: 'center',
         alignItems: 'center',
-        borderTopColor: ColorScheme.separateLineGray,
-        borderTopWidth: 1,
     },
     filterTitle: {
         justifyContent: 'center',
@@ -55,7 +50,7 @@ const styles = {
         paddingLeft: 8,
         fontSize: 16,
         fontWeight: '300',
-        color: ColorScheme.textDarkGray
+        color: ColorScheme.textDarkGray,
     },
 };
 
@@ -121,7 +116,7 @@ class Problems extends Component<ProblemsProps> {
     }
 
     onRight = () => {
-
+        this.setState({ showFilter: true });
     }
 
     rightButton = () => {
@@ -333,7 +328,8 @@ class Problems extends Component<ProblemsProps> {
                         />
                         <Popover
                             isVisible={showFilter}
-                            popoverStyle={{ width: 200, height: 250, borderRadius: 8 }}
+                            // popoverStyle={{ flex: 1 }}
+                            popoverStyle={{ width: 250, height: 300, borderRadius: 8, opacity: 0.9 }}
                             // fromRect={Rect(400, 60, 10, 10)}
                             // showInModal={false}
                         >
@@ -355,9 +351,9 @@ class Problems extends Component<ProblemsProps> {
                                         <Text style={filterItemText}>Hard</Text>
                                     </TouchableOpacity>
                                 </ScrollView>
-                                <View style={filterButton}>
-                                    <Button title="Cancel" onPress={() => { this.setState({ showFilter: false }); }} />
-                                </View>
+                                <TouchableOpacity style={filterButton} onPress={() => { this.setState({ showFilter: false }); }}>
+                                    <Icon type="ionicon" name="ios-close-circle-outline" size={30} color={ColorScheme.textGray} />
+                                </TouchableOpacity>
                             </View>
                         </Popover>
                     </View>
