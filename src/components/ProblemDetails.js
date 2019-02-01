@@ -228,7 +228,24 @@ class ProblemDetails extends Component<Props> {
         return null;
     }
 
-    renderToolbar = (titleSlug, title, questionId, judgeType, sampleTestCase) => {
+    renderSolution = (markdown, canSeeDetail) => {
+        if (canSeeDetail) {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-start' }}>
+                    <TouchableOpacity
+                        style={{ marginLeft: 12 }}
+                        onPress={() => Actions.problemSolution({ markdown })}
+                    >
+                        <Icon type="ionicon" name="ios-archive" color={ColorScheme.lightGray} size={32} />
+                    </TouchableOpacity>
+                </View>
+            );
+        }
+
+        return null;
+    }
+
+    renderToolbar = (titleSlug, title, questionId, judgeType, sampleTestCase, markdown, canSeeDetail) => {
         const { toolBarRootStyle, toolBarActionStyle, toolBarActionTextStyle } = styles;
 
         return (
@@ -239,6 +256,7 @@ class ProblemDetails extends Component<Props> {
                 >
                     <Text style={toolBarActionTextStyle}>Resolve</Text>
                 </TouchableOpacity>
+                {this.renderSolution(markdown, canSeeDetail)}
             </View>
         );
     };
@@ -251,8 +269,10 @@ class ProblemDetails extends Component<Props> {
         const { loading, error } = this.state;
         const { detail } = this.props;
         const {
-            title, questionId, difficulty, likes, dislikes, titleSlug, similarQuestions, stats, judgeType, sampleTestCase,
+            title, questionId, difficulty, likes, dislikes, titleSlug, similarQuestions, stats, judgeType, sampleTestCase, solution,
         } = detail;
+        const markdown = solution ? solution.content : '';
+        const canSeeDetail = solution ? solution.canSeeDetail : false;
         let similars = null;
         let statsObj = null;
         let difficultyColor;
@@ -309,7 +329,7 @@ class ProblemDetails extends Component<Props> {
                                 stylesheet={HTMLStyles}
                             />
                         </ScrollView>
-                        {this.renderToolbar(titleSlug, title, questionId, judgeType, sampleTestCase)}
+                        {this.renderToolbar(titleSlug, title, questionId, judgeType, sampleTestCase, markdown, canSeeDetail)}
                     </SafeAreaView>
                 )}
             </LoadingErrorWrapper>
@@ -339,7 +359,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(ProblemDetails);
 
 //     static onEnter(props) {
 //         console.log(`problemdetails`);
-        
+
 //     }
 //     // static onEnter(props) {
 //     //     console.log(`Enter titleSlug: ${this.props.titleSlug}, title: ${this.props.problemTitle}`);

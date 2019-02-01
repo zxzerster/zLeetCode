@@ -10,6 +10,7 @@ import Problems from './src/components/Problems';
 import Profile from './src/components/Profile';
 import Submissions from './src/components/Submissions';
 import ProblemDetails from './src/components/ProblemDetails';
+import ProblemSolution from './src/components/ProblemSolution';
 import ProblemSubmission from './src/components/ProblemSubmission';
 import CodeLangSelector from './src/components/CodeLangSelector';
 import TagsProblem from './src/components/TagsProblem';
@@ -51,6 +52,7 @@ const LeetCodeRoutes = () => {
                     <Stack tab initial icon={ProblemTabIcon}>
                         <Scene key="problems" initial component={Problems} title="Problems" renderRightButton={ProblemRightButton} />
                         <Scene key="problemDetails" component={ProblemDetails} title="Details" hideTabBar />
+                        <Scene key="problemSolution" component={ProblemSolution} title="Solution" hideTabBar />
                         <Scene key="problemSubmission" component={ProblemSubmission} title="Submission" hideTabBar />
                         <Scene key="codelangselector" component={CodeLangSelector} title="Select Languate" hideTabBar />
                     </Stack>
