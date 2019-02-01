@@ -47,6 +47,11 @@
 		2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
 		3E34C99C123B435D81924DFB /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9B528A7993FD4AD1A3511B4C /* FontAwesome.ttf */; };
 		4623C2CCE97648A5ACC8F124 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5F587CD5E2084768991B6C17 /* SimpleLineIcons.ttf */; };
+		5DD056AE220435440041AD14 /* MarkdownViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DD056AD220435440041AD14 /* MarkdownViewManager.m */; };
+		5DD056E5220435F00041AD14 /* Down.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD056E2220435B50041AD14 /* Down.framework */; };
+		5DD056E6220435F00041AD14 /* Down.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD056E2220435B50041AD14 /* Down.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5DD056EB22045F0F0041AD14 /* MarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD056EA22045F0F0041AD14 /* MarkdownView.swift */; };
+		5DEF8B362204352100BBE7F5 /* MarkdownViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DEF8B352204352100BBE7F5 /* MarkdownViewManager.swift */; };
 		602AB867409042F5909D3E66 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D49821AF218454B99E4086F /* libRNVectorIcons.a */; };
 		70578306B38D48078CBC5855 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CAD04808E6134B1B9D2DF1D9 /* Entypo.ttf */; };
 		7A093D9547434A9B9BE33215 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DAD7BB709315463CA70122DD /* AntDesign.ttf */; };
@@ -351,6 +356,27 @@
 			remoteGlobalIDString = A39873CE1EA65EE60051E01A;
 			remoteInfo = "RNVectorIcons-tvOS";
 		};
+		5DD056E1220435B50041AD14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5DD056DC220435B50041AD14 /* Down.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8A569F401E6B3E50008BE2AC;
+			remoteInfo = Down;
+		};
+		5DD056E3220435B50041AD14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5DD056DC220435B50041AD14 /* Down.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8AFAEAFB1E6E32E900E09B68;
+			remoteInfo = DownTests;
+		};
+		5DD056E7220435F00041AD14 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5DD056DC220435B50041AD14 /* Down.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8A569F3F1E6B3E50008BE2AC;
+			remoteInfo = Down;
+		};
 		5DE4739821D7388900FDDFF9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 898F50E953A94DCDA009E4C9 /* RNBackgroundWorkers.xcodeproj */;
@@ -395,6 +421,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		5DD056E9220435F00041AD14 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				5DD056E6220435F00041AD14 /* Down.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = "../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; };
@@ -428,6 +468,11 @@
 		4D14E7DBBC43482B9D38591F /* RNSVG.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSVG.xcodeproj; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; };
 		54A1EC9F60A0469C8BDD2126 /* libRNVectorIcons-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNVectorIcons-tvOS.a"; sourceTree = "<group>"; };
 		5506DCD03B1C4635A43075C2 /* RNUserAgent.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNUserAgent.xcodeproj; path = "../node_modules/react-native-user-agent/ios/RNUserAgent.xcodeproj"; sourceTree = "<group>"; };
+		5DD056AD220435440041AD14 /* MarkdownViewManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MarkdownViewManager.m; sourceTree = "<group>"; };
+		5DD056DC220435B50041AD14 /* Down.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Down.xcodeproj; path = ZLC/Down/Down.xcodeproj; sourceTree = "<group>"; };
+		5DD056EA22045F0F0041AD14 /* MarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownView.swift; sourceTree = "<group>"; };
+		5DEF8B342204352100BBE7F5 /* ZLC-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZLC-Bridging-Header.h"; sourceTree = "<group>"; };
+		5DEF8B352204352100BBE7F5 /* MarkdownViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownViewManager.swift; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		5F587CD5E2084768991B6C17 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		5F9338931B8A4C4685FCEE4F /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
@@ -476,6 +521,7 @@
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
+				5DD056E5220435F00041AD14 /* Down.framework in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				602AB867409042F5909D3E66 /* libRNVectorIcons.a in Frameworks */,
@@ -597,6 +643,7 @@
 		13B07FAE1A68108700A75B9A /* ZLC */ = {
 			isa = PBXGroup;
 			children = (
+				5DEF8B062204350600BBE7F5 /* MarkdownView */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -696,12 +743,33 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		5DD056DD220435B50041AD14 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5DD056E2220435B50041AD14 /* Down.framework */,
+				5DD056E4220435B50041AD14 /* DownTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		5DE4739521D7388900FDDFF9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				5DE4739921D7388900FDDFF9 /* libRNBackgroundWorkers.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		5DEF8B062204350600BBE7F5 /* MarkdownView */ = {
+			isa = PBXGroup;
+			children = (
+				5DD056DC220435B50041AD14 /* Down.xcodeproj */,
+				5DEF8B352204352100BBE7F5 /* MarkdownViewManager.swift */,
+				5DD056EA22045F0F0041AD14 /* MarkdownView.swift */,
+				5DEF8B342204352100BBE7F5 /* ZLC-Bridging-Header.h */,
+				5DD056AD220435440041AD14 /* MarkdownViewManager.m */,
+			);
+			name = MarkdownView;
 			sourceTree = "<group>";
 		};
 		5E91572E1DD0AC6500FF2AA8 /* Products */ = {
@@ -843,10 +911,12 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				5DD056E9220435F00041AD14 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5DD056E8220435F00041AD14 /* PBXTargetDependency */,
 			);
 			name = ZLC;
 			productName = "Hello World";
@@ -905,6 +975,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 2K3PAR9T8H;
+						LastSwiftMigration = 1010;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -929,6 +1000,10 @@
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = 5DD056DD220435B50041AD14 /* Products */;
+					ProjectRef = 5DD056DC220435B50041AD14 /* Down.xcodeproj */;
+				},
 				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
 					ProjectRef = 00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */;
@@ -1286,6 +1361,20 @@
 			remoteRef = 5D6EA82321AEE09F00A7DAED /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		5DD056E2220435B50041AD14 /* Down.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Down.framework;
+			remoteRef = 5DD056E1220435B50041AD14 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5DD056E4220435B50041AD14 /* DownTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DownTests.xctest;
+			remoteRef = 5DD056E3220435B50041AD14 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		5DE4739921D7388900FDDFF9 /* libRNBackgroundWorkers.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1423,7 +1512,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5DEF8B362204352100BBE7F5 /* MarkdownViewManager.swift in Sources */,
+				5DD056AE220435440041AD14 /* MarkdownViewManager.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				5DD056EB22045F0F0041AD14 /* MarkdownView.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1458,6 +1550,11 @@
 			target = 2D02E47A1E0B4A5D006451C7 /* ZLC-tvOS */;
 			targetProxy = 2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */;
 		};
+		5DD056E8220435F00041AD14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Down;
+			targetProxy = 5DD056E7220435F00041AD14 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -1476,6 +1573,7 @@
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 2K3PAR9T8H;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1518,6 +1616,7 @@
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = 2K3PAR9T8H;
@@ -1557,7 +1656,9 @@
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 2K3PAR9T8H;
@@ -1579,6 +1680,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = ZLC;
+				SWIFT_OBJC_BRIDGING_HEADER = "ZLC-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1586,7 +1690,9 @@
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2K3PAR9T8H;
 				HEADER_SEARCH_PATHS = (
@@ -1607,6 +1713,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = ZLC;
+				SWIFT_OBJC_BRIDGING_HEADER = "ZLC-Bridging-Header.h";
+				SWIFT_VERSION = 4.2;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

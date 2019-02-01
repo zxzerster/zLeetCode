@@ -6,4 +6,17 @@
 //  Copyright © 2019 Facebook. All rights reserved.
 //
 
-import Foundation
+import UIKit
+import Down
+
+@objc(MarkdownViewManager)
+class MarkdownViewManager: RCTViewManager {
+  
+  override func view() -> UIView! {
+    return MarkdownView();
+  }
+  
+  override static func requiresMainQueueSetup() -> Bool {
+    return true
+  }
+}
