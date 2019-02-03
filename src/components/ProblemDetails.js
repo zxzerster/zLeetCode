@@ -233,7 +233,7 @@ class ProblemDetails extends Component<Props> {
             return (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-start' }}>
                     <TouchableOpacity
-                        style={{ marginLeft: 12 }}
+                        style={{ marginLeft: 16 }}
                         onPress={() => Actions.problemSolution({ markdown })}
                     >
                         <Icon type="ionicon" name="ios-archive" color={ColorScheme.lightGray} size={32} />

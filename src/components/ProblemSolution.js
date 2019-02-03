@@ -9,6 +9,7 @@ export default ({ markdown }) => {
     let markdownString = markdown || '';
 
     markdownString = markdownString.replace('[TOC]', '');
+    markdownString = markdownString.replace(/\$\$/g, '**');
 
     return (
         <View style={{ flex: 1 }}>
